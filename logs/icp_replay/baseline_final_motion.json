@@ -1,0 +1,30 @@
+{
+  "duration_s": 9.0,
+  "first_odom_stamp": 1789489507.2617617,
+  "last_odom_stamp": 1789489511.9565988,
+  "last_scan_minus_last_odom_s": 4.096027374267578,
+  "log": "/home/abx/ros2_ws/logs/icp_replay/baseline_final_motion.log",
+  "lost_info_count": 41,
+  "min_inlier_ratio": 0.0,
+  "name": "baseline_final_motion",
+  "nonzero_command_count": 0,
+  "nonzero_command_end": null,
+  "nonzero_command_start": null,
+  "null_guess_errors": 76,
+  "odom_count": 48,
+  "odom_coverage_s": 4.6948370933532715,
+  "params": "/home/abx/ros2_ws/src/sensor_visualization/config/icp_experiments/baseline.yaml",
+  "registration_failures": 39,
+  "scan_count": 90,
+  "scan_frame_ids": [
+    "lidar_link"
+  ],
+  "scan_mean_hz": 10.01066803613079,
+  "start_offset_s": 558.0,
+  "trajectory": {
+    "distance_m": 0.0007306092781551393,
+    "dx_m": 0.00037667959986720234,
+    "dy_m": -0.0006260210830077995,
+    "dyaw_rad": -0.00025747400235084553
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "duration_s": 9.0,
+  "first_odom_stamp": 1789489507.2617617,
+  "last_odom_stamp": 1789489516.0526261,
+  "last_scan_minus_last_odom_s": 0.0,
+  "log": "/home/abx/ros2_ws/logs/icp_replay/correspondence_050_final_motion.log",
+  "lost_info_count": 0,
+  "min_inlier_ratio": 0.0,
+  "name": "correspondence_050_final_motion",
+  "nonzero_command_count": 20,
+  "nonzero_command_end": 1789490057.844817,
+  "nonzero_command_start": 1789490056.8849435,
+  "null_guess_errors": 0,
+  "odom_count": 89,
+  "odom_coverage_s": 8.79086446762085,
+  "params": "/home/abx/ros2_ws/src/sensor_visualization/config/icp_experiments/correspondence_050.yaml",
+  "registration_failures": 0,
+  "scan_count": 90,
+  "scan_frame_ids": [
+    "lidar_link"
+  ],
+  "scan_mean_hz": 10.01066803613079,
+  "start_offset_s": 558.0,
+  "trajectory": {
+    "distance_m": 0.15218587604404077,
+    "dx_m": -0.1520213764597429,
+    "dy_m": -0.007074034674587892,
+    "dyaw_rad": 0.005262666246096164
+  }
+}

@@ -1,0 +1,27 @@
+/**:
+  ros__parameters:
+    use_sim_time: true
+    frame_id: lidar_link
+    odom_frame_id: odom_replay
+    publish_tf: false
+    publish_null_when_lost: false
+    scan_cloud_is_2d: true
+    scan_downsampling_step: 1
+    scan_range_min: 0.20
+    scan_range_max: 8.0
+    scan_voxel_size: 0.03
+    Icp/Strategy: "1"
+    Icp/PointToPlane: "false"
+    Icp/Iterations: "30"
+    Icp/MaxCorrespondenceDistance: "0.15"
+    Icp/CorrespondenceRatio: "0.70"
+    Icp/OutlierRatio: "0.75"
+    Icp/MaxTranslation: "0.10"
+    Icp/MaxRotation: "0.175"
+    Icp/ReciprocalCorrespondences: "true"
+    Icp/VoxelSize: "0.03"
+    Odom/Deskewing: "false"
+    Odom/Strategy: "1"
+    Odom/GuessMotion: "true"
+    Odom/ResetCountdown: "0"
+

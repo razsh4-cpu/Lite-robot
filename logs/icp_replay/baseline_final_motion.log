@@ -1,0 +1,219 @@
+[INFO] [1789489963.567250230] [icp_odometry]: Odometry: frame_id               = lidar_link
+[INFO] [1789489963.567910355] [icp_odometry]: Odometry: odom_frame_id          = odom_replay
+[INFO] [1789489963.567941815] [icp_odometry]: Odometry: publish_tf             = false
+[INFO] [1789489963.567953023] [icp_odometry]: Odometry: wait_for_transform     = 0.100000
+[INFO] [1789489963.567966558] [icp_odometry]: Odometry: log_to_rosout_level    = 4
+[INFO] [1789489963.568012265] [icp_odometry]: Odometry: initial_pose           = xyz=0.000000,0.000000,0.000000 rpy=0.000000,-0.000000,0.000000
+[INFO] [1789489963.568026293] [icp_odometry]: Odometry: ground_truth_frame_id  = 
+[INFO] [1789489963.568036220] [icp_odometry]: Odometry: ground_truth_base_frame_id = lidar_link
+[INFO] [1789489963.568045099] [icp_odometry]: Odometry: config_path            = 
+[INFO] [1789489963.568052562] [icp_odometry]: Odometry: publish_null_when_lost = false
+[INFO] [1789489963.568060503] [icp_odometry]: Odometry: publish_compressed_sensor_data = false
+[INFO] [1789489963.568070279] [icp_odometry]: Odometry: guess_frame_id         = 
+[INFO] [1789489963.568085977] [icp_odometry]: Odometry: guess_min_translation  = 0.000000
+[INFO] [1789489963.568095108] [icp_odometry]: Odometry: guess_min_rotation     = 0.000000
+[INFO] [1789489963.568103685] [icp_odometry]: Odometry: guess_min_time         = 0.000000
+[INFO] [1789489963.568112033] [icp_odometry]: Odometry: expected_update_rate   = 0.000000 Hz
+[INFO] [1789489963.568119468] [icp_odometry]: Odometry: max_update_rate        = 0.000000 Hz
+[INFO] [1789489963.568126428] [icp_odometry]: Odometry: min_update_rate        = 0.000000 Hz
+[INFO] [1789489963.568133365] [icp_odometry]: Odometry: wait_imu_to_init       = false
+[INFO] [1789489963.568140753] [icp_odometry]: Odometry: always_check_imu_tf    = true
+[INFO] [1789489963.568147782] [icp_odometry]: Odometry: sensor_data_compression_format = .jpg
+[INFO] [1789489963.568154874] [icp_odometry]: Odometry: sensor_data_parallel_compression = true
+[INFO] [1789489963.568169846] [icp_odometry]: Odometry: stereoParams_=0 visParams_=0 icpParams_=1
+[INFO] [1789489963.569031376] [icp_odometry]: Setting odometry parameter "Icp/CorrespondenceRatio"="0.70"
+[INFO] [1789489963.569135680] [icp_odometry]: Setting odometry parameter "Icp/MaxCorrespondenceDistance"="0.15"
+[INFO] [1789489963.569166053] [icp_odometry]: Setting odometry parameter "Icp/MaxRotation"="0.175"
+[INFO] [1789489963.569194093] [icp_odometry]: Setting odometry parameter "Icp/MaxTranslation"="0.10"
+[INFO] [1789489963.569220862] [icp_odometry]: Setting odometry parameter "Icp/OutlierRatio"="0.75"
+[INFO] [1789489963.569294956] [icp_odometry]: Setting odometry parameter "Icp/PointToPlane"="false"
+[INFO] [1789489963.569460191] [icp_odometry]: Setting odometry parameter "Icp/VoxelSize"="0.03"
+[INFO] [1789489963.569537414] [icp_odometry]: Setting odometry parameter "Odom/Deskewing"="false"
+[INFO] [1789489963.569933094] [icp_odometry]: Setting odometry parameter "Odom/Strategy"="1"
+[WARN] [1789489963.573546578] [icp_odometry]: IcpOdometry: Transferring value 0.03 of "Icp/VoxelSize" to ros parameter "scan_voxel_size" for convenience. "Icp/VoxelSize" is set to 0.
+[WARN] [1789489963.573575977] [icp_odometry]: IcpOdometry: Transferring value 5 of "Icp/PointToPlaneK" to ros parameter "scan_normal_k" for convenience.
+[INFO] [1789489963.579031895] [icp_odometry]: IcpOdometry: qos                    = 0
+[INFO] [1789489963.579104782] [icp_odometry]: IcpOdometry: scan_cloud_max_points  = -1
+[INFO] [1789489963.579115334] [icp_odometry]: IcpOdometry: scan_cloud_is_2d       = true
+[INFO] [1789489963.579122861] [icp_odometry]: IcpOdometry: scan_downsampling_step = 1
+[INFO] [1789489963.579128364] [icp_odometry]: IcpOdometry: scan_range_min         = 0.200000 m
+[INFO] [1789489963.579137930] [icp_odometry]: IcpOdometry: scan_range_max         = 8.000000 m
+[INFO] [1789489963.579146982] [icp_odometry]: IcpOdometry: scan_voxel_size        = 0.030000 m
+[INFO] [1789489963.579154561] [icp_odometry]: IcpOdometry: scan_normal_k          = 5
+[INFO] [1789489963.579161195] [icp_odometry]: IcpOdometry: scan_normal_radius     = 0.000000 m
+[INFO] [1789489963.579196973] [icp_odometry]: IcpOdometry: scan_normal_ground_up  = 0.000000
+[INFO] [1789489963.579207666] [icp_odometry]: IcpOdometry: deskewing              = false
+[INFO] [1789489963.579213268] [icp_odometry]: IcpOdometry: deskewing_slerp        = false
+[INFO] [1789489963.580184461] [icp_odometry]: 
+icp_odometry subscribed to /replay/scan and /scan_cloud (make sure only one of this topic is published, otherwise remap one to a dummy topic name).
+[INFO] [1789489964.586377338] [rosbag2_storage]: Opened database '/home/abx/ros2_ws/bags/lite3_20260915-191547/lite3_20260915-191547_0.db3' for READ_ONLY.
+[INFO] [1789489964.586578458] [rosbag2_player]: Set rate to 1
+[WARN] [1789489964.602545538] [rosbag2_player]: New subscription discovered on topic '/replay/cmd_vel', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
+[INFO] [1789489964.603329411] [rosbag2_player]: Playback until timestamp: 1789489516246192055
+[INFO] [1789489964.724343429] [icp_odometry]: Odom: ratio=0.000000, std dev=99.995000m|99.995000rad, update time=0.000585s delay=0.094456s
+[INFO] [1789489964.833048732] [icp_odometry]: Odom: ratio=0.826144, std dev=0.000729m|0.000231rad, update time=0.011786s delay=0.104504s
+[INFO] [1789489964.929364848] [icp_odometry]: Odom: ratio=0.830931, std dev=0.000866m|0.000274rad, update time=0.006994s delay=0.104646s
+[INFO] [1789489965.027047369] [icp_odometry]: Odom: ratio=0.840637, std dev=0.000490m|0.000173rad, update time=0.005848s delay=0.104390s
+[INFO] [1789489965.127821125] [icp_odometry]: Odom: ratio=0.838838, std dev=0.000557m|0.000176rad, update time=0.006723s delay=0.104712s
+[INFO] [1789489965.225508720] [icp_odometry]: Odom: ratio=0.838196, std dev=0.000706m|0.000223rad, update time=0.004999s delay=0.105625s
+[INFO] [1789489965.327718035] [icp_odometry]: Odom: ratio=0.819246, std dev=0.000752m|0.000238rad, update time=0.006776s delay=0.105549s
+[INFO] [1789489965.426762804] [icp_odometry]: Odom: ratio=0.839426, std dev=0.000521m|0.000173rad, update time=0.006250s delay=0.105550s
+[INFO] [1789489965.528012979] [icp_odometry]: Odom: ratio=0.816754, std dev=0.000828m|0.000262rad, update time=0.006972s delay=0.105940s
+[INFO] [1789489965.624131990] [icp_odometry]: Odom: ratio=0.844327, std dev=0.000537m|0.000173rad, update time=0.005071s delay=0.095809s
+[INFO] [1789489965.726421048] [icp_odometry]: Odom: ratio=0.827128, std dev=0.000782m|0.000247rad, update time=0.006564s delay=0.106902s
+[INFO] [1789489965.824258219] [icp_odometry]: Odom: ratio=0.808959, std dev=0.000889m|0.000281rad, update time=0.005053s delay=0.096813s
+[INFO] [1789489965.926661405] [icp_odometry]: Odom: ratio=0.825858, std dev=0.000562m|0.000178rad, update time=0.007140s delay=0.106681s
+[INFO] [1789489966.024534044] [icp_odometry]: Odom: ratio=0.824377, std dev=0.000497m|0.000173rad, update time=0.005088s delay=0.106428s
+[INFO] [1789489966.128400025] [icp_odometry]: Odom: ratio=0.839378, std dev=0.000418m|0.000173rad, update time=0.007144s delay=0.106733s
+[INFO] [1789489966.226154282] [icp_odometry]: Odom: ratio=0.840580, std dev=0.000481m|0.000173rad, update time=0.006230s delay=0.105520s
+[INFO] [1789489966.326150794] [icp_odometry]: Odom: ratio=0.833766, std dev=0.000467m|0.000173rad, update time=0.005774s delay=0.105978s
+[INFO] [1789489966.424530136] [icp_odometry]: Odom: ratio=0.833992, std dev=0.000587m|0.000186rad, update time=0.005478s delay=0.105564s
+[INFO] [1789489966.526570625] [icp_odometry]: Odom: ratio=0.827540, std dev=0.000762m|0.000241rad, update time=0.006860s delay=0.106879s
+[INFO] [1789489966.624524411] [icp_odometry]: Odom: ratio=0.822985, std dev=0.000713m|0.000225rad, update time=0.005333s delay=0.106839s
+[INFO] [1789489966.726495983] [icp_odometry]: Odom: ratio=0.815547, std dev=0.000723m|0.000229rad, update time=0.006918s delay=0.106829s
+[INFO] [1789489966.824411188] [icp_odometry]: Odom: ratio=0.827770, std dev=0.000795m|0.000251rad, update time=0.005261s delay=0.106991s
+[INFO] [1789489966.926565749] [icp_odometry]: Odom: ratio=0.838667, std dev=0.000457m|0.000173rad, update time=0.006920s delay=0.106613s
+[INFO] [1789489967.025291392] [icp_odometry]: Odom: ratio=0.838881, std dev=0.000523m|0.000173rad, update time=0.006025s delay=0.106967s
+[INFO] [1789489967.127115362] [icp_odometry]: Odom: ratio=0.823529, std dev=0.000612m|0.000194rad, update time=0.007317s delay=0.106434s
+[INFO] [1789489967.225168762] [icp_odometry]: Odom: ratio=0.834862, std dev=0.000767m|0.000243rad, update time=0.005269s delay=0.106853s
+[INFO] [1789489967.326643261] [icp_odometry]: Odom: ratio=0.820000, std dev=0.000854m|0.000270rad, update time=0.006240s delay=0.105967s
+[INFO] [1789489967.425122193] [icp_odometry]: Odom: ratio=0.827815, std dev=0.000494m|0.000173rad, update time=0.004978s delay=0.105618s
+[INFO] [1789489967.527751099] [icp_odometry]: Odom: ratio=0.828947, std dev=0.000689m|0.000218rad, update time=0.007126s delay=0.105669s
+[INFO] [1789489967.625970623] [icp_odometry]: Odom: ratio=0.836173, std dev=0.000600m|0.000190rad, update time=0.005215s delay=0.105340s
+[INFO] [1789489967.726329676] [icp_odometry]: Odom: ratio=0.840849, std dev=0.000560m|0.000177rad, update time=0.006498s delay=0.105099s
+[INFO] [1789489967.824971083] [icp_odometry]: Odom: ratio=0.840054, std dev=0.000860m|0.000272rad, update time=0.005975s delay=0.106750s
+[INFO] [1789489967.925751839] [icp_odometry]: Odom: ratio=0.838196, std dev=0.000759m|0.000240rad, update time=0.007529s delay=0.106880s
+[INFO] [1789489968.022799162] [icp_odometry]: Odom: ratio=0.835092, std dev=0.000574m|0.000182rad, update time=0.005711s delay=0.098480s
+[INFO] [1789489968.124974448] [icp_odometry]: Odom: ratio=0.829787, std dev=0.000677m|0.000214rad, update time=0.006850s delay=0.108920s
+[INFO] [1789489968.223273915] [icp_odometry]: Odom: ratio=0.838624, std dev=0.000724m|0.000229rad, update time=0.005120s delay=0.098142s
+[INFO] [1789489968.325887852] [icp_odometry]: Odom: ratio=0.834677, std dev=0.000735m|0.000232rad, update time=0.006987s delay=0.107386s
+[INFO] [1789489968.423077554] [icp_odometry]: Odom: ratio=0.823219, std dev=0.000616m|0.000195rad, update time=0.005225s delay=0.097335s
+[INFO] [1789489968.522957964] [icp_odometry]: Odom: ratio=0.852547, std dev=0.000588m|0.000186rad, update time=0.005169s delay=0.098017s
+[INFO] [1789489968.626562626] [icp_odometry]: Odom: ratio=0.846980, std dev=0.000505m|0.000173rad, update time=0.007816s delay=0.107894s
+[INFO] [1789489968.724929395] [icp_odometry]: Odom: ratio=0.831750, std dev=0.000488m|0.000173rad, update time=0.005689s delay=0.107642s
+[INFO] [1789489968.825782439] [icp_odometry]: Odom: ratio=0.842818, std dev=0.000485m|0.000173rad, update time=0.006988s delay=0.108015s
+[INFO] [1789489968.923121325] [icp_odometry]: Odom: ratio=0.841398, std dev=0.000605m|0.000191rad, update time=0.005115s delay=0.098076s
+[INFO] [1789489969.025080254] [icp_odometry]: Odom: ratio=0.848118, std dev=0.000838m|0.000265rad, update time=0.006796s delay=0.108020s
+[INFO] [1789489969.123423865] [icp_odometry]: Odom: ratio=0.837618, std dev=0.000688m|0.000217rad, update time=0.005349s delay=0.097627s
+[INFO] [1789489969.225185308] [icp_odometry]: Odom: ratio=0.855422, std dev=0.000684m|0.000216rad, update time=0.006724s delay=0.107849s
+[INFO] [1789489969.322180620] [icp_odometry]: Odom: ratio=0.879679, std dev=0.000522m|0.000173rad, update time=0.005274s delay=0.098007s
+[INFO] [1789489969.425176621] [icp_odometry]: Odom: ratio=0.846462, std dev=0.000986m|0.000312rad, update time=0.008226s delay=0.108670s
+[INFO] [1789489969.524167354] [icp_odometry]: Odom: ratio=0.776882, std dev=0.001199m|0.000379rad, update time=0.006932s delay=0.099799s
+[INFO] [1789489969.624425622] [icp_odometry]: Odom: ratio=0.646030, std dev=0.000000m|0.000000rad, update time=0.007189s delay=0.098765s
+[INFO] [1789489969.716765366] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000174s delay=0.099853s
+[INFO] [1789489969.817480707] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000243s delay=0.098960s
+[INFO] [1789489969.917889769] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000193s delay=0.098719s
+[INFO] [1789489970.018331013] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000210s delay=0.098189s
+[INFO] [1789489970.119855641] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000222s delay=0.098251s
+[INFO] [1789489970.218639983] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000444s delay=0.096452s
+[INFO] [1789489970.317905090] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000189s delay=0.097821s
+[INFO] [1789489970.418704864] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000268s delay=0.098129s
+[INFO] [1789489970.517806136] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000225s delay=0.097869s
+[INFO] [1789489970.617956789] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000246s delay=0.098608s
+[INFO] [1789489970.717198573] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000188s delay=0.098964s
+[INFO] [1789489970.817936371] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000328s delay=0.098800s
+[33m[ WARN] (2026-09-15 19:32:49.624) OdometryF2F.cpp:299::computeTransform() Registration failed: "Cannot compute transform (cor=480 corrRatio=0.646030/0.700000 maxLaserScans=743)"[0m
+[31m[ERROR] (2026-09-15 19:32:49.716) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:49.716) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:49.817) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:49.817) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:49.917) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:49.917) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.018) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.018) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.119) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.119) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.218) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.218) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.317) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.317) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.418) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.418) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.517) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.517) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.617) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.617) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.717) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.717) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.817) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.817) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:50.916) RegistrationIcp.cpp:980::comp[INFO] [1789489970.916852783] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000247s delay=0.098937s
+[INFO] [1789489971.017028170] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000198s delay=0.098962s
+[INFO] [1789489971.116966461] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000170s delay=0.099334s
+[INFO] [1789489971.217177275] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000661s delay=0.098609s
+[INFO] [1789489971.317052431] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000174s delay=0.099772s
+[INFO] [1789489971.417761680] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000363s delay=0.098858s
+[INFO] [1789489971.515787997] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000301s delay=0.098744s
+[INFO] [1789489971.615967520] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000378s delay=0.100232s
+[INFO] [1789489971.713194712] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000181s delay=0.090770s
+[INFO] [1789489971.813468223] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000406s delay=0.093044s
+[INFO] [1789489971.913148487] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000167s delay=0.093068s
+[INFO] [1789489972.013152079] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000215s delay=0.092998s
+[INFO] [1789489972.113597624] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000187s delay=0.093082s
+uteTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:50.916) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.016) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.016) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.116) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.116) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.216) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.216) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.316) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.316) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.417) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.417) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.515) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.515) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.615) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.615) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.713) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.713) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.813) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.813) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:51.913) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:51.913) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.012) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.013) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.113) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.113) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31[INFO] [1789489972.216458383] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000506s delay=0.102746s
+[INFO] [1789489972.315332430] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000190s delay=0.100650s
+[INFO] [1789489972.415728868] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000355s delay=0.100848s
+[INFO] [1789489972.515457045] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000188s delay=0.100692s
+[INFO] [1789489972.616337705] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000325s delay=0.100813s
+[INFO] [1789489972.715452906] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000228s delay=0.100745s
+[INFO] [1789489972.816621514] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000473s delay=0.100942s
+[INFO] [1789489972.915155860] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000171s delay=0.100568s
+[INFO] [1789489973.016407307] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000324s delay=0.101063s
+[INFO] [1789489973.114021899] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000247s delay=0.090782s
+[INFO] [1789489973.214065171] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000341s delay=0.093154s
+[INFO] [1789489973.313341670] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000189s delay=0.093091s
+m[ERROR] (2026-09-15 19:32:52.216) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.216) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.315) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.315) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.415) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.415) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.515) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.515) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.616) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.616) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.715) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.715) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.816) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.816) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:52.915) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:52.915) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:53.016) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:53.016) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:53.113) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:53.113) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:53.213) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:53.213) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:53.313) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:53.313) OdometryF2F.cpp:299::computeTransform() Registration failed: "RegistrationIcp cannot do registration with a null guess."[0m
+[31m[ERROR] (2026-09-15 19:32:53.412) RegistrationIcp.cpp:980::computeTransformationImpl() RegistrationIcp cannot do registration with a null guess.[0m
+[33m[ WARN] (2026-09-15 19:32:53.412) OdometryF2F.cpp:299::computeTransform() Registration failed: "Regi[INFO] [1789489973.413168742] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000492s delay=0.093053s
+strationIcp cannot do registration with a null guess."[0m
+[INFO] [1789489973.513290826] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000281s delay=0.093810s
+[INFO] [1789489973.613274992] [icp_odometry]: Odom: ratio=0.000000, std dev=0.000000m|0.000000rad, update time=0.000341s delay=0.093710s

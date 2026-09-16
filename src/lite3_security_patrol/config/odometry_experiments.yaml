@@ -1,0 +1,24 @@
+# No candidate is selected until physical validation.
+experiments:
+  metrics:
+    - static_drift
+    - straight_line_error
+    - rotation_error
+    - return_to_start_error
+    - tracking_loss_count
+    - recovery_behavior
+    - output_frequency_hz
+    - latency_ms
+  candidates:
+    lidar_scan_matching:
+      existing_launch: sensor_visualization/launch/lidar_odometry.launch.py
+      status: READY_FOR_TEST
+    realsense_visual_depth_odometry:
+      status: NOT_STARTED
+    imu_robot_localization_fusion:
+      status: NOT_STARTED
+  procedure:
+    - verify_static_for_60_seconds
+    - move_straight_measured_distance
+    - rotate_measured_angle
+    - return_to_start

@@ -1,0 +1,151 @@
+[INFO] [1789490070.535224560] [icp_odometry]: Odometry: frame_id               = lidar_link
+[INFO] [1789490070.535906104] [icp_odometry]: Odometry: odom_frame_id          = odom_replay
+[INFO] [1789490070.535951435] [icp_odometry]: Odometry: publish_tf             = false
+[INFO] [1789490070.535960155] [icp_odometry]: Odometry: wait_for_transform     = 0.100000
+[INFO] [1789490070.535974595] [icp_odometry]: Odometry: log_to_rosout_level    = 4
+[INFO] [1789490070.536039897] [icp_odometry]: Odometry: initial_pose           = xyz=0.000000,0.000000,0.000000 rpy=0.000000,-0.000000,0.000000
+[INFO] [1789490070.536089436] [icp_odometry]: Odometry: ground_truth_frame_id  = 
+[INFO] [1789490070.536095224] [icp_odometry]: Odometry: ground_truth_base_frame_id = lidar_link
+[INFO] [1789490070.536100448] [icp_odometry]: Odometry: config_path            = 
+[INFO] [1789490070.536106403] [icp_odometry]: Odometry: publish_null_when_lost = false
+[INFO] [1789490070.536111850] [icp_odometry]: Odometry: publish_compressed_sensor_data = false
+[INFO] [1789490070.536117460] [icp_odometry]: Odometry: guess_frame_id         = 
+[INFO] [1789490070.536124416] [icp_odometry]: Odometry: guess_min_translation  = 0.000000
+[INFO] [1789490070.536133130] [icp_odometry]: Odometry: guess_min_rotation     = 0.000000
+[INFO] [1789490070.536140264] [icp_odometry]: Odometry: guess_min_time         = 0.000000
+[INFO] [1789490070.536148139] [icp_odometry]: Odometry: expected_update_rate   = 0.000000 Hz
+[INFO] [1789490070.536155654] [icp_odometry]: Odometry: max_update_rate        = 0.000000 Hz
+[INFO] [1789490070.536163932] [icp_odometry]: Odometry: min_update_rate        = 0.000000 Hz
+[INFO] [1789490070.536171844] [icp_odometry]: Odometry: wait_imu_to_init       = false
+[INFO] [1789490070.536178865] [icp_odometry]: Odometry: always_check_imu_tf    = true
+[INFO] [1789490070.536186189] [icp_odometry]: Odometry: sensor_data_compression_format = .jpg
+[INFO] [1789490070.536193432] [icp_odometry]: Odometry: sensor_data_parallel_compression = true
+[INFO] [1789490070.536208212] [icp_odometry]: Odometry: stereoParams_=0 visParams_=0 icpParams_=1
+[INFO] [1789490070.537144691] [icp_odometry]: Setting odometry parameter "Icp/CorrespondenceRatio"="0.50"
+[INFO] [1789490070.537303039] [icp_odometry]: Setting odometry parameter "Icp/MaxCorrespondenceDistance"="0.15"
+[INFO] [1789490070.537350706] [icp_odometry]: Setting odometry parameter "Icp/MaxRotation"="0.175"
+[INFO] [1789490070.537379217] [icp_odometry]: Setting odometry parameter "Icp/MaxTranslation"="0.10"
+[INFO] [1789490070.537429666] [icp_odometry]: Setting odometry parameter "Icp/OutlierRatio"="0.75"
+[INFO] [1789490070.537511373] [icp_odometry]: Setting odometry parameter "Icp/PointToPlane"="false"
+[INFO] [1789490070.537698141] [icp_odometry]: Setting odometry parameter "Icp/VoxelSize"="0.03"
+[INFO] [1789490070.537741391] [icp_odometry]: Setting odometry parameter "Odom/Deskewing"="false"
+[INFO] [1789490070.537971340] [icp_odometry]: Setting odometry parameter "Odom/Strategy"="1"
+[WARN] [1789490070.541094356] [icp_odometry]: IcpOdometry: Transferring value 0.03 of "Icp/VoxelSize" to ros parameter "scan_voxel_size" for convenience. "Icp/VoxelSize" is set to 0.
+[WARN] [1789490070.541123346] [icp_odometry]: IcpOdometry: Transferring value 5 of "Icp/PointToPlaneK" to ros parameter "scan_normal_k" for convenience.
+[INFO] [1789490070.546729313] [icp_odometry]: IcpOdometry: qos                    = 0
+[INFO] [1789490070.546778761] [icp_odometry]: IcpOdometry: scan_cloud_max_points  = -1
+[INFO] [1789490070.546786782] [icp_odometry]: IcpOdometry: scan_cloud_is_2d       = true
+[INFO] [1789490070.546793647] [icp_odometry]: IcpOdometry: scan_downsampling_step = 1
+[INFO] [1789490070.546798694] [icp_odometry]: IcpOdometry: scan_range_min         = 0.200000 m
+[INFO] [1789490070.546807722] [icp_odometry]: IcpOdometry: scan_range_max         = 8.000000 m
+[INFO] [1789490070.546814453] [icp_odometry]: IcpOdometry: scan_voxel_size        = 0.030000 m
+[INFO] [1789490070.546822420] [icp_odometry]: IcpOdometry: scan_normal_k          = 5
+[INFO] [1789490070.546828808] [icp_odometry]: IcpOdometry: scan_normal_radius     = 0.000000 m
+[INFO] [1789490070.546902110] [icp_odometry]: IcpOdometry: scan_normal_ground_up  = 0.000000
+[INFO] [1789490070.546913201] [icp_odometry]: IcpOdometry: deskewing              = false
+[INFO] [1789490070.546919893] [icp_odometry]: IcpOdometry: deskewing_slerp        = false
+[INFO] [1789490070.548158591] [icp_odometry]: 
+icp_odometry subscribed to /replay/scan and /scan_cloud (make sure only one of this topic is published, otherwise remap one to a dummy topic name).
+[INFO] [1789490071.573532813] [rosbag2_storage]: Opened database '/home/abx/ros2_ws/bags/lite3_20260915-191547/lite3_20260915-191547_0.db3' for READ_ONLY.
+[INFO] [1789490071.573742333] [rosbag2_player]: Set rate to 1
+[INFO] [1789490071.860819436] [rosbag2_player]: Playback until timestamp: 1789489134246192055
+[INFO] [1789490072.016461703] [icp_odometry]: Odom: ratio=0.000000, std dev=99.995000m|99.995000rad, update time=0.000678s delay=0.098056s
+[INFO] [1789490072.125172766] [icp_odometry]: Odom: ratio=0.905386, std dev=0.000544m|0.000173rad, update time=0.009406s delay=0.108187s
+[INFO] [1789490072.220829951] [icp_odometry]: Odom: ratio=0.907381, std dev=0.000643m|0.000203rad, update time=0.005299s delay=0.097808s
+[INFO] [1789490072.321808837] [icp_odometry]: Odom: ratio=0.918276, std dev=0.000724m|0.000229rad, update time=0.006259s delay=0.107991s
+[INFO] [1789490072.420204125] [icp_odometry]: Odom: ratio=0.919643, std dev=0.000694m|0.000220rad, update time=0.005103s delay=0.097962s
+[INFO] [1789490072.523333502] [icp_odometry]: Odom: ratio=0.911894, std dev=0.000828m|0.000262rad, update time=0.007336s delay=0.108260s
+[INFO] [1789490072.620826137] [icp_odometry]: Odom: ratio=0.903179, std dev=0.000823m|0.000260rad, update time=0.005560s delay=0.098043s
+[INFO] [1789490072.723730221] [icp_odometry]: Odom: ratio=0.897250, std dev=0.000945m|0.000299rad, update time=0.007742s delay=0.108342s
+[INFO] [1789490072.821171979] [icp_odometry]: Odom: ratio=0.921739, std dev=0.000510m|0.000173rad, update time=0.006170s delay=0.097890s
+[INFO] [1789490072.922758091] [icp_odometry]: Odom: ratio=0.916667, std dev=0.000817m|0.000258rad, update time=0.006382s delay=0.108172s
+[INFO] [1789490073.020999690] [icp_odometry]: Odom: ratio=0.898678, std dev=0.000912m|0.000289rad, update time=0.005780s delay=0.097836s
+[INFO] [1789490073.120459091] [icp_odometry]: Odom: ratio=0.901592, std dev=0.000665m|0.000210rad, update time=0.005861s delay=0.098053s
+[INFO] [1789490073.220531044] [icp_odometry]: Odom: ratio=0.899123, std dev=0.000720m|0.000228rad, update time=0.006566s delay=0.099182s
+[INFO] [1789490073.319553269] [icp_odometry]: Odom: ratio=0.897810, std dev=0.000666m|0.000211rad, update time=0.005070s delay=0.099391s
+[INFO] [1789490073.420193990] [icp_odometry]: Odom: ratio=0.901592, std dev=0.000695m|0.000220rad, update time=0.005452s delay=0.098962s
+[INFO] [1789490073.521322694] [icp_odometry]: Odom: ratio=0.895115, std dev=0.000685m|0.000217rad, update time=0.007208s delay=0.099064s
+[INFO] [1789490073.619990940] [icp_odometry]: Odom: ratio=0.907381, std dev=0.000743m|0.000235rad, update time=0.005871s delay=0.099264s
+[INFO] [1789490073.721125875] [icp_odometry]: Odom: ratio=0.907648, std dev=0.000588m|0.000186rad, update time=0.006251s delay=0.099235s
+[INFO] [1789490073.820207058] [icp_odometry]: Odom: ratio=0.917526, std dev=0.000887m|0.000281rad, update time=0.005146s delay=0.098941s
+[INFO] [1789490073.920745074] [icp_odometry]: Odom: ratio=0.900862, std dev=0.000703m|0.000222rad, update time=0.006289s delay=0.099270s
+[INFO] [1789490074.019801825] [icp_odometry]: Odom: ratio=0.896011, std dev=0.000839m|0.000265rad, update time=0.005591s delay=0.098841s
+[INFO] [1789490074.120624633] [icp_odometry]: Odom: ratio=0.914740, std dev=0.000648m|0.000205rad, update time=0.006542s delay=0.099224s
+[INFO] [1789490074.220171597] [icp_odometry]: Odom: ratio=0.914040, std dev=0.000805m|0.000254rad, update time=0.006163s delay=0.099730s
+[INFO] [1789490074.320336201] [icp_odometry]: Odom: ratio=0.907539, std dev=0.000631m|0.000200rad, update time=0.006807s delay=0.100005s
+[INFO] [1789490074.420300807] [icp_odometry]: Odom: ratio=0.897250, std dev=0.000888m|0.000281rad, update time=0.005901s delay=0.100148s
+[INFO] [1789490074.520300938] [icp_odometry]: Odom: ratio=0.927729, std dev=0.000513m|0.000173rad, update time=0.006257s delay=0.099892s
+[INFO] [1789490074.619538240] [icp_odometry]: Odom: ratio=0.916788, std dev=0.000629m|0.000199rad, update time=0.005900s delay=0.099717s
+[INFO] [1789490074.719939739] [icp_odometry]: Odom: ratio=0.911594, std dev=0.000799m|0.000253rad, update time=0.006153s delay=0.100052s
+[INFO] [1789490074.819765530] [icp_odometry]: Odom: ratio=0.898698, std dev=0.000732m|0.000232rad, update time=0.005543s delay=0.099993s
+[INFO] [1789490074.920161692] [icp_odometry]: Odom: ratio=0.900585, std dev=0.000768m|0.000243rad, update time=0.006557s delay=0.099981s
+[INFO] [1789490075.019213055] [icp_odometry]: Odom: ratio=0.885507, std dev=0.000801m|0.000253rad, update time=0.005231s delay=0.100227s
+[INFO] [1789490075.120233853] [icp_odometry]: Odom: ratio=0.904762, std dev=0.000754m|0.000238rad, update time=0.006660s delay=0.099710s
+[INFO] [1789490075.218426143] [icp_odometry]: Odom: ratio=0.897361, std dev=0.000772m|0.000244rad, update time=0.007024s delay=0.099946s
+[INFO] [1789490075.318426969] [icp_odometry]: Odom: ratio=0.900433, std dev=0.000577m|0.000182rad, update time=0.006562s delay=0.102402s
+[INFO] [1789490075.417865458] [icp_odometry]: Odom: ratio=0.892550, std dev=0.000668m|0.000211rad, update time=0.006606s delay=0.102281s
+[INFO] [1789490075.519000819] [icp_odometry]: Odom: ratio=0.909621, std dev=0.000762m|0.000241rad, update time=0.006669s delay=0.102542s
+[INFO] [1789490075.618054735] [icp_odometry]: Odom: ratio=0.896700, std dev=0.000880m|0.000278rad, update time=0.006759s delay=0.102075s
+[INFO] [1789490075.717887042] [icp_odometry]: Odom: ratio=0.913043, std dev=0.000584m|0.000185rad, update time=0.006700s delay=0.102185s
+[INFO] [1789490075.817730562] [icp_odometry]: Odom: ratio=0.907760, std dev=0.000718m|0.000227rad, update time=0.006273s delay=0.102415s
+[INFO] [1789490075.918502563] [icp_odometry]: Odom: ratio=0.890490, std dev=0.000756m|0.000239rad, update time=0.006850s delay=0.101999s
+[INFO] [1789490076.018287024] [icp_odometry]: Odom: ratio=0.892550, std dev=0.000676m|0.000214rad, update time=0.006668s delay=0.102452s
+[INFO] [1789490076.119141436] [icp_odometry]: Odom: ratio=0.891273, std dev=0.000689m|0.000218rad, update time=0.006817s delay=0.102000s
+[INFO] [1789490076.217692010] [icp_odometry]: Odom: ratio=0.914894, std dev=0.000479m|0.000173rad, update time=0.006338s delay=0.101810s
+[INFO] [1789490076.319219883] [icp_odometry]: Odom: ratio=0.807799, std dev=0.000842m|0.000266rad, update time=0.006651s delay=0.102073s
+[INFO] [1789490076.417939159] [icp_odometry]: Odom: ratio=0.721536, std dev=0.001629m|0.000515rad, update time=0.006518s delay=0.102049s
+[INFO] [1789490076.518333088] [icp_odometry]: Odom: ratio=0.700288, std dev=0.002973m|0.000940rad, update time=0.006878s delay=0.102151s
+[INFO] [1789490076.617646812] [icp_odometry]: Odom: ratio=0.577291, std dev=0.005415m|0.001712rad, update time=0.006053s delay=0.102438s
+[INFO] [1789490076.721655220] [icp_odometry]: Odom: ratio=0.609116, std dev=0.004580m|0.001448rad, update time=0.007068s delay=0.111849s
+[INFO] [1789490076.821124672] [icp_odometry]: Odom: ratio=0.635078, std dev=0.004290m|0.001357rad, update time=0.007506s delay=0.099811s
+[INFO] [1789490076.921241878] [icp_odometry]: Odom: ratio=0.610098, std dev=0.004296m|0.001358rad, update time=0.006048s delay=0.099982s
+[INFO] [1789490077.020915130] [icp_odometry]: Odom: ratio=0.719346, std dev=0.003756m|0.001188rad, update time=0.006779s delay=0.100134s
+[INFO] [1789490077.120465952] [icp_odometry]: Odom: ratio=0.759441, std dev=0.002273m|0.000719rad, update time=0.005756s delay=0.099721s
+[INFO] [1789490077.221731244] [icp_odometry]: Odom: ratio=0.792768, std dev=0.001383m|0.000437rad, update time=0.007163s delay=0.109893s
+[INFO] [1789490077.320633850] [icp_odometry]: Odom: ratio=0.791549, std dev=0.001671m|0.000528rad, update time=0.007148s delay=0.100188s
+[INFO] [1789490077.418439534] [icp_odometry]: Odom: ratio=0.740000, std dev=0.002429m|0.000768rad, update time=0.006279s delay=0.100042s
+[INFO] [1789490077.518775065] [icp_odometry]: Odom: ratio=0.686357, std dev=0.002737m|0.000866rad, update time=0.007341s delay=0.102080s
+[INFO] [1789490077.618145947] [icp_odometry]: Odom: ratio=0.765292, std dev=0.001548m|0.000490rad, update time=0.007096s delay=0.101933s
+[INFO] [1789490077.718005837] [icp_odometry]: Odom: ratio=0.773371, std dev=0.002230m|0.000705rad, update time=0.006920s delay=0.102715s
+[INFO] [1789490077.819696259] [icp_odometry]: Odom: ratio=0.803922, std dev=0.002188m|0.000692rad, update time=0.007061s delay=0.102524s
+[INFO] [1789490077.916558017] [icp_odometry]: Odom: ratio=0.809384, std dev=0.002289m|0.000724rad, update time=0.005832s delay=0.102092s
+[INFO] [1789490078.017465885] [icp_odometry]: Odom: ratio=0.826339, std dev=0.001852m|0.000586rad, update time=0.006712s delay=0.102961s
+[INFO] [1789490078.117126345] [icp_odometry]: Odom: ratio=0.870451, std dev=0.001270m|0.000401rad, update time=0.006612s delay=0.102795s
+[INFO] [1789490078.218450709] [icp_odometry]: Odom: ratio=0.881306, std dev=0.001052m|0.000333rad, update time=0.006251s delay=0.103183s
+[INFO] [1789490078.316852559] [icp_odometry]: Odom: ratio=0.886398, std dev=0.001040m|0.000329rad, update time=0.006936s delay=0.102432s
+[INFO] [1789490078.417798196] [icp_odometry]: Odom: ratio=0.847761, std dev=0.001196m|0.000378rad, update time=0.006836s delay=0.103183s
+[INFO] [1789490078.519987783] [icp_odometry]: Odom: ratio=0.813486, std dev=0.001212m|0.000383rad, update time=0.009214s delay=0.102842s
+[INFO] [1789490078.618387459] [icp_odometry]: Odom: ratio=0.820660, std dev=0.000996m|0.000315rad, update time=0.007009s delay=0.103206s
+[INFO] [1789490078.717177132] [icp_odometry]: Odom: ratio=0.833091, std dev=0.000939m|0.000297rad, update time=0.006944s delay=0.102915s
+[INFO] [1789490078.816884986] [icp_odometry]: Odom: ratio=0.749304, std dev=0.001320m|0.000418rad, update time=0.006822s delay=0.103063s
+[INFO] [1789490078.916371470] [icp_odometry]: Odom: ratio=0.856330, std dev=0.001042m|0.000330rad, update time=0.006467s delay=0.103813s
+[INFO] [1789490079.016984025] [icp_odometry]: Odom: ratio=0.861111, std dev=0.000797m|0.000252rad, update time=0.006661s delay=0.104078s
+[INFO] [1789490079.116205021] [icp_odometry]: Odom: ratio=0.876751, std dev=0.000909m|0.000287rad, update time=0.006432s delay=0.103668s
+[INFO] [1789490079.217093888] [icp_odometry]: Odom: ratio=0.902857, std dev=0.000807m|0.000255rad, update time=0.007025s delay=0.104028s
+[INFO] [1789490079.317156457] [icp_odometry]: Odom: ratio=0.902332, std dev=0.001158m|0.000366rad, update time=0.007063s delay=0.103997s
+[INFO] [1789490079.418348917] [icp_odometry]: Odom: ratio=0.892351, std dev=0.001244m|0.000394rad, update time=0.007100s delay=0.103852s
+[INFO] [1789490079.516530266] [icp_odometry]: Odom: ratio=0.894509, std dev=0.000846m|0.000267rad, update time=0.006383s delay=0.102916s
+[INFO] [1789490079.617249136] [icp_odometry]: Odom: ratio=0.885057, std dev=0.000692m|0.000219rad, update time=0.006784s delay=0.103268s
+[INFO] [1789490079.716078337] [icp_odometry]: Odom: ratio=0.893064, std dev=0.000532m|0.000173rad, update time=0.006442s delay=0.103852s
+[INFO] [1789490079.816724311] [icp_odometry]: Odom: ratio=0.893983, std dev=0.000840m|0.000266rad, update time=0.006825s delay=0.103816s
+[INFO] [1789490079.916610377] [icp_odometry]: Odom: ratio=0.908962, std dev=0.000504m|0.000173rad, update time=0.006824s delay=0.103704s
+[INFO] [1789490080.016315674] [icp_odometry]: Odom: ratio=0.900289, std dev=0.000828m|0.000262rad, update time=0.006431s delay=0.103744s
+[INFO] [1789490080.117534731] [icp_odometry]: Odom: ratio=0.885877, std dev=0.001018m|0.000322rad, update time=0.007702s delay=0.103835s
+[INFO] [1789490080.218145124] [icp_odometry]: Odom: ratio=0.915205, std dev=0.000936m|0.000296rad, update time=0.007595s delay=0.104143s
+[INFO] [1789490080.315944664] [icp_odometry]: Odom: ratio=0.911850, std dev=0.000964m|0.000305rad, update time=0.006160s delay=0.103749s
+[INFO] [1789490080.417204812] [icp_odometry]: Odom: ratio=0.901734, std dev=0.001218m|0.000385rad, update time=0.007005s delay=0.103906s
+[INFO] [1789490080.515717960] [icp_odometry]: Odom: ratio=0.916788, std dev=0.001141m|0.000361rad, update time=0.006368s delay=0.103659s
+[INFO] [1789490080.616517509] [icp_odometry]: Odom: ratio=0.900875, std dev=0.001249m|0.000395rad, update time=0.006235s delay=0.103956s
+[INFO] [1789490080.716291293] [icp_odometry]: Odom: ratio=0.901146, std dev=0.001255m|0.000397rad, update time=0.006659s delay=0.103650s
+[INFO] [1789490080.818961445] [icp_odometry]: Odom: ratio=0.891618, std dev=0.001256m|0.000397rad, update time=0.008495s delay=0.104116s
+[INFO] [1789490080.916131535] [icp_odometry]: Odom: ratio=0.905386, std dev=0.000726m|0.000230rad, update time=0.006890s delay=0.103265s
+[INFO] [1789490081.017109624] [icp_odometry]: Odom: ratio=0.885714, std dev=0.000844m|0.000267rad, update time=0.007267s delay=0.103990s
+[INFO] [1789490081.117065079] [icp_odometry]: Odom: ratio=0.900576, std dev=0.000745m|0.000235rad, update time=0.006042s delay=0.104631s
+[INFO] [1789490081.218313419] [icp_odometry]: Odom: ratio=0.891738, std dev=0.000799m|0.000253rad, update time=0.008200s delay=0.102903s
+[INFO] [1789490081.313205984] [icp_odometry]: Odom: ratio=0.901004, std dev=0.000526m|0.000173rad, update time=0.005019s delay=0.104597s
+[INFO] [1789490081.414924080] [icp_odometry]: Odom: ratio=0.886331, std dev=0.000688m|0.000217rad, update time=0.006219s delay=0.104761s
+[INFO] [1789490081.516180175] [icp_odometry]: Odom: ratio=0.895565, std dev=0.000716m|0.000226rad, update time=0.006376s delay=0.104460s
+[INFO] [1789490081.616647791] [icp_odometry]: Odom: ratio=0.896403, std dev=0.000526m|0.000173rad, update time=0.007239s delay=0.103708s
+[INFO] [1789490081.716159181] [icp_odometry]: Odom: ratio=0.888406, std dev=0.000620m|0.000196rad, update time=0.007262s delay=0.104408s
+[INFO] [1789490081.817365613] [icp_odometry]: Odom: ratio=0.879828, std dev=0.000578m|0.000183rad, update time=0.008071s delay=0.104405s
+[INFO] [1789490081.916326725] [icp_odometry]: Odom: ratio=0.876259, std dev=0.000614m|0.000194rad, update time=0.006870s delay=0.095015s

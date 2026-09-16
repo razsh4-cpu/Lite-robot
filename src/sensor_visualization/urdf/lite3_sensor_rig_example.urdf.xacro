@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="lite3_sensor_rig_uncalibrated"
+       xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find sensor_visualization)/urdf/lite3_sensor_mounts.urdf.xacro"/>
+  <link name="base_link"/>
+  <!-- Visualization-only zeros. Never use for Nav2 until all six mounts are measured. -->
+  <xacro:lite3_sensor_mounts
+      parent="base_link"
+      lidar_xyz="0 0 0" lidar_rpy="0 0 0"
+      camera_xyz="0 0 0" camera_rpy="0 0 0"
+      imu_xyz="0 0 0" imu_rpy="0 0 0"/>
+</robot>

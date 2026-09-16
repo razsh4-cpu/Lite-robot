@@ -1,0 +1,11 @@
+lite3_cmd_vel_normalizer:
+  ros__parameters:
+    # PHYSICAL CALIBRATION REQUIRED. Zero is intentionally fail-safe.
+    max_forward_mps: 0.0
+    max_lateral_mps: 0.0
+    max_yaw_radps: 0.0
+    normalized_limit: 1.0
+    command_timeout_sec: 0.3
+    input_topic: /cmd_vel
+    output_topic: /lite3/normalized_cmd_vel
+    publish_rate_hz: 20.0

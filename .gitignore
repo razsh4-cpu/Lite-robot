@@ -1,0 +1,31 @@
+build/
+install/
+log/
+.colcon/
+**/__pycache__/
+**/*.py[cod]
+.pytest_cache/
+
+# Large runtime evidence; metadata and checksums remain tracked.
+bags/**/*.db3
+bags/**/*.mcap
+logs/*.jsonl
+captures/**/*.jsonl
+
+# Vendor repositories pinned in docs/DEPENDENCIES.md.
+src/Lite3_ROS/
+src/Lite3_MotionSDK/
+src/deeprobotics_sdk_deploy/
+src/sllidar_ros2/
+
+# Credentials/private configuration
+.env
+.env.*
+*.token
+secrets/
+telegram*.env
+
+.vscode/
+.idea/
+*~
+

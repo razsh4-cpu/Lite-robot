@@ -1,0 +1,3 @@
+# Populate only after map/localization and safety validation.
+repeat: false
+waypoints: []
