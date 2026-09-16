@@ -37,5 +37,6 @@ endif()
 
 
 # ==== BUILD STATIC LIBRARY ====
-add_library(interface STATIC ${USER_COMMAND_SRC} ${GAMEPAD_SDK_SRC} ${LITE3_MOTION_SDK_SRC})
+add_library(interface STATIC ${USER_COMMAND_SRC} ${GAMEPAD_SDK_SRC} ${LITE3_MOTION_SDK_SRC}
+    robot/hardware/motion_sdk_transport.cpp)
 target_link_libraries(interface PUBLIC -lpthread -lm -lrt -ldl -lstdc++)

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "common_types.h"
+#include <array>
 
 using namespace types;
 
@@ -36,6 +37,11 @@ public:
      */
     virtual void OnEnter() = 0;
 
+    // Read-only diagnostic snapshot of the most recent policy inference.
+    // Implementations that do not expose one retain the inert default.
+    virtual bool GetDiagnosticSnapshot(std::array<double,45>&,
+                                       std::array<double,12>&) const { return false; }
+
     /**
      * @brief Set the decimation
      * @param  d decimation
@@ -48,5 +54,4 @@ public:
     int decimation_;
     int run_cnt_;
 };
-
 

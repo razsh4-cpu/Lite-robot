@@ -1,0 +1,477 @@
+Start testing: Sep 13 13:13 IDT
+----------------------------------------------------------
+1/5 Testing: software_velocity_interface_test
+1/5 Test: software_velocity_interface_test
+Command: "/home/abx/Lite3_rl_deploy/build_supported_stand/software_velocity_interface_test"
+Directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+"software_velocity_interface_test" start time: Sep 13 13:13 IDT
+Output:
+----------------------------------------------------------
+software_velocity_interface_test: PASS
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"software_velocity_interface_test" end time: Sep 13 13:13 IDT
+"software_velocity_interface_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/5 Testing: control_safety_test
+2/5 Test: control_safety_test
+Command: "/home/abx/Lite3_rl_deploy/build_supported_stand/control_safety_test"
+Directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+"control_safety_test" start time: Sep 13 13:13 IDT
+Output:
+----------------------------------------------------------
+hardware acquisition/freshness tests: PASS
+in-flight send/release serialization: PASS
+STAND_TEST ARMED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266713462163.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266713914945.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266714315105.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266714643568.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266714976603.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266715357455.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST TARGET_REACHED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266716822269.jsonl records=554 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266733017437.jsonl records=602 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266749562815.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TEST LOCKED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266750062286.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266750451779.jsonl records=3 dropped=0
+supervised actual stand + shared abort + convergence: PASS
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266751535887.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266752710229.jsonl records=3 dropped=0
+STAND_TEST ARMED
+STAND_TEST PENDING
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+STAND_TRACE /tmp/lite3-stand-trace-134509-330266773791865.jsonl records=3 dropped=0
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"control_safety_test" end time: Sep 13 13:13 IDT
+"control_safety_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/5 Testing: stand_recovery_test
+3/5 Test: stand_recovery_test
+Command: "/home/abx/Lite3_rl_deploy/build_supported_stand/stand_recovery_test"
+Directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+"stand_recovery_test" start time: Sep 13 13:13 IDT
+Output:
+----------------------------------------------------------
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST TARGET_REACHED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330266794602962.jsonl records=5504 dropped=0
+REPLAY uptime_ms=1000 arm_delay=0 frozen=0 sends=5502 max_delta=0.00178656 max_speed=1.78649 max_accel=5.62846 result=observation complete
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST TARGET_REACHED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330266956283060.jsonl records=5505 dropped=0
+REPLAY uptime_ms=2000000000 arm_delay=4.8 frozen=0 sends=5503 max_delta=0.00178656 max_speed=1.78649 max_accel=4.88758 result=observation complete
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267115378252.jsonl records=438 dropped=0
+REPLAY uptime_ms=1000 arm_delay=0 frozen=1 sends=435 max_delta=0.00145322 max_speed=1.45428 max_accel=4.8607 result=send guard: TRACKING_ERROR
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.2 -0.8    2 -0.2   -1  2.1  0.1 -0.9  2.2 -0.1 -1.2  2.3
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST TARGET_REACHED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267138625474.jsonl records=5504 dropped=0
+REPLAY uptime_ms=1000 arm_delay=0 frozen=0 sends=5502 max_delta=0.00126088 max_speed=1.26088 max_accel=4.88758 result=observation complete
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:   0.1    -2   1.5  -0.1  -1.9   1.6  0.15  -1.8   1.7 -0.15  -1.7   1.8
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST TARGET_REACHED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267297512774.jsonl records=5504 dropped=0
+REPLAY uptime_ms=1000 arm_delay=0 frozen=0 sends=5502 max_delta=0.00126088 max_speed=1.26088 max_accel=4.88758 result=observation complete
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267445559767.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267446154077.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267446702251.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267447342345.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267447884945.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267448469296.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267449110453.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330267449650689.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ARMED
+STAND_TEST PENDING
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253   0.339699    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 1
+STAND_TEST STANDING_UP
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+STAND_TRACE /tmp/lite3-stand-trace-134516-330275500767384.jsonl records=4 dropped=0
+Waiting for stand up...
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+Waiting for stand up...
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+Waiting for stand up...
+Waiting for stand up...
+Joint Data: 
+pos:  0.0669479    0.41935    2.73736 -0.0818253      2.506    2.39868  0.0785446 -0.0981522    2.40273 -0.0762558  -0.187416    2.67723
+vel:  0.00904083    0.050087  -0.0210953 -0.00278473  0.00293732  0.00164032   0.0140762   0.0792313   0.0205612   0.0492477   0.0181198  -0.0201035
+tau: 0 0 0 0 0 0 0 0 0 0 0 0
+Imu Data: 
+rpy: 0 0 0
+acc:    0    0 9.81
+omg: 0 0 0
+User Command Input: 
+axis value:  0 0 0
+target mode: 0
+STAND_TEST ABORTING
+STAND_TEST LOCKED
+Waiting for stand up...
+STAND RECOVERY: PASS; inert transports only, real network calls=0
+<end of output>
+Test time =   8.73 sec
+----------------------------------------------------------
+Test Passed.
+"stand_recovery_test" end time: Sep 13 13:13 IDT
+"stand_recovery_test" time elapsed: 00:00:08
+----------------------------------------------------------
+
+4/5 Testing: stand_monitor_test
+4/5 Test: stand_monitor_test
+Command: "/home/abx/Lite3_rl_deploy/build_supported_stand/stand_monitor_test"
+Directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+"stand_monitor_test" start time: Sep 13 13:13 IDT
+Output:
+----------------------------------------------------------
+PASS: 23 isolated stand-monitor checks; no SDK/network
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"stand_monitor_test" end time: Sep 13 13:13 IDT
+"stand_monitor_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/5 Testing: vendor_adapter_test
+5/5 Test: vendor_adapter_test
+Command: "/home/abx/Lite3_rl_deploy/build_supported_stand/vendor_adapter_test"
+Directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+"vendor_adapter_test" start time: Sep 13 13:13 IDT
+Output:
+----------------------------------------------------------
+production adapter with inert SDK symbols: PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"vendor_adapter_test" end time: Sep 13 13:13 IDT
+"vendor_adapter_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 13 13:13 IDT

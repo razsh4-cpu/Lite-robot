@@ -12,6 +12,7 @@
 
 
 #include "state_base.h"
+#include <chrono>
 
 class IdleState : public StateBase{
 private:
@@ -21,7 +22,9 @@ private:
     Vec3f rpy_, acc_, omg_;
     double enter_state_time_ = -10000.;
 
-    float last_print_time = 0;
+    double last_print_time = 0;
+    std::chrono::steady_clock::time_point last_invalid_report_{};
+    bool reported_invalid_=false, reported_joint_=false, reported_imu_=false;
     void GetProprioceptiveData(){
         joint_pos_ = ri_ptr_->GetJointPosition();
         joint_vel_ = ri_ptr_->GetJointVelocity();
@@ -127,9 +130,16 @@ public:
         // std::cout << "Current target_mode = " << uc_ptr_->GetUserCommand().target_mode << std::endl;
 
         if(!joint_normal_flag_ || !imu_normal_flag_) {
-            std::cout << "joint status: " << joint_normal_flag_ << " | imu status: " << imu_normal_flag_ << std::endl;
+            const auto now=std::chrono::steady_clock::now();
+            if(!reported_invalid_ || reported_joint_!=joint_normal_flag_ || reported_imu_!=imu_normal_flag_ ||
+               now-last_invalid_report_>=std::chrono::seconds(1)) {
+                std::cout << "joint status: " << joint_normal_flag_ << " | imu status: " << imu_normal_flag_ << std::endl;
+                last_invalid_report_=now; reported_invalid_=true;
+                reported_joint_=joint_normal_flag_; reported_imu_=imu_normal_flag_;
+            }
             return StateName::kIdle;
         }
+        reported_invalid_=false;
         if(first_enter_flag_ && ri_ptr_->GetInterfaceTimeStamp() - enter_state_time_ < 0.5){
             return StateName::kIdle;
         }

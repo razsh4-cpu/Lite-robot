@@ -1,0 +1,23 @@
+[ 33%] Building CXX object CMakeFiles/stand_recovery_test.dir/tests/stand_recovery_test.cpp.o
+[ 66%] Linking CXX executable stand_recovery_test
+[100%] Built target stand_recovery_test
+[ 33%] Building CXX object CMakeFiles/control_safety_test.dir/tests/control_safety_test.cpp.o
+[ 66%] Linking CXX executable control_safety_test
+[100%] Built target control_safety_test
+[ 33%] Building CXX object CMakeFiles/vendor_adapter_test.dir/interface/robot/hardware/motion_sdk_transport.cpp.o
+[ 66%] Building CXX object CMakeFiles/vendor_adapter_test.dir/tests/vendor_adapter_test.cpp.o
+[100%] Linking CXX executable vendor_adapter_test
+[100%] Built target vendor_adapter_test
+[ 16%] Built target run_policy
+[ 25%] Building CXX object interface/CMakeFiles/interface.dir/robot/hardware/motion_sdk_transport.cpp.o
+[ 33%] Linking CXX static library libinterface.a
+[ 75%] Built target interface
+[ 83%] Building CXX object CMakeFiles/lite3_validation_console.dir/tools/lite3_validation_console.cpp.o
+[ 91%] Linking CXX executable lite3_validation_console
+[100%] Built target lite3_validation_console
+[ 50%] Building CXX object CMakeFiles/lite3_passive_stand_observer.dir/tools/lite3_passive_stand_observer.cpp.o
+[100%] Linking CXX executable lite3_passive_stand_observer
+[100%] Built target lite3_passive_stand_observer
+[ 33%] Building CXX object CMakeFiles/stand_recovery_test.dir/tests/stand_recovery_test.cpp.o
+[ 66%] Linking CXX executable stand_recovery_test
+[100%] Built target stand_recovery_test

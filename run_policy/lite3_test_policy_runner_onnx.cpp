@@ -77,16 +77,16 @@ Lite3TestPolicyRunnerONNX::Lite3TestPolicyRunnerONNX(std::string policy_name)
                           0.125f, 0.25f, 0.25f};
 
     dof_pos_default_policy.setZero(12);
-    dof_pos_default_policy << 0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000;
+    dof_pos_default_policy << 0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000;
 
     dof_pos_default_robot.setZero(12);
-    dof_pos_default_robot << 0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000,
-                                  0.0000, -0.6500, 1.3000;
+    dof_pos_default_robot << 0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000,
+                                  0.0000, -0.8000, 1.6000;
 
 
     kp_ = 30. * VecXf::Ones(12);
@@ -94,6 +94,8 @@ Lite3TestPolicyRunnerONNX::Lite3TestPolicyRunnerONNX(std::string policy_name)
     max_cmd_vel_ << 0.8, 0.8, 0.8;
 
     tmp_action = VecXf(act_dim_);
+    action = VecXf::Zero(act_dim_);
+    last_action = VecXf::Zero(act_dim_);
     ra.goal_joint_pos = VecXf::Zero(act_dim_);
     ra.goal_joint_vel = VecXf::Zero(act_dim_);
     ra.tau_ff         = VecXf::Zero(act_dim_);
@@ -124,6 +126,10 @@ Lite3TestPolicyRunnerONNX::Lite3TestPolicyRunnerONNX(std::string policy_name)
         std::cout << policy_name_ << " ONNX policy network test success" << std::endl;
     }
 
+    // Keep the control period paired with the official 2025 Lite3 policy
+    // restored from commit 08749f3.  That repository revision is the latest
+    // one predating the April 2026 model/default-pose replacement and uses a
+    // 12 ms policy period in its real-robot deployment path.
     decimation_ = 12;
 }
 
@@ -142,6 +148,11 @@ void Lite3TestPolicyRunnerONNX::DisplayPolicyInfo() {
 void Lite3TestPolicyRunnerONNX::OnEnter() {
     run_cnt_ = 0;
     current_obs_.setZero(obs_dim_);
+    // IsaacLab resets the previous-action observation at episode entry.
+    // Do the same on every real/sim policy entry so an earlier RL session
+    // cannot seed the recurrent last-action input of the next one.
+    action.setZero(act_dim_);
+    last_action.setZero(act_dim_);
     std::cout << "[ONNX ENTER] PolicyRunner entered: " << policy_name_ << std::endl;
 }
 
@@ -198,6 +209,16 @@ RobotAction Lite3TestPolicyRunnerONNX::GetRobotAction(const RobotBasicState& ro)
     ++run_cnt_;
 
     return ra;
+}
+
+bool Lite3TestPolicyRunnerONNX::GetDiagnosticSnapshot(
+    std::array<double,45>& observation,
+    std::array<double,12>& raw_action) const {
+    if(current_obs_.size()!=45 || action.size()!=12 ||
+       !current_obs_.allFinite() || !action.allFinite()) return false;
+    for(int i=0;i<45;++i) observation[i]=current_obs_[i];
+    for(int i=0;i<12;++i) raw_action[i]=action[i];
+    return true;
 }
 
 // ---------------------------------------------------------------------------

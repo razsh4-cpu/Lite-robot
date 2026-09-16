@@ -1,0 +1,24 @@
+Internal ctest changing into directory: /home/abx/Lite3_rl_deploy/build_supported_stand
+Test project /home/abx/Lite3_rl_deploy/build_supported_stand
+    Start 1: software_velocity_interface_test
+1/5 Test #1: software_velocity_interface_test ...   Passed    0.04 sec
+    Start 2: control_safety_test
+2/5 Test #2: control_safety_test ................   Passed    0.09 sec
+    Start 3: stand_recovery_test
+3/5 Test #3: stand_recovery_test ................   Passed    8.73 sec
+    Start 4: stand_monitor_test
+4/5 Test #4: stand_monitor_test .................   Passed    0.01 sec
+    Start 5: vendor_adapter_test
+5/5 Test #5: vendor_adapter_test ................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   8.87 sec
+STAND_TEST WAITING_FOR_TELEMETRY
+STAND_TEST LOCKED
+STAND_TEST WAITING_FOR_TELEMETRY
+STAND_TEST LOCKED
+STAND_TEST ARMED
+STAND_TEST ABORTING
+STAND_TEST RELEASE_REQUESTED
+startup telemetry wait/recovery and acquired-stale latch: PASS

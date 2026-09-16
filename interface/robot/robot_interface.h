@@ -12,11 +12,20 @@
 
 #include "common_types.h"
 #include <atomic>
+#include "stand_only_permit.hpp"
+#include "rl_zero_permit.hpp"
+#include "rl_forward_permit.hpp"
+#include "stand_diagnostics.hpp"
 
 using namespace types;
 
 namespace interface{
 class RobotInterface{
+    friend class ::StateMachine;
+protected:
+    virtual bool OpenSupervisedStand(const std::shared_ptr<const StandOnlyPermit>&) { return false; }
+    virtual bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>&) { return false; }
+    virtual bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>&) { return false; }
 private:
     /* data */
 public:
@@ -44,6 +53,39 @@ public:
      * @brief Stop to control the robot
      */
     virtual void Stop() = 0;
+
+    // Hardware implementations may require an explicit ownership handoff.
+    // Simulation backends remain passive and can use the default no-op result.
+    virtual bool AcquireControl() { return true; }
+    virtual void ReleaseControl() {}
+    virtual bool IsControlAcquired() const { return false; }
+    virtual bool IsControlRequestSent() const { return IsControlAcquired(); }
+    virtual const char* OwnershipStatus() const { return "OWNERSHIP_UNCONFIRMED"; }
+    virtual bool IsFeedbackFresh() const { return true; }
+    virtual double FeedbackAgeSeconds() const { return 0.0; }
+    virtual void SetJointCommandEnabled(bool) {}
+    virtual bool JointCommandsEnabled() const { return false; }
+    struct StandFeedback {
+        VecXf q, dq, torque;
+        Vec3f rpy;
+        double stamp=0, age=0;
+        bool fresh=false;
+        bool valid=true;
+    };
+    virtual StandFeedback GetStandFeedback() {
+        return {GetJointPosition(),GetJointVelocity(),GetJointTorque(),GetImuRpy(),
+                GetInterfaceTimeStamp(),FeedbackAgeSeconds(),IsFeedbackFresh()};
+    }
+    virtual void SetStandDiagnosticContext(double) {}
+    virtual void SetStandMonitorDiagnostics(const stand_diagnostics::MonitorStatus&) {}
+    // Log-only metadata. Never a source for feedback, freshness or guard checks.
+    virtual void RecordStandEntryMetadata(const VecXf&, const VecXf&, double) {}
+    virtual std::string LastStandSendReason() const { return "OTHER"; }
+    virtual void FinishStandDiagnostics(const std::string&) {}
+    virtual void RecordStandEvent(int, const std::string&) {}
+    virtual void RecordPolicyProgress(const Vec3f&, bool) {} // diagnostic only
+    virtual void RecordPolicySnapshot(const std::array<double,45>&,
+                                      const std::array<double,12>&) {} // diagnostic only
 
     /**
      * @brief Get the time stamp of the robot

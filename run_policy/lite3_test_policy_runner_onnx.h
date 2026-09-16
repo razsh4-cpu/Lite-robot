@@ -29,6 +29,8 @@ public:
     void DisplayPolicyInfo() override;
     void OnEnter() override;
     RobotAction GetRobotAction(const RobotBasicState& ro) override;
+    bool GetDiagnosticSnapshot(std::array<double,45>& observation,
+                               std::array<double,12>& raw_action) const override;
 
 private:
     // Hides all onnxruntime types so callers don't need to include

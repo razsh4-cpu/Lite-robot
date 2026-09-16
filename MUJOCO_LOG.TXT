@@ -8,3 +8,6 @@ WARNING Wed Jul 22 10:34:35 2026: Nan, Inf or huge value in CTRL at ACTUATOR 0. 
 
 WARNING Wed Jul 22 10:34:50 2026: Nan, Inf or huge value in CTRL at ACTUATOR 0. The simulation is unstable. Time = 0.0000.
 
+Mon Sep 14 15:45:41 2026
+WARNING: mju_openResource: unknown file 'third_party/deep_robotics_model/lite3_description/mjcf/lite3.xml'
+

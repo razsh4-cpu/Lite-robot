@@ -1,0 +1,19 @@
+134508 +++ exited with 0 +++
+134506 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=134508, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+134511 +++ exited with 0 +++
+134510 +++ exited with 0 +++
+134509 --- SIGINT {si_signo=SIGINT, si_code=SI_TKILL, si_pid=134509, si_uid=1000} ---
+134512 +++ exited with 0 +++
+134509 --- SIGTERM {si_signo=SIGTERM, si_code=SI_TKILL, si_pid=134509, si_uid=1000} ---
+134513 +++ exited with 0 +++
+134514 +++ exited with 0 +++
+134515 +++ exited with 0 +++
+134509 +++ exited with 0 +++
+134506 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=134509, si_uid=1000, si_status=0, si_utime=3 /* 0.03 s */, si_stime=0} ---
+134516 +++ exited with 0 +++
+134506 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=134516, si_uid=1000, si_status=0, si_utime=60 /* 0.60 s */, si_stime=2 /* 0.02 s */} ---
+134565 +++ exited with 0 +++
+134506 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=134565, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+134566 +++ exited with 0 +++
+134506 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=134566, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
+134506 +++ exited with 0 +++

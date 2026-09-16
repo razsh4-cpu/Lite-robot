@@ -1,0 +1,13 @@
+PASSIVE packets=34999 seconds=35.0001 callback_hz=999.968 fresh_samples=3499 stale_or_startup_samples=1 progressing_samples=3499 max_fresh_age_s=0.00163351 gate=0 request=0 ownership=NOT_REQUESTED
+JOINT 0 FL HipX min=-0.447121 max=-0.446129 max_sample_delta=0.000762939
+JOINT 1 FL HipY min=-1.16081 max=-1.15982 max_sample_delta=0.000839233
+JOINT 2 FL Knee min=2.73888 max=2.73949 max_sample_delta=0.000457764
+JOINT 3 FR HipX min=0.43567 max=0.436662 max_sample_delta=0.000762939
+JOINT 4 FR HipY min=-1.16366 max=-1.1629 max_sample_delta=0.000610352
+JOINT 5 FR Knee min=2.74151 max=2.74204 max_sample_delta=0.000457764
+JOINT 6 HL HipX min=-0.44597 max=-0.444978 max_sample_delta=0.000686646
+JOINT 7 HL HipY min=-1.14977 max=-1.14924 max_sample_delta=0.00038147
+JOINT 8 HL Knee min=2.74495 max=2.74556 max_sample_delta=0.000534058
+JOINT 9 HR HipX min=0.440477 max=0.441239 max_sample_delta=0.000610352
+JOINT 10 HR HipY min=-1.14833 max=-1.14756 max_sample_delta=0.000534058
+JOINT 11 HR Knee min=2.74704 max=2.74757 max_sample_delta=0.00038147

@@ -1,0 +1,2 @@
+143195 connect(4, {sa_family=AF_INET, sin_port=htons(43893), sin_addr=inet_addr("192.168.1.120")}, 16) = 0
+143195 sendto(4, "\24\1\0\0\0\0\0\0\0\0\0\0", 12, 0, NULL, 0) = 12

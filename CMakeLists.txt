@@ -159,12 +159,25 @@ target_link_libraries(run_policy onnxruntime)
 file(GLOB_RECURSE STATE_MACHINE_SRC "state_machine/*.c*")
 
 add_executable(rl_deploy main.cpp ${STATE_MACHINE_SRC})
+add_executable(lite3_validation_console tools/lite3_validation_console.cpp ${STATE_MACHINE_SRC})
+add_executable(lite3_passive_stand_observer tools/lite3_passive_stand_observer.cpp)
+if(BUILD_PLATFORM STREQUAL "arm")
+  set(PASSIVE_SDK_ARCH aarch64)
+else()
+  set(PASSIVE_SDK_ARCH x86_64)
+endif()
+target_link_libraries(lite3_passive_stand_observer pthread
+    ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_${PASSIVE_SDK_ARCH}.so)
+set_target_properties(lite3_passive_stand_observer PROPERTIES
+    BUILD_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib")
 
 # ========== 链接基本库 ==========
 if(BUILD_SIM)
     target_link_libraries(rl_deploy run_policy interface dw -lpthread -lm -lrt -ldl -lstdc++)
+    target_link_libraries(lite3_validation_console run_policy interface dw -lpthread -lm -lrt -ldl -lstdc++)
 else()
     target_link_libraries(rl_deploy run_policy interface -lpthread -lm -lrt -ldl -lstdc++)
+    target_link_libraries(lite3_validation_console run_policy interface -lpthread -lm -lrt -ldl -lstdc++)
 endif()
 
 # if (USE_ONNX)
@@ -181,9 +194,15 @@ if (BUILD_SIM)
   endif()
 endif()
 
-if (BUILD_SIM)
-  link_directories(${THIRD_PARTY}/Lite3_MotionSDK/lib)
+if (BUILD_PLATFORM STREQUAL "x86")
+  # The controller may target either simulation or real hardware. Select the
+  # SDK ABI from the requested platform, not from BUILD_SIM.
   target_link_libraries(rl_deploy
+      ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_x86_64.so
+      pthread
+      rt
+  )
+  target_link_libraries(lite3_validation_console
       ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_x86_64.so
       pthread
       rt
@@ -194,10 +213,99 @@ else()
       pthread
       rt
   )
+  target_link_libraries(lite3_validation_console
+      ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_aarch64.so
+      pthread
+      rt
+  )
+endif()
+
+# Keep the executable paired with the SDK shipped by this repository.  This
+# avoids silently loading another MotionSDK copy from an unrelated workspace.
+set_target_properties(rl_deploy PROPERTIES
+    BUILD_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib"
+    INSTALL_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib")
+target_link_options(rl_deploy PRIVATE "-Wl,--disable-new-dtags")
+set_target_properties(lite3_validation_console PROPERTIES
+    BUILD_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib"
+    INSTALL_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib")
+target_link_options(lite3_validation_console PRIVATE "-Wl,--disable-new-dtags")
+
+include(CTest)
+if (BUILD_TESTING)
+  add_executable(software_velocity_interface_test
+      tests/software_velocity_interface_test.cpp)
+  target_include_directories(software_velocity_interface_test PRIVATE
+      ${THIRD_PARTY}/eigen/
+      types
+      interface/user_command)
+  add_test(NAME software_velocity_interface_test
+           COMMAND software_velocity_interface_test)
+  # No vendor SDK, ONNX runtime, socket implementation or hardware adapter is
+  # linked into this integration test. It uses injected inert dependencies.
+  add_executable(control_safety_test tests/control_safety_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(control_safety_test pthread)
+  add_test(NAME control_safety_test COMMAND control_safety_test)
+  add_executable(stand_recovery_test tests/stand_recovery_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(stand_recovery_test pthread)
+  add_test(NAME stand_recovery_test COMMAND stand_recovery_test)
+  add_executable(stand_once_test tests/stand_once_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(stand_once_test pthread)
+  add_test(NAME stand_once_test COMMAND stand_once_test)
+  set_tests_properties(stand_once_test PROPERTIES TIMEOUT 10)
+  add_executable(stand_convergence_replay_test tests/stand_convergence_replay_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(stand_convergence_replay_test pthread)
+  add_test(NAME stand_convergence_replay_test COMMAND stand_convergence_replay_test
+      ${PROJECT_SOURCE_DIR}/docs/handoff_evidence/20260913/supported-stand-timeout.jsonl)
+  set_tests_properties(stand_convergence_replay_test PROPERTIES TIMEOUT 15)
+  add_executable(stand_hold_test tests/stand_hold_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(stand_hold_test pthread)
+  add_executable(rl_zero_test tests/rl_zero_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(rl_zero_test pthread run_policy)
+  add_test(NAME rl_zero_test COMMAND rl_zero_test)
+  set_tests_properties(rl_zero_test PROPERTIES TIMEOUT 20)
+  add_executable(forward_once_test tests/forward_once_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(forward_once_test pthread run_policy)
+  add_test(NAME forward_once_test COMMAND forward_once_test)
+  set_tests_properties(forward_once_test PROPERTIES TIMEOUT 15)
+  add_executable(policy_contract_test tests/policy_contract_test.cpp)
+  target_link_libraries(policy_contract_test run_policy)
+  add_test(NAME policy_contract_test COMMAND policy_contract_test)
+  if(BUILD_PLATFORM STREQUAL "x86")
+    add_executable(policy_mujoco_sweep tests/policy_mujoco_sweep.cpp)
+    target_include_directories(policy_mujoco_sweep PRIVATE ${MUJOCO_ROOT}/include)
+    target_link_directories(policy_mujoco_sweep PRIVATE ${MUJOCO_ROOT}/lib)
+    target_link_libraries(policy_mujoco_sweep run_policy mujoco)
+    add_executable(policy_hardware_trace_replay tests/policy_hardware_trace_replay.cpp)
+    target_link_libraries(policy_hardware_trace_replay run_policy)
+  endif()
+  add_test(NAME stand_hold_success COMMAND stand_hold_test --hold)
+  add_test(NAME stand_hold_failures COMMAND stand_hold_test --faults)
+  add_test(NAME stand_explicit_release COMMAND stand_hold_test --release)
+  set_tests_properties(stand_explicit_release PROPERTIES TIMEOUT 10)
+  set_tests_properties(stand_hold_success stand_hold_failures PROPERTIES TIMEOUT 20)
+  set_tests_properties(stand_recovery_test PROPERTIES TIMEOUT 20)
+  add_executable(stand_monitor_test tests/stand_monitor_candidate_test.cpp)
+  add_test(NAME stand_monitor_test COMMAND stand_monitor_test)
+  set_tests_properties(control_safety_test PROPERTIES TIMEOUT 15)
+  add_executable(vendor_adapter_test tests/vendor_adapter_test.cpp
+      interface/robot/hardware/motion_sdk_transport.cpp)
+  target_include_directories(vendor_adapter_test BEFORE PRIVATE tests/fake_sdk)
+  target_link_libraries(vendor_adapter_test pthread)
+  add_test(NAME vendor_adapter_test COMMAND vendor_adapter_test)
+  set_tests_properties(vendor_adapter_test PROPERTIES TIMEOUT 10)
 endif()
 
 if (BUILD_SIM)
     target_compile_definitions(rl_deploy PRIVATE BUILD_SIMULATION)
+    target_compile_definitions(lite3_validation_console PRIVATE BUILD_SIMULATION)
 endif()
 
 # SDK动态链接库

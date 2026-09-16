@@ -15,15 +15,16 @@
 class StandUpState : public StateBase{
 private:
     VecXf init_joint_pos_, init_joint_vel_, current_joint_pos_, current_joint_vel_;
-    float time_stamp_record_, run_time_;
+    double time_stamp_record_, run_time_;
     VecXf goal_joint_pos_, kp_, kd_;
     MatXf joint_cmd_;
     float stand_duration_ = 2.;
 
     void GetRobotJointValue(){
-        current_joint_pos_ = ri_ptr_->GetJointPosition();
-        current_joint_vel_ = ri_ptr_->GetJointVelocity();
-        run_time_ = ri_ptr_->GetInterfaceTimeStamp();
+        const auto sample = ri_ptr_->GetStandFeedback();
+        current_joint_pos_ = sample.q;
+        current_joint_vel_ = sample.dq;
+        run_time_ = sample.stamp;
     }
 
     void RecordJointData(){
@@ -95,6 +96,7 @@ public:
     virtual void OnEnter() {
         GetRobotJointValue();
         RecordJointData();
+        ri_ptr_->RecordStandEntryMetadata(init_joint_pos_, init_joint_vel_, time_stamp_record_);
         StateBase::msfb_.UpdateCurrentState(RobotMotionState::StandingUp);
         uc_ptr_->SetMotionStateFeedback(StateBase::msfb_);
     };
@@ -130,6 +132,7 @@ public:
 
         joint_cmd_.col(1) = planning_joint_pos;
         joint_cmd_.col(3) = planning_joint_vel;
+        ri_ptr_->SetStandDiagnosticContext(run_time_ - time_stamp_record_);
         ri_ptr_->SetJointCommand(joint_cmd_); // (current torque, not last torque, video content slip of the tongue)
     }
     virtual bool LoseControlJudge() {

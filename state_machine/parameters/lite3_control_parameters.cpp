@@ -8,7 +8,10 @@ void ControlParameters::GenerateLite3Parameters(){
     shank_len_ = 0.21;
 
     pre_height_ = 0.12;
-    stand_height_ = 0.33;
+    // Keep the stand endpoint paired with the restored pre-April policy.
+    // Vendor commit 7871b47 changed this from 0.30 to 0.33 in the same
+    // change that replaced the policy and its -0.80/1.60 default pose.
+    stand_height_ = 0.30;
     swing_leg_kp_ << 100., 100., 100.;
     swing_leg_kd_ << 2.5, 2.5, 2.5;
     // swing_leg_kp_ << 180., 180., 180.;
