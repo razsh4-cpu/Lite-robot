@@ -38,3 +38,8 @@ Only set `transmit:=true` during a supervised session under `docs/SAFETY.md`.
 Large bags and raw JSONL are excluded; their hashes are in the evidence index.
 No Telegram token or other secret belongs in Git.
 
+## Complete handoff on GitHub
+
+- ROS 2/control/sensor source: branch `main`
+- MotionSDK/ONNX research history: branch `rl-deploy-research`
+- Raw runtime evidence archive: release `evidence-2026-09-16`

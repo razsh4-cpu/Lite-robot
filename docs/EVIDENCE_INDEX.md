@@ -3,6 +3,13 @@
 Large evidence stays outside Git object storage. Preserve these paths or archive
 them separately and verify copies with SHA-256.
 
+The full archived copy is published at:
+
+`https://github.com/razsh4-cpu/Lite-robot/releases/tag/evidence-2026-09-16`
+
+Release asset `lite3-runtime-evidence-2026-09-15.tar.gz` SHA-256:
+`ce3646f82f6c7fd8b21fdc3e670087c5f25c10a5ac9b81907ec22f782ca70878`.
+
 | Evidence | Bytes | SHA-256 | Meaning |
 |---|---:|---|---|
 | `bags/lite3_20260915-191547/lite3_20260915-191547_0.db3` | 172998656 | `83f652adbcd4e167d3b0728a1ca91f5a8c2ed0ffda1014967a04764b10989ada` | ICP failure/tuning source |
@@ -14,4 +21,3 @@ them separately and verify copies with SHA-256.
 
 Metadata YAML and compact replay summaries are versioned. Never upload tokens,
 `.env` files or shell history.
-
