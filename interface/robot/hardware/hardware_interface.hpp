@@ -31,6 +31,7 @@ private:
     std::shared_ptr<MotionSdkTransport> transport_;
     mutable std::mutex send_mutex_;
     bool started_{false}, request_sent_{false}, joint_enabled_{false};
+    bool supported_leg_test_bounds_{false};
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
     std::shared_ptr<const RLZeroPermit> rl_zero_permit_;
     std::shared_ptr<const RLForwardPermit> rl_forward_permit_;
@@ -284,6 +285,7 @@ public:
         if (!started_ || !IsFeedbackFresh()) return false;
         if (request_sent_) return true;
         joint_enabled_ = false;
+        supported_leg_test_bounds_ = false;
         stand_permit_.reset();
         transport_->RequestOwnership(2);
         request_sent_ = true;
@@ -292,9 +294,11 @@ public:
     void ReleaseControl() override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         joint_enabled_ = false;
+        supported_leg_test_bounds_ = false;
         rl_zero_permit_.reset();
         rl_forward_permit_.reset();
         stand_permit_.reset();
+        supported_leg_test_bounds_ = false;
         if (!request_sent_) return;
         transport_->RequestOwnership(1); // excludes all in-flight SendJoints
         request_sent_ = false;
@@ -410,6 +414,21 @@ public:
             }
             if(r.max_error>0.35) {reject(R::TRACKING_ERROR); return;}
         }
+        if(supported_leg_test_bounds_) {
+            constexpr double stand[3]={0.0,-0.7729795255029084,1.5005003509817765};
+            if(!stand_permit_ || std::abs(r.roll)>3.0*M_PI/180.0 ||
+               std::abs(r.pitch)>3.0*M_PI/180.0 || s.dq.cwiseAbs().maxCoeff()>0.50) {
+                reject(R::EXCESSIVE_TILT); return;
+            }
+            for(int i=0;i<12;++i) {
+                if(input(i,0)>60.0001 || input(i,2)>0.7001 ||
+                   std::abs(input(i,1)-stand[i%3])>0.0300001 ||
+                   std::abs(input(i,3))>0.1000001 ||
+                   std::abs(input(i,1)-s.q[i])>0.15) {
+                    r.joint=i; reject(R::INVALID_COMMAND); return;
+                }
+            }
+        }
         RobotCmd cmd{};
         for(int i=0;i<12;++i) {
             cmd.joint_cmd[i].kp=input(i,0); cmd.joint_cmd[i].position=input(i,1);
@@ -424,6 +443,13 @@ public:
         r.reason=R::SENT; r.sent=true; Remember(r);
     }
 protected:
+    bool EnableSupportedLegTestBounds(bool enabled) override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+        if(enabled && (!joint_enabled_ || !request_sent_ || !stand_permit_ ||
+                       !stand_permit_->Valid() || !IsFeedbackFresh())) return false;
+        supported_leg_test_bounds_=enabled;
+        return true;
+    }
     bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>& permit) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         if(!permit || !permit->Valid() || !request_sent_ || joint_enabled_ || !IsFeedbackFresh()) return false;
@@ -450,6 +476,7 @@ protected:
         rl_zero_diagnostics_=rl_forward_diagnostics_=false;
         monitor_diagnostics_={};
         stand_permit_=permit; joint_enabled_=true;
+        supported_leg_test_bounds_=false;
         return true;
     }
 };

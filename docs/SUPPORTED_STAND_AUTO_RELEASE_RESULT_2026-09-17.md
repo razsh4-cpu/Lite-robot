@@ -2,7 +2,8 @@
 
 ## Evidence status
 
-**Software acceptance: PASS. Physical observation: EVIDENCE INCOMPLETE.**
+**Software acceptance: PASS. Operator observation: robot stood normally and
+returned to the ground. Independent physical evidence: INCOMPLETE.**
 
 One explicitly authorized, mechanically supported `stand_once` was executed from
 branch `handoff/low-level-leg-control-2026-09-17` at commit
@@ -77,12 +78,16 @@ logs:
 The original `/tmp` files have the same hashes. The transcript includes process
 startup, all operator inputs, state transitions, trace path and final status.
 
+After the run, the supervising operator reported in chat that the robot stood
+normally and was back on the ground. This is recorded as an operator observation;
+it is not inferred from telemetry and no video or independent posture measurement
+was captured.
+
 ## Missing physical evidence
 
-The software cannot establish the robot's physical response, support behavior,
-sound, or final posture after SDK release. Those facts remain **UNKNOWN** until
-the supervising operator reports them. This document does not claim unsupported
-balance or a safe return-to-rest.
+The software cannot independently establish support behavior, sound, balance, or
+final posture after SDK release. The operator report supplies the physical
+observation but does not prove unsupported balance or repeatability.
 
 No later physical milestone is authorized. The next safe action is to record the
 operator's direct observation, review this result, and decide whether any further

@@ -40,6 +40,7 @@ void PrintStatus(StateMachine& machine) {
 void PrintHelp() {
     std::cout << "Commands: status | acquire | authorize_stand SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "stand_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
+                 "leg_lift_once SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED | "
                  "stand | rl_zero_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "forward_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | stop | release | quit. "
                  "Unrestricted RL/velocity blocked; RL_ZERO is limited to 8s then release."
@@ -117,6 +118,15 @@ int main() {
             const bool submitted=!(input>>extra) && machine.RequestStandOnce(acknowledgement);
             std::cout << "STAND_ONCE request " << (submitted ? "submitted" : "blocked")
                       << "; ownership UNCONFIRMED; RL/velocity remain disabled." << std::endl;
+        } else if (command == "leg_lift_once") {
+            std::string acknowledgement, extra;
+            input >> acknowledgement;
+            const bool submitted=!(input>>extra) &&
+                machine.RequestSupportedLegLiftOnce(acknowledgement);
+            std::cout << "LEG_LIFT_ONCE request " << (submitted ? "submitted" : "blocked")
+                      << "; requires mechanical support; 5mm body shift, 2mm FR lift, "
+                         "0.25s hold, automatic lower/recenter/release; RL/velocity disabled."
+                      << std::endl;
         } else if (command == "stand") {
             std::cout << "STAND request " << (machine.RequestStand() ? "submitted" : "blocked")
                       << "; RL/velocity remain disabled." << std::endl;

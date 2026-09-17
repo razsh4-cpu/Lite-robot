@@ -54,6 +54,7 @@ private:
     std::shared_ptr<StateBase> current_controller_;
     std::shared_ptr<StateBase> idle_controller_;
     std::shared_ptr<StateBase> standup_controller_;
+    std::shared_ptr<StandUpState> typed_standup_controller_;
     std::shared_ptr<StateBase> rl_controller_;
     std::shared_ptr<StateBase> joint_damping_controller_;
 
@@ -80,6 +81,11 @@ private:
     uint64_t acquisition_epoch_{0}, used_epoch_{0};
     double arm_deadline_{0}, stand_robot_start_{0}, last_command_stamp_{0};
     double target_reached_started_{-1.0};
+    bool supported_leg_test_requested_{false};
+    bool supported_leg_test_active_{false};
+    bool supported_leg_test_finishing_{false};
+    bool supported_leg_test_have_command_{false};
+    double supported_leg_test_started_{0.0};
     std::string stand_status_{"LOCKED"}, abort_reason_;
     std::string stand_preflight_reason_{"not checked"};
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
@@ -116,7 +122,8 @@ private:
             }
             for(int i=0;i<12;++i) { sample.target[i]=command(i,1); sample.target_velocity[i]=command(i,3); }
             const double duration=cp_ptr_ ? 2.0*cp_ptr_->stand_duration_ : 3.0;
-            sample.final_target=last_command_stamp_-stand_robot_start_>=duration;
+            sample.final_target=supported_leg_test_finishing_ ||
+                last_command_stamp_-stand_robot_start_>=duration;
         }
         return sample;
     }
@@ -154,6 +161,8 @@ private:
             try { ri_ptr_->RecordStandEvent(2,reason); } catch(...) {}
         }
         stand_armed_=stand_pending_=stand_active_=false;
+        supported_leg_test_requested_=supported_leg_test_active_=
+            supported_leg_test_finishing_=supported_leg_test_have_command_=false;
         target_reached_started_=-1.0;
         rl_zero_active_=rl_forward_active_=false; rl_zero_permit_.reset();rl_forward_permit_.reset();
         stand_permit_.reset();
@@ -248,6 +257,37 @@ private:
         }
         return nullptr;
     }
+    const char* SupportedLegPhaseStatus() const {
+        if(!typed_standup_controller_) return "LEG_TEST_INVALID";
+        using P=SupportedLegLiftPlan::Phase;
+        switch(typed_standup_controller_->SupportedLegLiftPhase()) {
+            case P::ShiftBody: return "LEG_TEST_SHIFT_BODY";
+            case P::HoldShift: return "LEG_TEST_HOLD_SHIFT";
+            case P::LiftFrontRight: return "LEG_TEST_LIFT_FR";
+            case P::HoldFrontRight: return "LEG_TEST_HOLD_FR";
+            case P::LowerFrontRight: return "LEG_TEST_LOWER_FR";
+            case P::RecenterBody: return "LEG_TEST_RECENTER";
+            case P::Complete: return "LEG_TEST_VERIFY_STAND";
+        }
+        return "LEG_TEST_INVALID";
+    }
+    bool SupportedLegTestGuard() {
+        if(!supported_leg_test_active_ || !typed_standup_controller_ ||
+           current_controller_!=standup_controller_ || current_state_name_!=kStandUp ||
+           !ri_ptr_->IsControlRequestSent() || !ri_ptr_->JointCommandsEnabled() ||
+           !stand_permit_ || !stand_permit_->Valid() ||
+           stand_now_()-supported_leg_test_started_>SupportedLegLiftPlan::kTotalSeconds+0.75)
+            return false;
+        const auto s=ri_ptr_->GetStandFeedback();
+        if(!s.valid || !s.fresh || s.q.size()!=12 || s.dq.size()!=12 ||
+           !s.q.allFinite() || !s.dq.allFinite() || !s.rpy.allFinite() ||
+           std::abs(s.rpy[0])>3.0*M_PI/180.0 || std::abs(s.rpy[1])>3.0*M_PI/180.0 ||
+           s.dq.cwiseAbs().maxCoeff()>0.50) return false;
+        if(!supported_leg_test_have_command_) return true;
+        const auto command=ri_ptr_->GetJointCommand();
+        return typed_standup_controller_->SupportedLegLiftCommandWithinBounds(command) &&
+            (command.col(1)-s.q).cwiseAbs().maxCoeff()<=0.15;
+    }
 public:
     StateMachine(RobotType robot_type){
         const std::string activation_key = "~/raisim/activation.raisim";
@@ -302,6 +342,7 @@ public:
 
         idle_controller_ = std::make_shared<IdleState>(robot_type, "idle_state", data_ptr);
         standup_controller_ = std::make_shared<StandUpState>(robot_type, "standup_state", data_ptr);
+        typed_standup_controller_ = std::static_pointer_cast<StandUpState>(standup_controller_);
 
         // 测试ONNX，后续需要改成参数控制
         // rl_controller_ = std::make_shared<RLControlState>(robot_type, "rl_control", data_ptr);
@@ -342,6 +383,7 @@ public:
           current_state_name_(kIdle), next_state_name_(kIdle), uc_ptr_(input),
           software_velocity_interface_(input), ri_ptr_(robot) {
         if(clock) stand_now_=std::move(clock);
+        typed_standup_controller_=std::dynamic_pointer_cast<StandUpState>(standup_controller_);
         cp_ptr_=std::move(parameters);
         ri_ptr_->Start();
         uc_ptr_->Start();
@@ -428,6 +470,16 @@ public:
         // No worker iteration can interleave authorization and request. All
         // existing request checks run again; entry/send gates remain unchanged.
         return RequestStandLocked();
+    }
+    bool RequestSupportedLegLiftOnce(const std::string& acknowledgement) {
+        std::lock_guard<std::mutex> lock(lifecycle_mutex_);
+        if(acknowledgement!="SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED" ||
+           !typed_standup_controller_) return false;
+        if(!AuthorizeStandTestLocked(true,true,true,true)) return false;
+        supported_leg_test_requested_=true;
+        if(RequestStandLocked()) return true;
+        supported_leg_test_requested_=false;
+        return false;
     }
     std::string StandTestStatus() const {
         std::lock_guard<std::mutex> lock(lifecycle_mutex_); return stand_status_;
@@ -619,22 +671,51 @@ public:
                    !ri_ptr_->IsControlRequestSent() || !ri_ptr_->JointCommandsEnabled()) {
                     AbortStandLocked("stand gate/state lost"); return true;
                 }
-                const auto result=stand_monitor_.Check(stand_now_(),StandSample(new_feedback));
-                ri_ptr_->SetStandMonitorDiagnostics(stand_monitor_.diagnostics());
-                if(result==supervised_stand::Result::Abort) {
-                    AbortStandLocked(stand_monitor_.reason()); return true;
-                }
-                if(result==supervised_stand::Result::TargetReached && new_feedback) {
-                    const auto now=stand_now_();
-                    if(target_reached_started_<0) target_reached_started_=now;
-                    if(now-target_reached_started_>=2.0) {
-                        AbortStandLocked("stand target hold complete"); return true;
+                if(supported_leg_test_active_) {
+                    if(!SupportedLegTestGuard()) {
+                        AbortStandLocked("supported leg test guard failure"); return true;
                     }
-                    if(!stand_permit_ || !stand_permit_->RenewSupportedHold()) {
-                        AbortStandLocked("stand hold permit expired or cancelled"); return true;
+                    StandStatus(SupportedLegPhaseStatus());
+                } else {
+                    const auto result=stand_monitor_.Check(stand_now_(),StandSample(new_feedback));
+                    ri_ptr_->SetStandMonitorDiagnostics(stand_monitor_.diagnostics());
+                    if(result==supervised_stand::Result::Abort) {
+                        AbortStandLocked(stand_monitor_.reason()); return true;
+                    }
+                    if(result==supervised_stand::Result::TargetReached && new_feedback) {
+                        const auto now=stand_now_();
+                        if(supported_leg_test_finishing_) {
+                            AbortStandLocked("supported leg lift complete"); return true;
+                        }
+                        if(supported_leg_test_requested_) {
+                            if(!stand_permit_ || !stand_permit_->RenewSupportedHold() ||
+                               !ri_ptr_->EnableSupportedLegTestBounds(true) ||
+                               !typed_standup_controller_->BeginSupportedLegLift()) {
+                                AbortStandLocked("supported leg test entry failed"); return true;
+                            }
+                            supported_leg_test_requested_=false;
+                            supported_leg_test_active_=true;
+                            supported_leg_test_have_command_=false;
+                            supported_leg_test_started_=now;
+                            target_reached_started_=-1.0;
+                            ri_ptr_->RecordStandEvent(1,
+                                "supported leg test: 5mm body shift, 2mm FR lift, 0.25s hold");
+                            StandStatus("LEG_TEST_SHIFT_BODY");
+                        } else {
+                            if(target_reached_started_<0) target_reached_started_=now;
+                            if(now-target_reached_started_>=2.0) {
+                                AbortStandLocked("stand target hold complete"); return true;
+                            }
+                            if(!stand_permit_ || !stand_permit_->RenewSupportedHold()) {
+                                AbortStandLocked("stand hold permit expired or cancelled"); return true;
+                            }
+                            StandStatus("TARGET_REACHED");
+                        }
+                    } else if(!supported_leg_test_finishing_) {
+                        StandStatus(result==supervised_stand::Result::TargetReached ?
+                            "TARGET_REACHED" : "STANDING_UP");
                     }
                 }
-                StandStatus(result==supervised_stand::Result::TargetReached ? "TARGET_REACHED" : "STANDING_UP");
             }
             if(!new_feedback) return true;
             time_record_=stamp;
@@ -647,6 +728,22 @@ public:
                     AbortStandLocked(reason.c_str()); return true;
                 }
                 have_stand_command_=true; last_command_stamp_=stamp;
+                if(supported_leg_test_active_) {
+                    supported_leg_test_have_command_=true;
+                    const auto command=ri_ptr_->GetJointCommand();
+                    if(!typed_standup_controller_->SupportedLegLiftCommandWithinBounds(command)) {
+                        AbortStandLocked("supported leg test command bounds"); return true;
+                    }
+                    if(typed_standup_controller_->SupportedLegLiftComplete()) {
+                        supported_leg_test_active_=false;
+                        supported_leg_test_finishing_=true;
+                        supported_leg_test_have_command_=false;
+                        stand_monitor_.Start(stand_now_());
+                        ri_ptr_->RecordStandEvent(1,
+                            "supported leg test recentered; verifying stand");
+                        StandStatus("LEG_TEST_VERIFY_STAND");
+                    } else StandStatus(SupportedLegPhaseStatus());
+                }
                 return true;
             }
             if(current_state_name_!=kIdle) { AbortStandLocked("unauthorized controller"); return true; }

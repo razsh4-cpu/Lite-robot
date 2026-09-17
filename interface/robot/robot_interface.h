@@ -24,6 +24,7 @@ class RobotInterface{
     friend class ::StateMachine;
 protected:
     virtual bool OpenSupervisedStand(const std::shared_ptr<const StandOnlyPermit>&) { return false; }
+    virtual bool EnableSupportedLegTestBounds(bool) { return false; }
     virtual bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>&) { return false; }
     virtual bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>&) { return false; }
 private:

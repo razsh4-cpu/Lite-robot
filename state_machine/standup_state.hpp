@@ -11,6 +11,7 @@
 #pragma once
 
 #include "state_base.h"
+#include "supported_leg_lift_plan.hpp"
 
 class StandUpState : public StateBase{
 private:
@@ -19,6 +20,11 @@ private:
     VecXf goal_joint_pos_, kp_, kd_;
     MatXf joint_cmd_;
     float stand_duration_ = 2.;
+    SupportedLegLiftPlan supported_leg_lift_plan_;
+    bool supported_leg_lift_active_{false};
+    bool supported_leg_lift_complete_{false};
+    double supported_leg_lift_start_{0.0};
+    SupportedLegLiftPlan::Phase supported_leg_lift_phase_{SupportedLegLiftPlan::Phase::Complete};
 
     void GetRobotJointValue(){
         const auto sample = ri_ptr_->GetStandFeedback();
@@ -94,6 +100,9 @@ public:
 
 
     virtual void OnEnter() {
+        supported_leg_lift_active_=false;
+        supported_leg_lift_complete_=false;
+        supported_leg_lift_phase_=SupportedLegLiftPlan::Phase::Complete;
         GetRobotJointValue();
         RecordJointData();
         ri_ptr_->RecordStandEntryMetadata(init_joint_pos_, init_joint_vel_, time_stamp_record_);
@@ -101,9 +110,21 @@ public:
         uc_ptr_->SetMotionStateFeedback(StateBase::msfb_);
     };
     virtual void OnExit() {
+        supported_leg_lift_active_=false;
     }
     virtual void Run() {
         GetRobotJointValue();
+        if(supported_leg_lift_active_){
+            const auto sample=supported_leg_lift_plan_.At(run_time_-supported_leg_lift_start_);
+            joint_cmd_=sample.command;
+            if(!SupportedLegLiftCommandWithinBounds(joint_cmd_))
+                throw std::runtime_error("supported leg test planner exceeded command bounds");
+            supported_leg_lift_phase_=sample.phase;
+            supported_leg_lift_complete_=sample.complete;
+            ri_ptr_->SetStandDiagnosticContext(run_time_-time_stamp_record_);
+            ri_ptr_->SetJointCommand(joint_cmd_);
+            return;
+        }
         VecXf planning_joint_pos(current_joint_pos_.rows());
         VecXf planning_joint_vel(current_joint_pos_.rows());
         if(run_time_ - time_stamp_record_ <= stand_duration_){
@@ -134,6 +155,28 @@ public:
         joint_cmd_.col(3) = planning_joint_vel;
         ri_ptr_->SetStandDiagnosticContext(run_time_ - time_stamp_record_);
         ri_ptr_->SetJointCommand(joint_cmd_); // (current torque, not last torque, video content slip of the tongue)
+    }
+    bool BeginSupportedLegLift(){
+        if(supported_leg_lift_active_ || supported_leg_lift_complete_) return false;
+        GetRobotJointValue();
+        supported_leg_lift_start_=run_time_;
+        supported_leg_lift_phase_=SupportedLegLiftPlan::Phase::ShiftBody;
+        supported_leg_lift_active_=true;
+        return true;
+    }
+    bool SupportedLegLiftActive() const { return supported_leg_lift_active_; }
+    bool SupportedLegLiftComplete() const { return supported_leg_lift_complete_; }
+    SupportedLegLiftPlan::Phase SupportedLegLiftPhase() const { return supported_leg_lift_phase_; }
+    bool SupportedLegLiftCommandWithinBounds(const MatXf& command) const {
+        if(command.rows()!=12 || command.cols()!=5 || !command.allFinite()) return false;
+        for(int i=0;i<12;++i){
+            const double stand=supported_leg_lift_plan_.stand()[i/3][i%3];
+            if(command(i,0)<0 || command(i,0)>SupportedLegLiftPlan::kKp+1e-4 ||
+               command(i,2)<0 || command(i,2)>SupportedLegLiftPlan::kKd+1e-4 ||
+               std::abs(command(i,1)-stand)>0.0300001 ||
+               std::abs(command(i,3))>0.1000001 || command(i,4)!=0) return false;
+        }
+        return true;
     }
     virtual bool LoseControlJudge() {
         if(uc_ptr_->GetUserCommand().target_mode == int(RobotMotionState::JointDamping)) return true;

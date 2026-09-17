@@ -241,6 +241,12 @@ if (BUILD_TESTING)
       interface/user_command)
   add_test(NAME software_velocity_interface_test
            COMMAND software_velocity_interface_test)
+  add_executable(supported_leg_lift_plan_test
+      tests/supported_leg_lift_plan_test.cpp)
+  target_include_directories(supported_leg_lift_plan_test PRIVATE
+      ${PROJECT_SOURCE_DIR}
+      ${THIRD_PARTY}/eigen/)
+  add_test(NAME supported_leg_lift_plan_test COMMAND supported_leg_lift_plan_test)
   # No vendor SDK, ONNX runtime, socket implementation or hardware adapter is
   # linked into this integration test. It uses injected inert dependencies.
   add_executable(control_safety_test tests/control_safety_test.cpp
@@ -256,6 +262,11 @@ if (BUILD_TESTING)
   target_link_libraries(stand_once_test pthread)
   add_test(NAME stand_once_test COMMAND stand_once_test)
   set_tests_properties(stand_once_test PROPERTIES TIMEOUT 10)
+  add_executable(supported_leg_lift_once_test tests/supported_leg_lift_once_test.cpp
+      state_machine/parameters/lite3_control_parameters.cpp)
+  target_link_libraries(supported_leg_lift_once_test pthread)
+  add_test(NAME supported_leg_lift_once_test COMMAND supported_leg_lift_once_test)
+  set_tests_properties(supported_leg_lift_once_test PROPERTIES TIMEOUT 20)
   add_executable(stand_convergence_replay_test tests/stand_convergence_replay_test.cpp
       state_machine/parameters/lite3_control_parameters.cpp)
   target_link_libraries(stand_convergence_replay_test pthread)
