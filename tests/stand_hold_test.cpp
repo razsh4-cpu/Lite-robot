@@ -20,20 +20,21 @@ static void Closed(StandFixture& f,int sends) {
 }
 static void Hold() {
     StandFixture f; Reach(f);
-    const auto started=std::chrono::steady_clock::now();
-    const auto end=started+8250ms;
-    // Real wall time intentionally crosses the original 8-second permit.
-    while(std::chrono::steady_clock::now()<end) {
+    const auto reached=f.wall;
+    while(f.io->releases==0 && f.wall-reached<2.1) {
         f.Tick();
-        Check(f.machine->StandTestStatus()=="TARGET_REACHED" && f.io->releases==0,
-              "healthy supported success holds beyond both old timers");
-        Check(f.hw->JointCommandsEnabled() && !f.machine->RequestRLControl(),"stand only, RL blocked");
-        const auto cmd=f.hw->GetJointCommand();
-        for(int j=0;j<12;++j) Check(std::abs(cmd(j,3))<.001,"final zero-velocity target held");
-        std::this_thread::sleep_for(10ms);
+        if(f.io->releases==0) {
+            Check(f.machine->StandTestStatus()=="TARGET_REACHED","successful target remains monitored");
+            Check(f.hw->JointCommandsEnabled() && !f.machine->RequestRLControl(),"stand only, RL blocked");
+            const auto cmd=f.hw->GetJointCommand();
+            for(int j=0;j<12;++j) Check(std::abs(cmd(j,3))<.001,"final zero-velocity target held");
+        }
     }
-    const auto sends=f.io->sends.load(); f.machine->StopVelocity(); Closed(f,sends);
-    std::cout<<"PASS: supported hold >8.25 real seconds, no auto-release, explicit stop releases\n";
+    Check(f.io->releases==1,"successful target automatically releases");
+    Check(f.wall-reached>=2.0 && f.wall-reached<2.02,"target hold bounded to two seconds");
+    Check(f.machine->StandAbortReason()=="stand target hold complete","automatic release reason");
+    const auto sends=f.io->sends.load(); Closed(f,sends);
+    std::cout<<"PASS: supported target hold automatically releases after two seconds\n";
 }
 static void Faults() {
     for(int failure=0;failure<9;++failure) {

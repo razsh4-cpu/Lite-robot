@@ -63,3 +63,7 @@ The approved attempt is consumed. Another physical stand test requires new
 explicit approval and the same mechanical support, clear area, emergency-stop,
 battery/health, and supervision checks. Do not retry automatically. Body shift,
 leg lift, RL, velocity control, and raw torque remain prohibited.
+
+A later, separately approved atomic attempt reached the standing target. Its
+result and the safety issue it exposed are recorded in
+`docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`.

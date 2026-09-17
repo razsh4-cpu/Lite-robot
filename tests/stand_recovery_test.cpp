@@ -108,9 +108,8 @@ void FullReplay(uint32_t uptime, double arm_delay, bool frozen=false, const std:
               f.sm->StandAbortReason()=="tracking error","frozen response tracking reason");
     } else {
         Check(phase1 && phase2 && reached,"full real trajectory plus measured convergence");
-        Check(f.io->releases==0 && f.hw->JointCommandsEnabled(),"successful stand holds");
-        f.sm->StopVelocity();
-        Check(f.sm->StandAbortReason()=="stop requested","explicit operator stop");
+        Check(f.io->releases==1 && !f.hw->JointCommandsEnabled(),"successful stand automatically releases");
+        Check(f.sm->StandAbortReason()=="stand target hold complete","bounded target hold release");
         Check(max_delta<.004,"no phase/uptime position discontinuity");
     }
     Check(!f.hw->JointCommandsEnabled() && f.io->releases==1,"final closed gate/release");

@@ -153,6 +153,16 @@ release is not proven; abort/release may remove stiffness. No RL/velocity/walkin
 was validated, and SDK ownership acknowledgement remains unconfirmed. No code,
 robot state or robot commands were changed while documenting this result.
 
+# Superseding update — 2026-09-17
+
+A separately authorized, mechanically supported `stand_once` reached the target.
+The indefinite successful hold described in E6 remained active until operator
+`stop`; the gate then closed and SDK release was requested. The handoff branch
+now enforces an absolute two-second post-convergence hold. All 13 offline tests
+pass; the correction has not been hardware-tested. See
+`docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`. Historical experiment entries below
+remain evidence of their original builds, not the current hold policy.
+
 ## E1 — acquisition-only (earlier supervised run)
 
 Operator requested acquire, then release. Robot reportedly remained still;

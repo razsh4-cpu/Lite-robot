@@ -199,15 +199,14 @@ void StandTests() {
     {
         StandFixture f; f.Enter();
         bool reached=false;
-        for(int i=0;i<580 && f.io->releases==0;++i) {
+        for(int i=0;i<800 && f.io->releases==0;++i) {
             f.Tick();
             reached |= f.machine->StandTestStatus()=="TARGET_REACHED";
             Check(!f.machine->RequestRLControl(),"RL always blocked during stand");
         }
         Check(reached,"measured convergence reached");
-        Check(f.io->releases==0 && f.hw->JointCommandsEnabled(),"successful stand retains support");
-        f.machine->StopVelocity();
-        Check(f.io->releases==1,"explicit stop releases successful stand");
+        Check(f.io->releases==1 && !f.hw->JointCommandsEnabled(),"successful stand automatically releases");
+        Check(f.machine->StandAbortReason()=="stand target hold complete","bounded target hold reason");
     }
     {
         StandFixture f; f.Enter();

@@ -83,6 +83,14 @@ fresh converged supported hold. `rl` and `velocity` STILL abort: do not use them
 Separate five-second non-renewable permit; permanently zero-only input; existing
 stop/join/release path. Deadline releases control and may remove support.
 
+# Current next step — 2026-09-17
+
+Review the successful stand trace and the restored absolute two-second target-hold
+deadline in `docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`. Do not run another
+hardware command until that review is complete and a new supervised test receives
+explicit user approval. The older RL-zero sequence below is historical and is
+not the current next action.
+
 Next operator action: `status` in the existing console, confirm released/zero/gate
 closed before `quit` and launching the new build. Do not restart an active hold.
 Then, separately: status -> acquire -> status -> stand_once confirmation token ->

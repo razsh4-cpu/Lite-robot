@@ -79,6 +79,7 @@ private:
     bool release_attempted_{false};
     uint64_t acquisition_epoch_{0}, used_epoch_{0};
     double arm_deadline_{0}, stand_robot_start_{0}, last_command_stamp_{0};
+    double target_reached_started_{-1.0};
     std::string stand_status_{"LOCKED"}, abort_reason_;
     std::string stand_preflight_reason_{"not checked"};
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
@@ -153,6 +154,7 @@ private:
             try { ri_ptr_->RecordStandEvent(2,reason); } catch(...) {}
         }
         stand_armed_=stand_pending_=stand_active_=false;
+        target_reached_started_=-1.0;
         rl_zero_active_=rl_forward_active_=false; rl_zero_permit_.reset();rl_forward_permit_.reset();
         stand_permit_.reset();
         if(ri_ptr_) ri_ptr_->SetJointCommandEnabled(false);
@@ -359,6 +361,7 @@ public:
         if(!ri_ptr_->AcquireControl()) return false;
         ++acquisition_epoch_; release_attempted_=false;
         abort_requested_->store(false);
+        target_reached_started_=-1.0;
         StandStatus("LOCKED"); abort_reason_.clear();
         return true;
     }
@@ -622,6 +625,11 @@ public:
                     AbortStandLocked(stand_monitor_.reason()); return true;
                 }
                 if(result==supervised_stand::Result::TargetReached && new_feedback) {
+                    const auto now=stand_now_();
+                    if(target_reached_started_<0) target_reached_started_=now;
+                    if(now-target_reached_started_>=2.0) {
+                        AbortStandLocked("stand target hold complete"); return true;
+                    }
                     if(!stand_permit_ || !stand_permit_->RenewSupportedHold()) {
                         AbortStandLocked("stand hold permit expired or cancelled"); return true;
                     }
@@ -654,6 +662,7 @@ public:
                 // Recheck after OnEnter; it never opens the actuator gate itself.
                 if(AbortRequested() || stand_now_()>=arm_deadline_ || !StandPreflight()) { AbortStandLocked("entry aborted"); return true; }
                 stand_monitor_.Start(stand_now_());
+                target_reached_started_=-1.0;
                 stand_robot_start_=ri_ptr_->GetInterfaceTimeStamp();
                 have_stand_command_=false;
                 stand_permit_=std::shared_ptr<const StandOnlyPermit>(new StandOnlyPermit(

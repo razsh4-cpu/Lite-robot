@@ -7,6 +7,13 @@ separate five-second authorization expired. No joint-send gate opened and no
 stand command ran. See `docs/SUPPORTED_STAND_RESULT_2026-09-17.md`. A new attempt
 requires new explicit approval and must use the atomic `stand_once` action.
 
+**Subsequent result:** a newly authorized atomic attempt reached
+`TARGET_REACHED`. Manual `stop` then closed the gate and requested release after
+the live run exposed an indefinite-hold discrepancy. The state machine now has
+an absolute two-second target-hold limit, verified by all offline tests. See
+`docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`. The correction has not been
+hardware-tested and requires review before another physical attempt.
+
 The software is ready for one **explicitly authorized, mechanically supported
 stand test**. That test has not been run and is not authorized by this document.
 The robot has not been moved, control ownership has not been requested, transmit

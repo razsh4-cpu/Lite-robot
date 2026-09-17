@@ -165,6 +165,19 @@ and does not guarantee physical stillness. No production change, hardware comman
 or RL test was performed during this readiness check. Separate focused zero-only
 RL authorization/transition work is needed before a live test can be offered.
 
+# Current update — 2026-09-17
+
+One newly authorized atomic `stand_once` reached `TARGET_REACHED` on mechanically
+supported hardware. The expected automatic release did not occur because fresh
+feedback continuously renewed the hold permit. Operator `stop` closed the joint
+gate and requested release; final local status was passive and `NOT_REQUESTED`.
+
+The handoff branch now restores an absolute two-second successful-target hold,
+followed by the existing shared release path. All 13 offline tests pass. This
+correction has not been hardware-tested. See
+`docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`. The older status below is retained
+as historical evidence and its indefinite-hold behavior is superseded.
+
 ## Latest milestone — 2026-09-13, documented at 21:00 +03:00
 
 **REAL SUPPORTED STAND TEST = SUCCESS. Computer-commanded supported stand:

@@ -69,6 +69,10 @@ transition to RL, damping or another controller. The ONNX policy, stand spline,
 joint PD gains and MotionSDK encoder are unchanged. The policy may be loaded by
 the existing constructor but its inference/control worker is never entered.
 
+The two-second successful-target hold is an absolute state-machine deadline from
+the first `TARGET_REACHED` result. Fresh telemetry may renew the private send
+permit inside that interval but cannot extend the overall hold deadline.
+
 ## Shared abort sequence
 
 1. Atomically latch stop/signal intent; clear stand authorization and queued modes.

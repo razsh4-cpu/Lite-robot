@@ -62,7 +62,7 @@ static void Recorded(const char* path) {
     std::cout<<"RECORDED rows="<<rows<<" max_error="<<largest<<" joint="<<largest_joint
              <<" final_error="<<final_error<<" speed_failures="<<speed_failures
              <<" previous_strict_longest_dwell="<<longest<<" corrected_reached_s="<<reached
-             <<" automatic_release=NO result="<<monitor.reason()<<'\n';
+             <<" state_machine_release=N/A result="<<monitor.reason()<<'\n';
 }
 
 static void Synthetic(double lag, double bias) {
@@ -93,14 +93,12 @@ static void Synthetic(double lag, double bias) {
         const auto record=f.hw->LastStandRecord();
         if(record.sent) max_error=std::max(max_error,record.max_error);
         Check(!f.machine->RequestRLControl(),"RL blocked");
-        Check(f.io->releases==0,"no successful-stand auto-release");
     }
-    Check(reached>=0 && f.io->releases==0,"slower model converges and holds");
-    f.machine->StopVelocity();
-    Check(f.machine->StandAbortReason()=="stop requested" && f.io->releases==1,"explicit stop releases");
+    Check(reached>=0 && f.io->releases==1,"slower model converges and automatically releases");
+    Check(f.machine->StandAbortReason()=="stand target hold complete","bounded target hold reason");
     Check(!f.hw->JointCommandsEnabled(),"release gate closed");
     const auto last=f.hw->LastStandRecord();
-    Check(last.event==2 && last.event_detail=="stop requested","exact release cause logged");
+    Check(last.event==2 && last.event_detail=="stand target hold complete","exact release cause logged");
     Check(last.monitor.observation_elapsed>=1.99 && last.monitor.dwell_elapsed>=.5,
           "monitor timing logged at release");
     std::cout<<"SYNTHETIC lag="<<lag<<" knee_bias="<<bias<<" reached_s="<<reached

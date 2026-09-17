@@ -149,8 +149,8 @@ public:
             return Result::TargetReached;
         }
         if(reached_target_) velocity_loss_pending_=false;
-        // Successful supported stand holds until an operator stop/release or
-        // a failed guard. Elapsed time after success alone is not an abort.
+        // This monitor continues evaluating a reached target. The state machine
+        // owns the absolute successful-hold deadline and release lifecycle.
         if(!reached_target_ && now-start_>=deadline) return Abort("convergence deadline");
         if(!s.new_feedback) return reached_target_ ? Result::TargetReached : Result::StandingUp;
         if(!converged) dwelling_=false;

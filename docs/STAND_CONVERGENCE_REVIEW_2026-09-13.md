@@ -1,5 +1,15 @@
 # Supported stand convergence review — NO further hardware test authorized
 
+## Superseding safety update — 2026-09-17
+
+A new supported stand reached `TARGET_REACHED`, then exposed that permit renewal
+kept the joint gate open indefinitely. Operator `stop` released successfully.
+The handoff branch now imposes an absolute two-second successful-target hold in
+the state machine, independent of permit renewal. All 13 offline tests pass. The
+new limit has not been hardware-tested. See
+`docs/SUPPORTED_STAND_SUCCESS_2026-09-17.md`. The indefinite-hold design below is
+retained only as historical rationale and no longer describes the branch tip.
+
 ## Latest post-success update — supported hold, explicit stop/release
 
 The operator subsequently requested removal of successful-stand automatic release.
