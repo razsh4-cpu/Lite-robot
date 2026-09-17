@@ -346,7 +346,13 @@ public:
     Vec3f GetImuOmega() override {
         auto d=Snapshot(); return Vec3f(d.imu.angular_velocity_roll,d.imu.angular_velocity_pitch,d.imu.angular_velocity_yaw);
     }
-    VecXf GetContactForce() override { return VecXf::Zero(4); }
+    VecXf GetContactForce() override {
+        const auto d=Snapshot();
+        VecXf force_z(4);
+        force_z << d.contact_force.fl_leg[2], d.contact_force.fr_leg[2],
+                   d.contact_force.hl_leg[2], d.contact_force.hr_leg[2];
+        return force_z;
+    }
     MatXf GetJointCommand() override {
         std::lock_guard<std::mutex> lock(send_mutex_); return joint_cmd_;
     }

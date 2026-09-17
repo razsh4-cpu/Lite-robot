@@ -9,19 +9,23 @@ Undocumented state 98 is not reclassified by this code.
 
 ## Build and executable
 
-The new build is separate from build_offline and any previously running console:
-`/home/abx/Lite3_rl_deploy/build_supported_stand/lite3_validation_console`.
+The hardware-safe build is separate from the simulation build and any previously
+running console:
+`/home/abx/Desktop/robotdog_ws/low-level-leg-control/build-low-level-hw/lite3_validation_console`.
 Build options: BUILD_SIM=OFF, BUILD_PLATFORM=x86, SEND_REMOTE=OFF.
-The executable was built, NOT run. Offline tests use an injected inert SDK.
+The executable was built and started once for a receive-only `status`, then quit.
+No ownership request or joint command was made. Offline tests use an injected
+inert SDK.
 The unchanged ONNX constructor resolves its model relative to the working
-directory, so launch from build_supported_stand as shown below.
+directory, so launch from `build-low-level-hw` as shown below.
 
 ## Later live sequence — do not paste as an automatic batch
 
 Only after separate hardware go-ahead and passive health/safety checks:
 
 ```sh
-cd /home/abx/Lite3_rl_deploy/build_supported_stand && ./lite3_validation_console
+cd /home/abx/Desktop/robotdog_ws/low-level-leg-control/build-low-level-hw
+./lite3_validation_console
 ```
 
 Then perform one console action at a time:

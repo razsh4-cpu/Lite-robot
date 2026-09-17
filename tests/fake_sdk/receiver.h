@@ -15,4 +15,10 @@ public:
     void RegisterCallBack(std::function<void(int)> callback) { callback_=std::move(callback); }
     RobotData& GetState() { return state_; }
     void Emit(uint32_t tick) { state_.tick=tick; state_.imu.acc_z=9.81f; callback_(0x0906); }
+    void SetFootForceZ(double fl, double fr, double hl, double hr) {
+        state_.contact_force.fl_leg[2]=fl;
+        state_.contact_force.fr_leg[2]=fr;
+        state_.contact_force.hl_leg[2]=hl;
+        state_.contact_force.hr_leg[2]=hr;
+    }
 };

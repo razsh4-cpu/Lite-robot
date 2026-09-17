@@ -24,13 +24,15 @@ int main() {
     auto hw=std::make_shared<HardwareInterface>("passive observer",io);
     hw->Start();
     std::ofstream log("/tmp/lite3-stand-passive-observation.csv");
-    log<<"wall_s,tick_s,age_s,fresh,roll,pitch";
+    log<<"wall_s,tick_s,age_s,fresh,roll,pitch,force_fl_z,force_fr_z,force_hl_z,force_hr_z";
     for(int i=0;i<12;++i) log<<",q"<<i<<",dq"<<i<<",tau"<<i;
     log<<'\n'; log.precision(12);
     auto start=HardwareInterface::Clock::now();
     uint64_t fresh=0, stale=0, progressing=0; double last=-1,max_age=0;
     std::array<double,12> low,high,jump{},previous{};
+    std::array<double,4> force_low,force_high;
     low.fill(INFINITY); high.fill(-INFINITY);
+    force_low.fill(INFINITY); force_high.fill(-INFINITY);
     for(int n=0;n<3500;++n) {
         auto s=hw->GetStandFeedback();
         const auto wall=std::chrono::duration<double>(HardwareInterface::Clock::now()-start).count();
@@ -45,7 +47,13 @@ int main() {
                 } last=s.stamp;
             }
         } else ++stale;
+        const auto force=hw->GetContactForce();
+        for(int i=0;i<4;++i) {
+            force_low[i]=std::min(force_low[i],double(force[i]));
+            force_high[i]=std::max(force_high[i],double(force[i]));
+        }
         log<<wall<<','<<s.stamp<<','<<s.age<<','<<s.fresh<<','<<s.rpy[0]<<','<<s.rpy[1];
+        for(int i=0;i<4;++i) log<<','<<force[i];
         for(int i=0;i<12;++i) log<<','<<s.q[i]<<','<<s.dq[i]<<','<<s.torque[i];
         log<<'\n';
         std::this_thread::sleep_until(start+std::chrono::milliseconds((n+1)*10));
@@ -57,6 +65,8 @@ int main() {
         <<" request="<<hw->IsControlRequestSent()<<" ownership="<<hw->OwnershipStatus()<<'\n';
     for(int i=0;i<12;++i) std::cout<<"JOINT "<<i<<' '<<stand_diagnostics::Leg(i)<<' '<<stand_diagnostics::Joint(i)
         <<" min="<<low[i]<<" max="<<high[i]<<" max_sample_delta="<<jump[i]<<'\n';
+    for(int i=0;i<4;++i) std::cout<<"FOOT_FORCE_Z "<<stand_diagnostics::Leg(i*3)
+        <<" min="<<force_low[i]<<" max="<<force_high[i]<<'\n';
     log.flush(); std::cout.flush();
     // Vendor receiver has no stop/join API. End this receive-only process without
     // destroying callback captures while its detached thread can still run.

@@ -13,7 +13,11 @@ int main() {
         Check(sender_constructions==0 && acquisitions==0 && joint_sends==0 && joint_initializations==0,
               "passive startup emitted command");
         Check(!hw.AcquireControl(),"no telemetry blocks acquisition");
+        Receiver::instance->SetFootForceZ(11.0,22.0,33.0,44.0);
         Receiver::instance->Emit(1);
+        const auto force=hw.GetContactForce();
+        Check(force.size()==4 && force[0]==11.0f && force[1]==22.0f &&
+              force[2]==33.0f && force[3]==44.0f,"foot-force Z mapping FL/FR/HL/HR");
         Check(hw.AcquireControl() && hw.AcquireControl(),"acquisition request");
         Check(sender_constructions==1 && acquisitions==1,"exactly one acquisition");
         Check(joint_initializations==0 && joint_sends==0,"acquire-only called init or send");
