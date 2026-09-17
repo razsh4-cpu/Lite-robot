@@ -2,6 +2,11 @@
 
 ## Stop point
 
+**Later result:** the authorized attempt failed closed before motion because the
+separate five-second authorization expired. No joint-send gate opened and no
+stand command ran. See `docs/SUPPORTED_STAND_RESULT_2026-09-17.md`. A new attempt
+requires new explicit approval and must use the atomic `stand_once` action.
+
 The software is ready for one **explicitly authorized, mechanically supported
 stand test**. That test has not been run and is not authorized by this document.
 The robot has not been moved, control ownership has not been requested, transmit
@@ -95,7 +100,7 @@ the operator verifies all of the following at the robot:
 
 The console sequence in `docs/SUPPORTED_STAND_TEST.md` must be performed one action
 at a time. Do not paste it as a batch. The intended sequence is `status`, `acquire`,
-`status`, one-use stand authorization, `stand`, observation, `status`, and `quit`.
+`status`, atomic one-use `stand_once`, observation, `status`, and `quit`.
 Do not invoke `rl_zero_once`, `forward_once`, velocity control, or the simulated
 leg primitive.
 

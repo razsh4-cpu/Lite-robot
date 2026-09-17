@@ -33,16 +33,23 @@ Then perform one console action at a time:
 1. `status` — confirm fresh feedback, zero input, closed joint gate.
 2. `acquire` — ownership request only; observe no unexpected physical movement.
 3. `status` — request sent, OWNERSHIP_UNCONFIRMED, joint gate closed.
-4. `authorize_stand SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED` — explicitly attest
-   mechanical support, supervision/E-stop, fresh acceptable battery/health,
-   and acceptance of the engineering limits below. Arms one stand for 5 seconds.
-5. `stand` — within that arming interval. No gate opens until actual StandUp entry.
+4. `stand_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED` — atomically attest
+   mechanical support, supervision/E-stop, fresh acceptable battery/health and
+   acceptance of the engineering limits, then queue one stand. The combined
+   action prevents operator or remote-console latency from consuming the
+   five-second authorization window. No gate opens until actual StandUp entry.
 6. Observe without further mode/input commands. Expect STANDING_UP, then possibly
    TARGET_REACHED. A successful target is held for at most 2 seconds before the
    shared abort/release path; lack of convergence aborts at 6 seconds after entry.
 7. `status` — expect RELEASE_REQUESTED, zero input, joint gate closed. Actual
    ownership return and physical posture must still be checked independently.
 8. `quit` — shutdown; no duplicate release request and no automatic retry.
+
+The separate `authorize_stand ...` followed by `stand` interface remains for
+local development diagnostics. Do not use that two-command form for a real test:
+on 2026-09-17, console/tool latency exhausted its five-second arm interval. The
+request failed closed with `stand authorization expired`, requested release, and
+never opened the joint-send gate. It must not be retried under the same approval.
 
 `stop`, `release`, Ctrl+C/SIGINT and SIGTERM abort the supported test. Do not rely
 on Ctrl+C instead of a physical E-stop. On unexpected movement, prioritize E-stop.
