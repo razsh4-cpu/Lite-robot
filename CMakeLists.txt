@@ -247,6 +247,12 @@ if (BUILD_TESTING)
       ${PROJECT_SOURCE_DIR}
       ${THIRD_PARTY}/eigen/)
   add_test(NAME supported_leg_lift_plan_test COMMAND supported_leg_lift_plan_test)
+  add_executable(supported_body_shift_plan_test
+      tests/supported_body_shift_plan_test.cpp)
+  target_include_directories(supported_body_shift_plan_test PRIVATE
+      ${PROJECT_SOURCE_DIR}
+      ${THIRD_PARTY}/eigen/)
+  add_test(NAME supported_body_shift_plan_test COMMAND supported_body_shift_plan_test)
   # No vendor SDK, ONNX runtime, socket implementation or hardware adapter is
   # linked into this integration test. It uses injected inert dependencies.
   add_executable(control_safety_test tests/control_safety_test.cpp
