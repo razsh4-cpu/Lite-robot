@@ -7,69 +7,323 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <stdexcept>
 
-// Offline-only command generator for the prerequisite supported body-shift.
-// It has no SDK or transport dependency.  It deliberately never lifts a foot.
+// Supported body-shift planner.
+// All four feet remain planted.
+// No leg lift or micro-unload is performed here.
 class SupportedBodyShiftPlan {
 public:
-    enum class GainStrategy { AbruptReduced, KeepStand, SmoothReduced };
-    enum class Phase { ShiftWeight, HoldShift, Recenter, Complete };
+    enum class GainStrategy {
+        AbruptReduced,
+        KeepStand,
+        SmoothReduced
+    };
+
+    enum class Phase {
+        ShiftWeight,
+        HoldShift,
+        UnloadFrontRight,
+        HoldUnload,
+        RestoreFrontRight,
+        Recenter,
+        Complete
+    };
 
     struct Sample {
-        Eigen::Matrix<float, 12, 5> command = Eigen::Matrix<float, 12, 5>::Zero();
+        Eigen::Matrix<float,12,5> command =
+            Eigen::Matrix<float,12,5>::Zero();
+
         Phase phase{Phase::ShiftWeight};
         bool complete{false};
     };
 
-    static constexpr double kShiftM = 0.005;
+    static constexpr double kShiftM = 0.020;
+
     static constexpr double kShiftSeconds = 2.0;
-    static constexpr double kHoldSeconds = 0.5;
+    static constexpr double kHoldSeconds = 2.0;
+    static constexpr double kUnloadM = 0.010;
+    static constexpr double kUnloadSeconds = 1.5;
+    static constexpr double kUnloadHoldSeconds = 1.0;
+    static constexpr double kRestoreSeconds = 1.5;
     static constexpr double kRecenterSeconds = 2.0;
-    static constexpr double kTotalSeconds = kShiftSeconds + kHoldSeconds + kRecenterSeconds;
+
+    static constexpr double kTotalSeconds =
+        kShiftSeconds +
+        kHoldSeconds +
+        kUnloadSeconds +
+        kUnloadHoldSeconds +
+        kRestoreSeconds +
+        kRecenterSeconds;
+
     static constexpr double kGainRampSeconds = 0.5;
+
     static constexpr float kStandKp = 100.0f;
     static constexpr float kStandKd = 2.5f;
+
     static constexpr float kReducedKp = 60.0f;
     static constexpr float kReducedKd = 0.7f;
 
-    explicit SupportedBodyShiftPlan(GainStrategy strategy) : strategy_(strategy), geometry_() {
-        // Reuse the already-tested IK solution for the common 5 mm shift.
-        // This body-only plan never samples the lift phases of that helper.
-        stand_=geometry_.stand();
-        shifted_=geometry_.shifted();
+    // Reviewed specifically for the 10 mm body-shift experiment.
+    static constexpr double kMaxJointDeltaRad = 0.120;
+    static constexpr double kMaxTargetSpeedRadS = 0.10;
+
+    explicit SupportedBodyShiftPlan(GainStrategy strategy)
+        : strategy_(strategy), geometry_() {
+
+        stand_ = geometry_.stand();
+
+        for(int leg_index=0; leg_index<4; ++leg_index) {
+            const auto leg =
+                static_cast<lite3::Leg>(leg_index);
+
+            const auto nominal =
+                lite3::FootPositionBody(
+                    leg,
+                    stand_[leg_index]);
+
+            const Eigen::Vector3d shifted_target =
+                nominal +
+                Eigen::Vector3d(
+                    kShiftM,
+                    -kShiftM,
+                    0.0);
+
+            const auto shifted =
+                lite3::SolveFootIk(
+                    leg,
+                    shifted_target,
+                    stand_[leg_index]);
+
+            if(!shifted.converged ||
+               shifted.residual_m > 5e-6) {
+                throw std::runtime_error(
+                    "supported body-shift IK failed");
+            }
+
+            shifted_[leg_index] = shifted.q;
+        }
+
+        unloaded_ = shifted_;
+
+        constexpr int fr_index = 1;
+        const auto fr_leg = static_cast<lite3::Leg>(fr_index);
+
+        const auto fr_now =
+            lite3::FootPositionBody(
+                fr_leg,
+                shifted_[fr_index]);
+
+        Eigen::Vector3d fr_target = fr_now;
+        fr_target.z() += kUnloadM;
+
+        const auto fr_unloaded =
+            lite3::SolveFootIk(
+                fr_leg,
+                fr_target,
+                shifted_[fr_index]);
+
+        if(!fr_unloaded.converged ||
+           fr_unloaded.residual_m > 5e-6) {
+            throw std::runtime_error(
+                "FR micro-unload IK failed");
+        }
+
+        unloaded_[fr_index] = fr_unloaded.q;
     }
 
     Sample At(double seconds) const {
-        const double t=std::max(0.0,seconds);
-        if(t<kShiftSeconds) return Interpolate(stand_,shifted_,t/kShiftSeconds,kShiftSeconds,Phase::ShiftWeight,t);
-        if(t<kShiftSeconds+kHoldSeconds) return Hold(shifted_,Phase::HoldShift,t);
-        if(t<kTotalSeconds) return Interpolate(shifted_,stand_,(t-kShiftSeconds-kHoldSeconds)/kRecenterSeconds,kRecenterSeconds,Phase::Recenter,t);
-        auto result=Hold(stand_,Phase::Complete,t); result.complete=true; return result;
+        const double t = std::max(0.0, seconds);
+
+        if(t < kShiftSeconds) {
+            return Interpolate(
+                stand_,
+                shifted_,
+                t/kShiftSeconds,
+                kShiftSeconds,
+                Phase::ShiftWeight,
+                t);
+        }
+
+        if(t < kShiftSeconds + kHoldSeconds) {
+            return Hold(
+                shifted_,
+                Phase::HoldShift,
+                t);
+        }
+
+        const double unload_start =
+            kShiftSeconds + kHoldSeconds;
+
+        if(t < unload_start + kUnloadSeconds) {
+            return Interpolate(
+                shifted_,
+                unloaded_,
+                (t-unload_start)/kUnloadSeconds,
+                kUnloadSeconds,
+                Phase::UnloadFrontRight,
+                t);
+        }
+
+        const double unload_hold_start =
+            unload_start + kUnloadSeconds;
+
+        if(t < unload_hold_start + kUnloadHoldSeconds) {
+            return Hold(
+                unloaded_,
+                Phase::HoldUnload,
+                t);
+        }
+
+        const double restore_start =
+            unload_hold_start + kUnloadHoldSeconds;
+
+        if(t < restore_start + kRestoreSeconds) {
+            return Interpolate(
+                unloaded_,
+                shifted_,
+                (t-restore_start)/kRestoreSeconds,
+                kRestoreSeconds,
+                Phase::RestoreFrontRight,
+                t);
+        }
+
+        const double recenter_start =
+            restore_start + kRestoreSeconds;
+
+        if(t < kTotalSeconds) {
+            return Interpolate(
+                shifted_,
+                stand_,
+                (t-recenter_start)/kRecenterSeconds,
+                kRecenterSeconds,
+                Phase::Recenter,
+                t);
+        }
+
+        auto result =
+            Hold(
+                stand_,
+                Phase::Complete,
+                t);
+
+        result.complete = true;
+        return result;
     }
-    const std::array<Eigen::Vector3d,4>& stand() const { return stand_; }
-    const std::array<Eigen::Vector3d,4>& shifted() const { return shifted_; }
+
+    const std::array<Eigen::Vector3d,4>& stand() const {
+        return stand_;
+    }
+
+    const std::array<Eigen::Vector3d,4>& shifted() const {
+        return shifted_;
+    }
 
 private:
-    using Pose=std::array<Eigen::Vector3d,4>;
+    using Pose =
+        std::array<Eigen::Vector3d,4>;
+
     GainStrategy strategy_;
     SupportedLegLiftPlan geometry_;
-    Pose stand_{},shifted_{};
-    static double QuinticDerivative(double p) { const double s=std::clamp(p,0.0,1.0); return 30.0*s*s*(1.0-s)*(1.0-s); }
-    std::pair<float,float> Gains(double elapsed) const {
-        if(strategy_==GainStrategy::KeepStand) return {kStandKp,kStandKd};
-        if(strategy_==GainStrategy::AbruptReduced) return {kReducedKp,kReducedKd};
-        const double a=lite3::Quintic(std::clamp(elapsed/kGainRampSeconds,0.0,1.0));
-        return {static_cast<float>(kStandKp+a*(kReducedKp-kStandKp)), static_cast<float>(kStandKd+a*(kReducedKd-kStandKd))};
+
+    Pose stand_{};
+    Pose shifted_{};
+    Pose unloaded_{};
+
+    static double QuinticDerivative(double p) {
+        const double s =
+            std::clamp(p,0.0,1.0);
+
+        return
+            30.0*s*s*(1.0-s)*(1.0-s);
     }
-    Sample Interpolate(const Pose& from,const Pose& to,double p,double duration,Phase phase,double elapsed) const {
-        const double blend=lite3::Quintic(p), rate=QuinticDerivative(p)/duration;
-        const auto [kp,kd]=Gains(elapsed); Sample out; out.phase=phase;
-        for(int leg=0;leg<4;++leg) for(int joint=0;joint<3;++joint) {
-            const int i=3*leg+joint;
-            out.command(i,0)=kp; out.command(i,1)=static_cast<float>(from[leg][joint]+blend*(to[leg][joint]-from[leg][joint]));
-            out.command(i,2)=kd; out.command(i,3)=static_cast<float>(rate*(to[leg][joint]-from[leg][joint])); out.command(i,4)=0.0f;
+
+    std::pair<float,float>
+    Gains(double elapsed) const {
+
+        if(strategy_ == GainStrategy::KeepStand)
+            return {kStandKp,kStandKd};
+
+        if(strategy_ == GainStrategy::AbruptReduced)
+            return {kReducedKp,kReducedKd};
+
+        const double a =
+            lite3::Quintic(
+                std::clamp(
+                    elapsed/kGainRampSeconds,
+                    0.0,
+                    1.0));
+
+        return {
+            static_cast<float>(
+                kStandKp +
+                a*(kReducedKp-kStandKp)),
+            static_cast<float>(
+                kStandKd +
+                a*(kReducedKd-kStandKd))
+        };
+    }
+
+    Sample Interpolate(
+        const Pose& from,
+        const Pose& to,
+        double p,
+        double duration,
+        Phase phase,
+        double elapsed) const {
+
+        const double blend =
+            lite3::Quintic(p);
+
+        const double rate =
+            QuinticDerivative(p) / duration;
+
+        const auto [kp,kd] =
+            Gains(elapsed);
+
+        Sample out;
+        out.phase = phase;
+
+        for(int leg=0; leg<4; ++leg) {
+            for(int joint=0; joint<3; ++joint) {
+                const int i =
+                    3*leg + joint;
+
+                out.command(i,0) = kp;
+
+                out.command(i,1) =
+                    static_cast<float>(
+                        from[leg][joint] +
+                        blend *
+                        (to[leg][joint] -
+                         from[leg][joint]));
+
+                out.command(i,2) = kd;
+
+                out.command(i,3) =
+                    static_cast<float>(
+                        rate *
+                        (to[leg][joint] -
+                         from[leg][joint]));
+
+                out.command(i,4) = 0.0f;
+            }
         }
+
         return out;
     }
-    Sample Hold(const Pose& pose,Phase phase,double elapsed) const { return Interpolate(pose,pose,0.0,1.0,phase,elapsed); }
+
+    Sample Hold(
+        const Pose& pose,
+        Phase phase,
+        double elapsed) const {
+
+        return Interpolate(
+            pose,
+            pose,
+            0.0,
+            1.0,
+            phase,
+            elapsed);
+    }
 };

@@ -4,9 +4,9 @@
  * @author mazunwang
  * @version 1.0
  * @date 2024-05-29
- * 
+ *
  * @copyright Copyright (c) 2024  DeepRobotics
- * 
+ *
  */
 #pragma once
 
@@ -17,7 +17,7 @@
 
 // #ifdef USE_ONNX
 //     #include "rl_control_state_onnx.hpp"
-// #else   
+// #else
 //     #include "rl_control_state.hpp"
 // #endif
 
@@ -86,6 +86,12 @@ private:
     bool supported_leg_test_finishing_{false};
     bool supported_leg_test_have_command_{false};
     double supported_leg_test_started_{0.0};
+    bool supported_body_shift_requested_{false};
+    bool supported_body_shift_active_{false};
+    bool supported_body_shift_finishing_{false};
+    bool supported_body_shift_have_command_{false};
+    double supported_body_shift_started_{0.0};
+
     std::string stand_status_{"LOCKED"}, abort_reason_;
     std::string stand_preflight_reason_{"not checked"};
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
@@ -230,7 +236,7 @@ private:
         ds_ptr_->InsertCommandData("target_mode", float(cmd.target_mode));
 
         ds_ptr_->InsertStateData("current_state", StateBase::msfb_.current_state);
-       
+
         ds_ptr_->SendData();
     }
 
@@ -271,6 +277,56 @@ private:
         }
         return "LEG_TEST_INVALID";
     }
+    const char* SupportedBodyShiftPhaseStatus() const {
+        if(!typed_standup_controller_)
+            return "BODY_SHIFT_INVALID";
+
+        using P = SupportedBodyShiftPlan::Phase;
+
+        switch(typed_standup_controller_->SupportedBodyShiftPhase()) {
+            case P::ShiftWeight:
+                return "BODY_SHIFT_SHIFT_WEIGHT";
+            case P::HoldShift:
+                return "BODY_SHIFT_HOLD";
+            case P::UnloadFrontRight:
+                return "BODY_SHIFT_LIFT_FR";
+            case P::HoldUnload:
+                return "BODY_SHIFT_HOLD_FR";
+            case P::RestoreFrontRight:
+                return "BODY_SHIFT_LOWER_FR";
+            case P::Recenter:
+                return "BODY_SHIFT_RECENTER";
+            case P::Complete:
+                return "BODY_SHIFT_VERIFY_STAND";
+        }
+
+        return "BODY_SHIFT_INVALID";
+    }
+
+    bool SupportedBodyShiftGuard() {
+        if(!supported_body_shift_active_ || !typed_standup_controller_ ||
+           current_controller_!=standup_controller_ || current_state_name_!=kStandUp ||
+           !ri_ptr_->IsControlRequestSent() || !ri_ptr_->JointCommandsEnabled() ||
+           !stand_permit_ || !stand_permit_->RenewSupportedHold() ||
+           stand_now_()-supported_body_shift_started_>
+               SupportedBodyShiftPlan::kTotalSeconds+0.75)
+            return false;
+
+        const auto s=ri_ptr_->GetStandFeedback();
+        if(!s.valid || !s.fresh || s.q.size()!=12 || s.dq.size()!=12 ||
+           !s.q.allFinite() || !s.dq.allFinite() || !s.rpy.allFinite() ||
+           std::abs(s.rpy[0])>3.0*M_PI/180.0 ||
+           std::abs(s.rpy[1])>3.0*M_PI/180.0 ||
+           s.dq.cwiseAbs().maxCoeff()>0.50)
+            return false;
+
+        if(!supported_body_shift_have_command_) return true;
+
+        const auto command=ri_ptr_->GetJointCommand();
+        return typed_standup_controller_->SupportedBodyShiftCommandWithinBounds(command) &&
+               (command.col(1)-s.q).cwiseAbs().maxCoeff()<=0.15;
+    }
+
     bool SupportedLegTestGuard() {
         if(!supported_leg_test_active_ || !typed_standup_controller_ ||
            current_controller_!=standup_controller_ || current_state_name_!=kStandUp ||
@@ -352,7 +408,7 @@ public:
         //     rl_controller_ = std::make_shared<RLControlState>(robot_type, "rl_control", data_ptr);
         // #endif
         rl_controller_ = std::make_shared<RLControlStateONNX>(robot_type, "rl_control", data_ptr);
-        
+
 
 
         joint_damping_controller_ = std::make_shared<JointDampingState>(robot_type, "joint_damping", data_ptr);
@@ -360,15 +416,15 @@ public:
         current_controller_ = idle_controller_;
         current_state_name_ = kIdle;
         next_state_name_ = kIdle;
-   
+
         // std::cout << "Controller will be enabled in 3 seconds!!!" << std::endl;
-        // std::this_thread::sleep_for(std::chrono::seconds(3)); //for safety 
+        // std::this_thread::sleep_for(std::chrono::seconds(3)); //for safety
 
         ri_ptr_->Start();
         std::cout << "Robot interface started" << std::endl;
         uc_ptr_->Start();
-        
-        current_controller_->OnEnter();  
+
+        current_controller_->OnEnter();
     }
 
     // Injected dependencies for offline integration tests. No production SDK,
@@ -479,6 +535,16 @@ public:
         supported_leg_test_requested_=true;
         if(RequestStandLocked()) return true;
         supported_leg_test_requested_=false;
+        return false;
+    }
+    bool RequestSupportedBodyShiftOnce(const std::string& acknowledgement) {
+        std::lock_guard<std::mutex> lock(lifecycle_mutex_);
+        if(acknowledgement!="SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED" ||
+           !typed_standup_controller_) return false;
+        if(!AuthorizeStandTestLocked(true,true,true,true)) return false;
+        supported_body_shift_requested_=true;
+        if(RequestStandLocked()) return true;
+        supported_body_shift_requested_=false;
         return false;
     }
     std::string StandTestStatus() const {
@@ -671,7 +737,12 @@ public:
                    !ri_ptr_->IsControlRequestSent() || !ri_ptr_->JointCommandsEnabled()) {
                     AbortStandLocked("stand gate/state lost"); return true;
                 }
-                if(supported_leg_test_active_) {
+                if(supported_body_shift_active_) {
+                    if(!SupportedBodyShiftGuard()) {
+                        AbortStandLocked("supported body shift guard failure"); return true;
+                    }
+                    StandStatus(SupportedBodyShiftPhaseStatus());
+                } else if(supported_leg_test_active_) {
                     if(!SupportedLegTestGuard()) {
                         AbortStandLocked("supported leg test guard failure"); return true;
                     }
@@ -684,10 +755,35 @@ public:
                     }
                     if(result==supervised_stand::Result::TargetReached && new_feedback) {
                         const auto now=stand_now_();
+                        if(supported_body_shift_finishing_) {
+                            AbortStandLocked("supported body shift complete"); return true;
+                        }
                         if(supported_leg_test_finishing_) {
                             AbortStandLocked("supported leg lift complete"); return true;
                         }
-                        if(supported_leg_test_requested_) {
+
+                        if(supported_body_shift_requested_) {
+                            if(!stand_permit_ || !stand_permit_->RenewSupportedHold() ||
+                               !ri_ptr_->EnableSupportedBodyShiftBounds(
+                                   true,
+                                   SupportedBodyShiftPlan::kStandKp,
+                                   SupportedBodyShiftPlan::kStandKd) ||
+                               !typed_standup_controller_->BeginSupportedBodyShift()) {
+                                AbortStandLocked("supported body shift entry failed"); return true;
+                            }
+
+                            supported_body_shift_requested_=false;
+                            supported_body_shift_active_=true;
+                            supported_body_shift_have_command_=false;
+                            supported_body_shift_started_=now;
+                            target_reached_started_=-1.0;
+
+                            ri_ptr_->RecordStandEvent(
+                                1,
+                                "supported body shift: 10mm, all feet remain planted");
+                            StandStatus("BODY_SHIFT_SHIFT_WEIGHT");
+
+                        } else if(supported_leg_test_requested_) {
                             if(!stand_permit_ || !stand_permit_->RenewSupportedHold() ||
                                !ri_ptr_->EnableSupportedLegTestBounds(true) ||
                                !typed_standup_controller_->BeginSupportedLegLift()) {
@@ -728,6 +824,30 @@ public:
                     AbortStandLocked(reason.c_str()); return true;
                 }
                 have_stand_command_=true; last_command_stamp_=stamp;
+                if(supported_body_shift_active_) {
+                    supported_body_shift_have_command_=true;
+                    const auto command=ri_ptr_->GetJointCommand();
+
+                    if(!typed_standup_controller_->SupportedBodyShiftCommandWithinBounds(command)) {
+                        AbortStandLocked("supported body shift command bounds"); return true;
+                    }
+
+                    if(typed_standup_controller_->SupportedBodyShiftComplete()) {
+                        supported_body_shift_active_=false;
+                        supported_body_shift_finishing_=true;
+                        supported_body_shift_have_command_=false;
+                        stand_monitor_.Start(stand_now_());
+
+                        ri_ptr_->RecordStandEvent(
+                            1,
+                            "supported body shift recentered; verifying stand");
+                        StandStatus("BODY_SHIFT_VERIFY_STAND");
+                    } else {
+                        StandStatus(SupportedBodyShiftPhaseStatus());
+                    }
+                    return true;
+                }
+
                 if(supported_leg_test_active_) {
                     supported_leg_test_have_command_=true;
                     const auto command=ri_ptr_->GetJointCommand();

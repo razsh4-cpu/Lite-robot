@@ -74,23 +74,11 @@ private:
     }
 
     void DisplayProprioceptiveInfo(){
-        std::cout << "Joint Data: \n";
-        std::cout << "pos: " << joint_pos_.transpose() << std::endl;
-        std::cout << "vel: " << joint_vel_.transpose() << std::endl;
-        std::cout << "tau: " << joint_tau_.transpose() << std::endl;
-        std::cout << "Imu Data: \n";
-        std::cout << "rpy: " << rpy_.transpose() << std::endl;
-        std::cout << "acc: " << acc_.transpose() << std::endl;
-        std::cout << "omg: " << omg_.transpose() << std::endl;
+        // Console telemetry spam disabled for validation-console use.
     }
 
     void DisplayAxisValue(){
-        auto cmd = uc_ptr_->GetUserCommand();
-        std::cout << "User Command Input: \n";
-        std::cout << "axis value:  " << cmd.forward_vel_scale << " " 
-                                     << cmd.side_vel_scale << " "
-                                     << cmd.turnning_vel_scale << std::endl;
-        std::cout << "target mode: " << cmd.target_mode << std::endl;
+        // Console user-command spam disabled for validation-console use.
     }
 
 

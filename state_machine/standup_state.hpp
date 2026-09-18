@@ -4,14 +4,15 @@
  * @author mazunwang
  * @version 1.0
  * @date 2024-05-29
- * 
+ *
  * @copyright Copyright (c) 2024  DeepRobotics
- * 
+ *
  */
 #pragma once
 
 #include "state_base.h"
 #include "supported_leg_lift_plan.hpp"
+#include "supported_body_shift_plan.hpp"
 
 class StandUpState : public StateBase{
 private:
@@ -25,6 +26,12 @@ private:
     bool supported_leg_lift_complete_{false};
     double supported_leg_lift_start_{0.0};
     SupportedLegLiftPlan::Phase supported_leg_lift_phase_{SupportedLegLiftPlan::Phase::Complete};
+
+    SupportedBodyShiftPlan supported_body_shift_plan_{SupportedBodyShiftPlan::GainStrategy::KeepStand};
+    bool supported_body_shift_active_{false};
+    bool supported_body_shift_complete_{false};
+    double supported_body_shift_start_{0.0};
+    SupportedBodyShiftPlan::Phase supported_body_shift_phase_{SupportedBodyShiftPlan::Phase::Complete};
 
     void GetRobotJointValue(){
         const auto sample = ri_ptr_->GetStandFeedback();
@@ -84,11 +91,11 @@ private:
     }
 
 public:
-    StandUpState(const RobotType& robot_type, const std::string& state_name, 
+    StandUpState(const RobotType& robot_type, const std::string& state_name,
         std::shared_ptr<ControllerData> data_ptr):StateBase(robot_type, state_name, data_ptr){
             goal_joint_pos_ = Vec3f(0., GetHipYPosByHeight(cp_ptr_->pre_height_), GetKneePosByHeight(cp_ptr_->pre_height_)).replicate(4, 1);
             kp_ = VecXf(12);
-            kd_ = VecXf(12);     
+            kd_ = VecXf(12);
             kp_ = cp_ptr_->swing_leg_kp_.replicate(4, 1);
             kd_ = cp_ptr_->swing_leg_kd_.replicate(4, 1);
             joint_cmd_ = MatXf::Zero(12, 5);
@@ -103,6 +110,9 @@ public:
         supported_leg_lift_active_=false;
         supported_leg_lift_complete_=false;
         supported_leg_lift_phase_=SupportedLegLiftPlan::Phase::Complete;
+        supported_body_shift_active_=false;
+        supported_body_shift_complete_=false;
+        supported_body_shift_phase_=SupportedBodyShiftPlan::Phase::Complete;
         GetRobotJointValue();
         RecordJointData();
         ri_ptr_->RecordStandEntryMetadata(init_joint_pos_, init_joint_vel_, time_stamp_record_);
@@ -111,9 +121,30 @@ public:
     };
     virtual void OnExit() {
         supported_leg_lift_active_=false;
+        supported_body_shift_active_=false;
     }
     virtual void Run() {
         GetRobotJointValue();
+
+        if(supported_body_shift_active_){
+            const auto sample=supported_body_shift_plan_.At(
+                run_time_-supported_body_shift_start_);
+
+            joint_cmd_=sample.command;
+
+            if(!SupportedBodyShiftCommandWithinBounds(joint_cmd_))
+                throw std::runtime_error("supported body-shift planner exceeded command bounds");
+
+            supported_body_shift_phase_=sample.phase;
+            supported_body_shift_complete_=sample.complete;
+
+            ri_ptr_->SetStandDiagnosticContext(
+                run_time_-time_stamp_record_);
+
+            ri_ptr_->SetJointCommand(joint_cmd_);
+            return;
+        }
+
         if(supported_leg_lift_active_){
             const auto sample=supported_leg_lift_plan_.At(run_time_-supported_leg_lift_start_);
             joint_cmd_=sample.command;
@@ -129,17 +160,17 @@ public:
         VecXf planning_joint_vel(current_joint_pos_.rows());
         if(run_time_ - time_stamp_record_ <= stand_duration_){
             for(int i=0;i<current_joint_pos_.rows();++i){
-                planning_joint_pos(i) = GetCubicSplinePos(init_joint_pos_(i), init_joint_vel_(i), goal_joint_pos_(i), 0, 
+                planning_joint_pos(i) = GetCubicSplinePos(init_joint_pos_(i), init_joint_vel_(i), goal_joint_pos_(i), 0,
                                                 run_time_ - time_stamp_record_, stand_duration_);
-                planning_joint_vel(i) = GetCubicSplineVel(init_joint_pos_(i), init_joint_vel_(i), goal_joint_pos_(i), 0, 
+                planning_joint_vel(i) = GetCubicSplineVel(init_joint_pos_(i), init_joint_vel_(i), goal_joint_pos_(i), 0,
                                                 run_time_ - time_stamp_record_, stand_duration_);
             }
         }else{
             float new_time = run_time_ - time_stamp_record_ - stand_duration_;
             float dt = 0.001;
-            float plan_height = GetCubicSplinePos(cp_ptr_->pre_height_, 0, cp_ptr_->stand_height_, 0, 
+            float plan_height = GetCubicSplinePos(cp_ptr_->pre_height_, 0, cp_ptr_->stand_height_, 0,
                                                 new_time, stand_duration_);
-            float plan_height_next = GetCubicSplinePos(cp_ptr_->pre_height_, 0, cp_ptr_->stand_height_, 0, 
+            float plan_height_next = GetCubicSplinePos(cp_ptr_->pre_height_, 0, cp_ptr_->stand_height_, 0,
                                                 new_time+dt, stand_duration_);
             float hipy_pos = GetHipYPosByHeight(plan_height);
             float hipy_vel = (GetHipYPosByHeight(plan_height_next) - hipy_pos) / dt;
@@ -156,8 +187,38 @@ public:
         ri_ptr_->SetStandDiagnosticContext(run_time_ - time_stamp_record_);
         ri_ptr_->SetJointCommand(joint_cmd_); // (current torque, not last torque, video content slip of the tongue)
     }
+    bool BeginSupportedBodyShift(){
+        if(supported_body_shift_active_ || supported_body_shift_complete_ ||
+           supported_leg_lift_active_) return false;
+        GetRobotJointValue();
+        supported_body_shift_start_=run_time_;
+        supported_body_shift_phase_=SupportedBodyShiftPlan::Phase::ShiftWeight;
+        supported_body_shift_active_=true;
+        return true;
+    }
+
+    bool SupportedBodyShiftActive() const { return supported_body_shift_active_; }
+    bool SupportedBodyShiftComplete() const { return supported_body_shift_complete_; }
+    SupportedBodyShiftPlan::Phase SupportedBodyShiftPhase() const {
+        return supported_body_shift_phase_;
+    }
+
+    bool SupportedBodyShiftCommandWithinBounds(const MatXf& command) const {
+        if(command.rows()!=12 || command.cols()!=5 || !command.allFinite()) return false;
+        for(int i=0;i<12;++i){
+            const double stand=supported_body_shift_plan_.stand()[i/3][i%3];
+            if(command(i,0)<0 || command(i,0)>SupportedBodyShiftPlan::kStandKp+1e-4 ||
+               command(i,2)<0 || command(i,2)>SupportedBodyShiftPlan::kStandKd+1e-4 ||
+               std::abs(command(i,1)-stand)>SupportedBodyShiftPlan::kMaxJointDeltaRad+1e-7 ||
+               std::abs(command(i,3))>SupportedBodyShiftPlan::kMaxTargetSpeedRadS+1e-7 ||
+               command(i,4)!=0) return false;
+        }
+        return true;
+    }
+
     bool BeginSupportedLegLift(){
-        if(supported_leg_lift_active_ || supported_leg_lift_complete_) return false;
+        if(supported_leg_lift_active_ || supported_leg_lift_complete_ ||
+           supported_body_shift_active_) return false;
         GetRobotJointValue();
         supported_leg_lift_start_=run_time_;
         supported_leg_lift_phase_=SupportedLegLiftPlan::Phase::ShiftBody;

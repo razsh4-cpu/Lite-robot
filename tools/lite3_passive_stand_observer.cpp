@@ -33,7 +33,8 @@ int main() {
     std::array<double,4> force_low,force_high;
     low.fill(INFINITY); high.fill(-INFINITY);
     force_low.fill(INFINITY); force_high.fill(-INFINITY);
-    for(int n=0;n<3500;++n) {
+    std::cout<<"RECORDING 12s - move robot with ORIGINAL remote now\n";
+    for(int n=0;n<2000;++n) {
         auto s=hw->GetStandFeedback();
         const auto wall=std::chrono::duration<double>(HardwareInterface::Clock::now()-start).count();
         if(s.fresh) {

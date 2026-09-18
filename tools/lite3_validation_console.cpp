@@ -41,6 +41,7 @@ void PrintHelp() {
     std::cout << "Commands: status | acquire | authorize_stand SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "stand_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "leg_lift_once SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED | "
+                 "body_shift_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
                  "stand | rl_zero_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "forward_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | stop | release | quit. "
                  "Unrestricted RL/velocity blocked; RL_ZERO is limited to 8s then release."
@@ -126,6 +127,26 @@ int main() {
             std::cout << "LEG_LIFT_ONCE request " << (submitted ? "submitted" : "blocked")
                       << "; requires mechanical support; 5mm body shift, 2mm FR lift, "
                          "0.25s hold, automatic lower/recenter/release; RL/velocity disabled."
+                      << std::endl;
+        } else if (command == "body_shift_once") {
+            std::string acknowledgement, extra;
+            input >> acknowledgement;
+
+            bool submitted=false;
+
+            if(!(input>>extra) &&
+               acknowledgement=="SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED") {
+                const bool acquired=machine.AcquireHardwareControl();
+                if(acquired) {
+                    submitted=
+                        machine.RequestSupportedBodyShiftOnce(
+                            acknowledgement);
+                }
+            }
+            std::cout << "BODY_SHIFT_ONCE request "
+                      << (submitted ? "submitted" : "blocked")
+                      << "; requires mechanical support; 5mm body shift, all feet planted, "
+                         "0.5s hold, automatic recenter/release; RL/velocity disabled."
                       << std::endl;
         } else if (command == "stand") {
             std::cout << "STAND request " << (machine.RequestStand() ? "submitted" : "blocked")

@@ -25,6 +25,9 @@ class RobotInterface{
 protected:
     virtual bool OpenSupervisedStand(const std::shared_ptr<const StandOnlyPermit>&) { return false; }
     virtual bool EnableSupportedLegTestBounds(bool) { return false; }
+    // Separate body-shift boundary: never reuse leg-lift limits for a different
+    // reviewed gain strategy.
+    virtual bool EnableSupportedBodyShiftBounds(bool, float, float) { return false; }
     virtual bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>&) { return false; }
     virtual bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>&) { return false; }
 private:
