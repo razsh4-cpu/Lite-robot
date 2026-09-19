@@ -1,0 +1,4 @@
+candidate_id,shift_x_mm,shift_y_mm,shift_s,hold_s,lift_mm,lift_s,lower_s,kp,kd,runs,successes,success_rate,worst_support_margin_m,worst_clearance_m,worst_roll_deg,worst_pitch_deg,worst_torque_nm,worst_touchdown_speed_m_s,worst_final_joint_error_rad,clear_margin
+0,60,60,2.0,0.0,15,1.5,1.5,180,3.5,5,0,0.0,0.09357664854,0.0,0.4924181093,0.8017025783,30.0,1.623495681,0.3398337843,False
+1,55,55,2.5,0.5,15,1.75,1.75,170,3.5,5,0,0.0,nan,0.0,0.0,0.0,30.0,0.0,0.0,False
+2,65,60,2.5,0.5,17,2.0,2.0,180,4.0,5,0,0.0,nan,0.0,0.0,0.0,30.0,0.0,0.0,False

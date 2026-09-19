@@ -43,7 +43,8 @@ void PrintHelp() {
                  "leg_lift_once SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED | "
                  "body_shift_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
                  "stand | rl_zero_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
-                 "forward_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | stop | release | quit. "
+                 "forward_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
+                 "record_start | record_stop | stop | release | quit. "
                  "Unrestricted RL/velocity blocked; RL_ZERO is limited to 8s then release."
               << std::endl;
 }
@@ -95,16 +96,43 @@ int main() {
         std::string command;
         input >> command;
 
+        if (command == "record_start") {
+            const std::string path =
+                std::string("/tmp/lite3-original-pitch-") +
+                std::to_string(
+                    std::chrono::duration_cast<
+                        std::chrono::nanoseconds>(
+                            std::chrono::steady_clock::now()
+                            .time_since_epoch()).count()) +
+                ".jsonl";
+
+            const bool ok =
+                machine.StartTelemetryRecording(path);
+
+            std::cout
+                << (ok
+                    ? "PITCH_RECORDING_ACTIVE "
+                    : "PITCH_RECORDING_START_FAILED ")
+                << path
+                << std::endl;
+
+        } else if (command == "record_stop") {
+
+            const bool ok =
+                machine.StopTelemetryRecording();
+
+            std::cout
+                << (ok
+                    ? "PITCH_RECORDING_STOPPED"
+                    : "PITCH_RECORDING_STOP_FAILED")
+                << std::endl;
+
         if (command == "status") {
             PrintStatus(machine);
         } else if (command == "acquire") {
-            // This is an explicit operator action. Motion remains zero.
-            const bool requested = machine.AcquireHardwareControl();
-            std::cout << "ACQUIRE request " << (requested ? "submitted" : "failed")
-                      << "; MotionSDK exposes no ownership acknowledgement. "
-                         "Verify robot posture and telemetry before the next action."
+            std::cout << "ACQUIRE BLOCKED: raw ownership handover can drop the vendor posture controller. "
+                         "Use only supervised stand/body-shift paths after offline validation."
                       << std::endl;
-            PrintStatus(machine);
         } else if (command == "authorize_stand") {
             std::string acknowledgement, extra;
             input >> acknowledgement;
@@ -120,14 +148,30 @@ int main() {
             std::cout << "STAND_ONCE request " << (submitted ? "submitted" : "blocked")
                       << "; ownership UNCONFIRMED; RL/velocity remain disabled." << std::endl;
         } else if (command == "leg_lift_once") {
-            std::string acknowledgement, extra;
-            input >> acknowledgement;
-            const bool submitted=!(input>>extra) &&
-                machine.RequestSupportedLegLiftOnce(acknowledgement);
-            std::cout << "LEG_LIFT_ONCE request " << (submitted ? "submitted" : "blocked")
-                      << "; requires mechanical support; 5mm body shift, 2mm FR lift, "
-                         "0.25s hold, automatic lower/recenter/release; RL/velocity disabled."
-                      << std::endl;
+        std::string acknowledgement, extra;
+        input >> acknowledgement;
+
+        bool submitted=false;
+
+        if(!(input >> extra) &&
+           acknowledgement=="SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED") {
+
+            const bool acquired=machine.AcquireHardwareControl();
+
+            if(acquired) {
+                submitted=
+                    machine.RequestSupportedLegLiftOnce(
+                        acknowledgement);
+            }
+        }
+
+        std::cout
+            << "LEG_LIFT_ONCE request "
+            << (submitted ? "submitted" : "blocked")
+            << "; sequence: stand -> shift left/back -> "
+               "2mm FR lift -> lower -> recenter."
+            << std::endl;
+
         } else if (command == "body_shift_once") {
             std::string acknowledgement, extra;
             input >> acknowledgement;
@@ -136,18 +180,24 @@ int main() {
 
             if(!(input>>extra) &&
                acknowledgement=="SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED") {
+
                 const bool acquired=machine.AcquireHardwareControl();
+
                 if(acquired) {
                     submitted=
                         machine.RequestSupportedBodyShiftOnce(
                             acknowledgement);
                 }
             }
+
             std::cout << "BODY_SHIFT_ONCE request "
                       << (submitted ? "submitted" : "blocked")
-                      << "; requires mechanical support; 5mm body shift, all feet planted, "
-                         "0.5s hold, automatic recenter/release; RL/velocity disabled."
+                      << "; 10mm body shift, all feet planted, "
+                         "2s hold, automatic recenter/release."
                       << std::endl;
+
+            PrintStatus(machine);
+
         } else if (command == "stand") {
             std::cout << "STAND request " << (machine.RequestStand() ? "submitted" : "blocked")
                       << "; RL/velocity remain disabled." << std::endl;

@@ -27,7 +27,7 @@ protected:
     virtual bool EnableSupportedLegTestBounds(bool) { return false; }
     // Separate body-shift boundary: never reuse leg-lift limits for a different
     // reviewed gain strategy.
-    virtual bool EnableSupportedBodyShiftBounds(bool, float, float) { return false; }
+    virtual bool EnableSupportedBodyShiftBounds(bool, float, float, double, double) { return false; }
     virtual bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>&) { return false; }
     virtual bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>&) { return false; }
 private:
@@ -87,6 +87,13 @@ public:
     virtual std::string LastStandSendReason() const { return "OTHER"; }
     virtual void FinishStandDiagnostics(const std::string&) {}
     virtual void RecordStandEvent(int, const std::string&) {}
+
+    // Read-only telemetry recording. These methods never acquire
+    // hardware control and never send motion commands.
+    virtual bool StartTelemetryRecording(const std::string&) { return false; }
+    virtual bool StopTelemetryRecording() { return false; }
+    virtual bool TelemetryRecordingActive() const { return false; }
+
     virtual void RecordPolicyProgress(const Vec3f&, bool) {} // diagnostic only
     virtual void RecordPolicySnapshot(const std::array<double,45>&,
                                       const std::array<double,12>&) {} // diagnostic only

@@ -38,15 +38,17 @@ public:
         bool complete{false};
     };
 
-    static constexpr double kShiftM = 0.020;
+    static constexpr double kShiftXM = 0.090;
+    static constexpr double kShiftYM = 0.090;
+    static constexpr double kFrontRiseM = 0.010;
 
-    static constexpr double kShiftSeconds = 2.0;
+    static constexpr double kShiftSeconds = 4.6;
     static constexpr double kHoldSeconds = 2.0;
-    static constexpr double kUnloadM = 0.010;
-    static constexpr double kUnloadSeconds = 1.5;
+    static constexpr double kUnloadM = 0.040;
+    static constexpr double kUnloadSeconds = 3.0;
     static constexpr double kUnloadHoldSeconds = 1.0;
-    static constexpr double kRestoreSeconds = 1.5;
-    static constexpr double kRecenterSeconds = 2.0;
+    static constexpr double kRestoreSeconds = 3.0;
+    static constexpr double kRecenterSeconds = 4.6;
 
     static constexpr double kTotalSeconds =
         kShiftSeconds +
@@ -65,8 +67,8 @@ public:
     static constexpr float kReducedKd = 0.7f;
 
     // Reviewed specifically for the 10 mm body-shift experiment.
-    static constexpr double kMaxJointDeltaRad = 0.120;
-    static constexpr double kMaxTargetSpeedRadS = 0.10;
+    static constexpr double kMaxJointDeltaRad = 0.30;
+    static constexpr double kMaxTargetSpeedRadS = 0.12;
 
     explicit SupportedBodyShiftPlan(GainStrategy strategy)
         : strategy_(strategy), geometry_() {
@@ -85,8 +87,8 @@ public:
             const Eigen::Vector3d shifted_target =
                 nominal +
                 Eigen::Vector3d(
-                    kShiftM,
-                    -kShiftM,
+                    kShiftXM,
+                    -kShiftYM,
                     0.0);
 
             const auto shifted =

@@ -43,13 +43,27 @@ private:
         joint_pos_lower << fl_lower, fr_lower, fl_lower, fr_lower;
         joint_pos_upper << fl_upper, fr_upper, fl_upper, fr_upper;
         for(int i=0;i<12;++i){
-            if(std::isnan(joint_pos_lower(i)) || joint_pos_(i) > joint_pos_upper(i)+0.1 || joint_pos_(i) < joint_pos_lower(i)-0.1) {
-                // std::cout << "joint pos " << i << " : " << joint_pos_(i) << " | " 
-                //                                         << joint_pos_lower(i) << " " << joint_pos_upper(i) << std::endl;
+            if(std::isnan(joint_pos_(i)) || joint_pos_(i) > joint_pos_upper(i)+0.1 || joint_pos_(i) < joint_pos_lower(i)-0.1) {
+                static bool dumped=false;
+                if(!dumped) {
+                    dumped=true;
+                    std::cout << "\n===== JOINT SNAPSHOT =====\n";
+                    for(int j=0;j<12;++j) {
+                        std::cout << "joint " << j
+                                  << " q=" << joint_pos_(j)
+                                  << " allowed=[" << joint_pos_lower(j)-0.1
+                                  << "," << joint_pos_upper(j)+0.1 << "]"
+                                  << std::endl;
+                    }
+                    std::cout << "==========================\n";
+                }
                 return false;
             }
-            if(std::isnan(joint_vel_(i)) || (joint_vel_(i)) > cp_ptr_->joint_vel_limit_(i%3) + 0.1) {
-                // std::cout << "joint vel " << i << " : " << joint_vel_(i) << " | " << cp_ptr_->joint_vel_limit_(i%3) << std::endl;
+            if(std::isnan(joint_vel_(i)) || std::abs(joint_vel_(i)) > cp_ptr_->joint_vel_limit_(i%3) + 0.1) {
+                std::cout << "JOINT_CHECK_FAIL velocity joint=" << i
+                          << " measured=" << joint_vel_(i)
+                          << " limit=" << cp_ptr_->joint_vel_limit_(i%3) + 0.1
+                          << std::endl;
                 return false;
             }
         }

@@ -204,14 +204,36 @@ public:
     }
 
     bool SupportedBodyShiftCommandWithinBounds(const MatXf& command) const {
-        if(command.rows()!=12 || command.cols()!=5 || !command.allFinite()) return false;
+        if(command.rows()!=12 || command.cols()!=5 || !command.allFinite()) {
+            std::cerr << "BODY_SHIFT_BOUND_FAIL shape/finite" << std::endl;
+            return false;
+        }
+
         for(int i=0;i<12;++i){
             const double stand=supported_body_shift_plan_.stand()[i/3][i%3];
+            const double delta=std::abs(command(i,1)-stand);
+            const double speed=std::abs(command(i,3));
+
             if(command(i,0)<0 || command(i,0)>SupportedBodyShiftPlan::kStandKp+1e-4 ||
                command(i,2)<0 || command(i,2)>SupportedBodyShiftPlan::kStandKd+1e-4 ||
-               std::abs(command(i,1)-stand)>SupportedBodyShiftPlan::kMaxJointDeltaRad+1e-7 ||
-               std::abs(command(i,3))>SupportedBodyShiftPlan::kMaxTargetSpeedRadS+1e-7 ||
-               command(i,4)!=0) return false;
+               delta>SupportedBodyShiftPlan::kMaxJointDeltaRad+1e-7 ||
+               speed>SupportedBodyShiftPlan::kMaxTargetSpeedRadS+1e-7 ||
+               command(i,4)!=0) {
+
+                std::cerr
+                    << "BODY_SHIFT_BOUND_FAIL"
+                    << " joint=" << i
+                    << " kp=" << command(i,0)
+                    << " kd=" << command(i,2)
+                    << " delta=" << delta
+                    << " delta_limit=" << SupportedBodyShiftPlan::kMaxJointDeltaRad
+                    << " speed=" << speed
+                    << " speed_limit=" << SupportedBodyShiftPlan::kMaxTargetSpeedRadS
+                    << " torque=" << command(i,4)
+                    << std::endl;
+
+                return false;
+            }
         }
         return true;
     }

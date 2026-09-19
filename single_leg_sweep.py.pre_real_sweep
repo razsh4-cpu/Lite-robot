@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+
+import argparse
+import csv
+import json
+import math
+import random
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+RUNNER = ROOT / "tools" / "run_one_leg_lift_sim.sh"
+CPP = ROOT / "tools" / "one_leg_lift_sim.cpp"
+ARTIFACTS = ROOT / "artifacts" / "single_leg_sweep"
+
+REQUIRED_MC_OPTIONS = {
+    "--shift-x-mm",
+    "--shift-y-mm",
+    "--shift-s",
+    "--hold-s",
+    "--lift-mm",
+    "--lift-s",
+    "--lower-s",
+    "--kp",
+    "--kd",
+    "--payload-kg",
+    "--com-offset-x-mm",
+    "--com-offset-y-mm",
+    "--friction-scale",
+    "--compliance-scale",
+    "--joint-offset-rad",
+    "--sensor-noise-rad",
+    "--delay-ms",
+    "--seed",
+}
+
+def die(msg):
+    print(f"\nSTOP: {msg}", file=sys.stderr)
+    raise SystemExit(2)
+
+def inspect_runner():
+    if not RUNNER.exists():
+        die(f"missing runner: {RUNNER}")
+    if not CPP.exists():
+        die(f"missing source: {CPP}")
+
+    text = CPP.read_text(errors="replace")
+    available = {x for x in REQUIRED_MC_OPTIONS if x in text}
+    missing = sorted(REQUIRED_MC_OPTIONS - available)
+
+    print("Simulation runner preflight")
+    print("---------------------------")
+    print("Runner:", RUNNER)
+    print("Source:", CPP)
+    print("Required sweep/MC CLI:", len(REQUIRED_MC_OPTIONS))
+    print("Available:", len(available))
+
+    if missing:
+        print("\nMissing simulation interfaces:")
+        for option in missing:
+            print(" ", option)
+
+        print("""
+The existing MuJoCo runner is deterministic and does not yet expose all
+parameters required for the requested parameter sweep / Monte Carlo.
+
+No Monte Carlo was executed because silently sampling values that are not
+actually applied to MuJoCo would create false robustness results.
+
+Required next implementation:
+  * parameterize body shift and state durations
+  * parameterize lift/lower trajectory
+  * parameterize stance/swing PD gains
+  * apply payload and CoM perturbations to the MuJoCo model
+  * perturb contact friction/compliance in the MuJoCo model
+  * inject joint offsets and sensor noise into controller observations
+  * implement delayed controller observations/commands
+  * expose deterministic seed
+  * record touchdown velocity
+  * record max tracking error and joint/rate-limit usage
+  * record final error relative to entry pose
+""")
+        return False
+
+    print("[PASS] Runner exposes every required Monte Carlo interface.")
+    return True
+
+def run_case(name, args):
+    out = ARTIFACTS / name
+    out.mkdir(parents=True, exist_ok=True)
+
+    cmd = [str(RUNNER), "--output-dir", str(out)] + args
+    print("+", " ".join(cmd))
+
+    p = subprocess.run(
+        cmd,
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    summary_path = out / "summary.json"
+    if not summary_path.exists():
+        die(f"{name}: runner produced no summary.json\n{p.stdout}")
+
+    with summary_path.open() as f:
+        summary = json.load(f)
+
+    summary["_returncode"] = p.returncode
+    summary["_stdout"] = p.stdout
+    return summary
+
+def smoke():
+    print("\n===== SMOKE TEST =====")
+
+    # First reproduce the already documented deterministic baseline.
+    baseline = run_case("smoke_baseline", [])
+
+    print("completed:", baseline.get("completed"))
+    print("clearance_m:", baseline.get("max_measured_fr_lift_m"))
+    print("support_margin_m:",
+          baseline.get("minimum_support_margin_during_lift_m"))
+    print("roll_deg:",
+          baseline.get("max_abs_roll_during_lift_deg"))
+    print("pitch_deg:",
+          baseline.get("max_abs_pitch_during_lift_deg"))
+    print("peak_torque_nm:", baseline.get("peak_pd_torque_nm"))
+
+    if not baseline.get("completed", False):
+        die("known deterministic baseline failed")
+
+    clearance = baseline.get("max_measured_fr_lift_m")
+    margin = baseline.get("minimum_support_margin_during_lift_m")
+
+    if clearance is None or clearance < 0.005:
+        die("baseline clearance is below 5 mm")
+
+    if margin is None or margin <= 0:
+        die("baseline has no positive three-foot support margin")
+
+    print("[PASS] deterministic smoke baseline")
+
+def batch(smoke_only=False):
+    if not inspect_runner():
+        die(
+            "Monte Carlo interface is incomplete. "
+            "Baseline runner was left unchanged."
+        )
+
+    smoke()
+
+    if smoke_only:
+        return
+
+    # This section is reached ONLY after the C++ runner genuinely exposes
+    # every perturbation above. These are conservative research ranges,
+    # not hardware settings.
+    grid = {
+        "shift_x_mm": [40, 50, 60],
+        "shift_y_mm": [40, 50, 60],
+        "shift_s": [2.0, 2.5, 3.0],
+        "hold_s": [0.5, 1.0],
+        "lift_mm": [12, 15, 18],
+        "lift_s": [1.0, 1.5, 2.0],
+        "lower_s": [1.0, 1.5, 2.0],
+        "kp": [140, 160, 180],
+        "kd": [2.5, 3.0, 3.5],
+    }
+
+    # Deliberately stop here until the parameterized C++ implementation
+    # exists. This prevents this setup script from claiming robustness
+    # results against perturbations it cannot currently apply.
+    die(
+        "Runner unexpectedly passed interface detection, but the batch "
+        "adapter must be validated against its final summary schema before "
+        "large execution."
+    )
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "--preflight",
+        action="store_true",
+        help="inspect simulator capabilities only",
+    )
+    ap.add_argument(
+        "--smoke-only",
+        action="store_true",
+        help="run deterministic smoke test after interface preflight",
+    )
+    args = ap.parse_args()
+
+    ARTIFACTS.mkdir(parents=True, exist_ok=True)
+
+    if args.preflight:
+        ok = inspect_runner()
+        raise SystemExit(0 if ok else 2)
+
+    batch(smoke_only=args.smoke_only)
+
+if __name__ == "__main__":
+    main()

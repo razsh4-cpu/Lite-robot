@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+build_dir="${repo_root}/build-low-level"
+compat_root="${MUJOCO_COMPAT_ROOT:-${repo_root}/../.deps/mujoco-2.2.2/root/usr}"
+
+if [[ ! -f "${compat_root}/include/mujoco/mujoco.h" ]]; then
+  echo "MuJoCo compatibility headers not found under ${compat_root}." >&2
+  echo "Set MUJOCO_COMPAT_ROOT to the extracted MuJoCo 2.2.2 usr directory." >&2
+  exit 2
+fi
+
+lib_dir="${compat_root}/lib/x86_64-linux-gnu"
+mkdir -p "${build_dir}"
+g++ -std=c++17 -O2 \
+  "${repo_root}/tools/one_leg_lift_sim.cpp" \
+  -I"${repo_root}" \
+  -I"${repo_root}/third_party/eigen" \
+  -I"${compat_root}/include" \
+  -L"${lib_dir}" \
+  -Wl,-rpath,"${lib_dir}" \
+  -lmujoco \
+  -o "${build_dir}/one_leg_lift_sim"
+
+export LD_LIBRARY_PATH="${lib_dir}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+exec "${build_dir}/one_leg_lift_sim" "$@"

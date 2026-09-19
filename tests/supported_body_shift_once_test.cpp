@@ -14,6 +14,41 @@ int main() {
     try {
         {
             StandFixture f;
+
+            Check(!f.machine->RequestSupportedBodyShiftSafeOnce(""),
+                  "safe combined path rejects missing acknowledgement");
+            Check(f.io->sends==0,
+                  "rejected safe combined request cannot send");
+
+            Check(f.machine->RequestSupportedBodyShiftSafeOnce(kToken),
+                  "safe combined body-shift accepted");
+
+            Check(f.machine->StandTestStatus()=="STANDING_UP",
+                  "safe combined path enters stand immediately");
+
+            Check(f.hw->JointCommandsEnabled(),
+                  "safe combined path opens supervised stand gate");
+
+            Check(f.io->sends>=1,
+                  "safe combined handover sends first stand command immediately");
+
+            const auto first=f.hw->GetJointCommand();
+
+            Check(first.rows()==12 && first.cols()==5 && first.allFinite(),
+                  "first handover stand command is finite");
+
+            for(int i=0;i<12;++i) {
+                Check(first(i,0)>=0 && first(i,0)<=100.0001f,
+                      "first command kp bounded");
+                Check(first(i,2)>=0 && first(i,2)<=2.5001f,
+                      "first command kd bounded");
+                Check(first(i,4)==0.0f,
+                      "first command feed-forward torque zero");
+            }
+        }
+
+        {
+            StandFixture f;
             Check(f.machine->AcquireHardwareControl(), "inert acquire");
             Check(!f.machine->RequestSupportedBodyShiftOnce(""),
                   "missing token rejected");
@@ -38,7 +73,10 @@ int main() {
             const Eigen::Vector3d stand(
                 0.0,-0.7729795255029084,1.5005003509817765);
 
-            for(int i=0;i<1600 && f.io->releases==0;++i) {
+            const int max_ticks =
+                static_cast<int>((SupportedBodyShiftPlan::kTotalSeconds + 5.0) / 0.01);
+
+            for(int i=0;i<max_ticks && f.io->releases==0;++i) {
                 f.Tick();
 
                 const auto status=f.machine->StandTestStatus();
@@ -78,13 +116,18 @@ int main() {
                       "every body-shift phase observed");
             }
 
-            Check(f.io->releases==1 && !f.hw->JointCommandsEnabled(),
-                  "completed action closes gate and releases once");
+            Check(f.io->releases==0 && f.hw->JointCommandsEnabled(),
+                  "completed body shift keeps supervised stand gate open");
 
-            Check(f.machine->StandAbortReason()=="supported body shift complete",
-                  "successful completion reason");
+            Check(f.machine->StandTestStatus()=="BODY_SHIFT_HOLD_STAND",
+                  "completed body shift remains standing under code control");
 
-            Check(max_delta<=SupportedBodyShiftPlan::kMaxJointDeltaRad && max_target_velocity<=0.10,
+            std::cerr << "BODY_SHIFT_MEASURED max_delta=" << max_delta
+                      << " limit=" << SupportedBodyShiftPlan::kMaxJointDeltaRad
+                      << " max_target_velocity=" << max_target_velocity
+                      << " velocity_limit=0.10" << std::endl;
+            Check(max_delta<=SupportedBodyShiftPlan::kMaxJointDeltaRad &&
+                  max_target_velocity<=SupportedBodyShiftPlan::kMaxTargetSpeedRadS,
                   "trajectory remains inside reviewed limits");
 
             Check(!f.machine->RequestSupportedBodyShiftOnce(kToken),

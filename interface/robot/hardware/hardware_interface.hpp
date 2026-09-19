@@ -30,10 +30,16 @@ private:
     std::shared_ptr<FeedbackStore> feedback_ = std::make_shared<FeedbackStore>();
     std::shared_ptr<MotionSdkTransport> transport_;
     mutable std::mutex send_mutex_;
+
+    bool telemetry_recording_{false};
+    std::string telemetry_path_;
+    std::ofstream telemetry_out_;
     bool started_{false}, request_sent_{false}, joint_enabled_{false};
     bool supported_leg_test_bounds_{false};
     bool supported_body_shift_bounds_{false};
     float body_shift_max_kp_{0.0f}, body_shift_max_kd_{0.0f};
+    double body_shift_max_joint_delta_{0.0};
+    double body_shift_max_target_speed_{0.0};
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
     std::shared_ptr<const RLZeroPermit> rl_zero_permit_;
     std::shared_ptr<const RLForwardPermit> rl_forward_permit_;
@@ -183,6 +189,66 @@ public:
         policy_raw_action_=raw_action;
         policy_snapshot_valid_=true;
     }
+
+    bool StartTelemetryRecording(const std::string& requested_path) override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+
+        if (telemetry_recording_) return false;
+
+        telemetry_path_ = requested_path;
+        telemetry_out_.open(
+            telemetry_path_,
+            std::ios::out | std::ios::trunc);
+
+        if (!telemetry_out_) {
+            telemetry_path_.clear();
+            return false;
+        }
+
+        telemetry_out_ << std::setprecision(12);
+
+        telemetry_out_
+            << "{\"type\":\"metadata\","
+            << "\"format\":\"lite3_pitch_telemetry_v1\","
+            << "\"read_only\":true}\n";
+
+        telemetry_recording_ = true;
+
+        std::cerr
+            << "PITCH_RECORDING_STARTED "
+            << telemetry_path_
+            << std::endl;
+
+        return true;
+    }
+
+    bool StopTelemetryRecording() override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+
+        if (!telemetry_recording_) return false;
+
+        telemetry_recording_ = false;
+
+        if (telemetry_out_) {
+            telemetry_out_.flush();
+            telemetry_out_.close();
+        }
+
+        std::cerr
+            << "PITCH_RECORDING_STOPPED "
+            << telemetry_path_
+            << std::endl;
+
+        telemetry_path_.clear();
+
+        return true;
+    }
+
+    bool TelemetryRecordingActive() const override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+        return telemetry_recording_;
+    }
+
     void RecordStandEvent(int event, const std::string& cause) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         if(!diagnostics_active_) return;
@@ -331,6 +397,52 @@ public:
     }
     void Stop() override { ReleaseControl(); }
     double GetInterfaceTimeStamp() override { return Snapshot().tick * 0.001; }
+
+    void RecordTelemetrySample() {
+        if (!telemetry_recording_ || !telemetry_out_) return;
+
+        const double wall_s =
+            std::chrono::duration<double>(
+                Clock::now().time_since_epoch()).count();
+
+        const auto q   = GetJointPosition();
+        const auto dq  = GetJointVelocity();
+        const auto tau = GetJointTorque();
+        const auto rpy = GetImuRpy();
+        const auto acc = GetImuAcc();
+        const auto omg = GetImuOmega();
+
+        auto write_vec =
+            [&](const char* name, const auto& v, int n) {
+                telemetry_out_ << ",\"" << name << "\":[";
+                for (int i = 0; i < n; ++i) {
+                    if (i) telemetry_out_ << ',';
+
+                    const double x =
+                        static_cast<double>(v[i]);
+
+                    if (std::isfinite(x))
+                        telemetry_out_ << x;
+                    else
+                        telemetry_out_ << "null";
+                }
+                telemetry_out_ << ']';
+            };
+
+        telemetry_out_
+            << "{\"type\":\"sample\",\"wall_s\":"
+            << wall_s;
+
+        write_vec("position", q, 12);
+        write_vec("velocity", dq, 12);
+        write_vec("torque", tau, 12);
+        write_vec("rpy", rpy, 3);
+        write_vec("imu_acc", acc, 3);
+        write_vec("imu_omega", omg, 3);
+
+        telemetry_out_ << "}\n";
+    }
+
     VecXf GetJointPosition() override {
         auto d=Snapshot(); VecXf v(12);
         for(int i=0;i<12;++i) v(i)=d.joint_data.joint_data[i].position;
@@ -367,6 +479,7 @@ public:
     }
     void SetJointCommand(Eigen::Matrix<float, Eigen::Dynamic, 5> input) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
+
         using R=stand_diagnostics::Reason;
         stand_diagnostics::Record r;
         r.wall=std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
@@ -441,7 +554,7 @@ public:
                 reject(R::EXCESSIVE_TILT); return;
             }
             for(int i=0;i<12;++i) if(input(i,0)>body_shift_max_kp_ || input(i,2)>body_shift_max_kd_ ||
-                std::abs(input(i,1)-stand[i%3])>0.1200001 || std::abs(input(i,3))>0.1000001 ||
+                std::abs(input(i,1)-stand[i%3])>body_shift_max_joint_delta_+1e-7 || std::abs(input(i,3))>body_shift_max_target_speed_+1e-7 ||
                 std::abs(input(i,1)-s.q[i])>0.15) { r.joint=i; reject(R::INVALID_COMMAND); return; }
         }
         RobotCmd cmd{};
@@ -465,12 +578,16 @@ protected:
         supported_leg_test_bounds_=enabled;
         return true;
     }
-    bool EnableSupportedBodyShiftBounds(bool enabled, float max_kp, float max_kd) override {
+    bool EnableSupportedBodyShiftBounds(bool enabled, float max_kp, float max_kd, double max_joint_delta, double max_target_speed) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         if(enabled && (!joint_enabled_ || !request_sent_ || !stand_permit_ || !stand_permit_->Valid() ||
-                       !IsFeedbackFresh() || max_kp<0 || max_kp>100.0f || max_kd<0 || max_kd>2.5f)) return false;
+                       !IsFeedbackFresh() || max_kp<0 || max_kp>100.0f || max_kd<0 || max_kd>2.5f || max_joint_delta<=0.0 || max_joint_delta>0.3000001 ||
+                       max_target_speed<=0.0 || max_target_speed>0.1200001)) return false;
         supported_body_shift_bounds_=enabled;
-        body_shift_max_kp_=enabled?max_kp:0.0f; body_shift_max_kd_=enabled?max_kd:0.0f;
+        body_shift_max_kp_=enabled?max_kp:0.0f;
+        body_shift_max_kd_=enabled?max_kd:0.0f;
+        body_shift_max_joint_delta_=enabled?max_joint_delta:0.0;
+        body_shift_max_target_speed_=enabled?max_target_speed:0.0;
         return true;
     }
     bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>& permit) override {

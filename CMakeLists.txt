@@ -364,3 +364,24 @@ if (SEND_REMOTE)
     COMMENT "run sftp_to_remote.sh"
   )
 endif()
+
+
+# ---- Lite3 offline FR lift diagnostic simulator ----
+if(USE_MJCPP)
+    add_executable(one_leg_lift_sim
+        tools/one_leg_lift_sim.cpp
+    )
+
+    target_include_directories(one_leg_lift_sim PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${MUJOCO_ROOT}/include
+    )
+
+    target_link_directories(one_leg_lift_sim PRIVATE
+        ${MUJOCO_ROOT}/lib
+    )
+
+    target_link_libraries(one_leg_lift_sim PRIVATE
+        mujoco
+    )
+endif()

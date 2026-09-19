@@ -30,13 +30,13 @@ public:
     };
 
     static constexpr double kBodyShiftM = 0.005;
-    static constexpr double kFootLiftM = 0.002;
+    static constexpr double kFootLiftM = 0.040;
     static constexpr double kShiftSeconds = 2.0;
-    static constexpr double kShiftHoldSeconds = 0.5;
+    static constexpr double kShiftHoldSeconds = 1.0;
     static constexpr double kLiftSeconds = 1.0;
-    static constexpr double kLiftHoldSeconds = 0.25;
+    static constexpr double kLiftHoldSeconds = 0.5;
     static constexpr double kLowerSeconds = 1.0;
-    static constexpr double kRecenterSeconds = 2.0;
+    static constexpr double kRecenterSeconds = 3.0;
     static constexpr double kTotalSeconds = kShiftSeconds + kShiftHoldSeconds +
         kLiftSeconds + kLiftHoldSeconds + kLowerSeconds + kRecenterSeconds;
     static constexpr float kKp = 60.0f;
@@ -57,7 +57,7 @@ public:
             stand_[leg_index] = stand;
             const auto nominal = lite3::FootPositionBody(leg, stand);
             const Eigen::Vector3d shifted_target =
-                nominal + Eigen::Vector3d(kBodyShiftM, -kBodyShiftM, 0.0);
+                nominal + Eigen::Vector3d(0.005, -0.005, 0.0);
             const auto shifted = lite3::SolveFootIk(leg, shifted_target, stand);
             if (!shifted.converged || shifted.residual_m > 5e-6)
                 throw std::runtime_error("supported leg test shift IK failed");
