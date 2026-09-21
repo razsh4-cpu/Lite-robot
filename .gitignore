@@ -9,6 +9,10 @@ third_party/libtorch
 third_party/x30_motion_sdk
 **/tmp/*
 artifacts/one_leg_lift/
+artifacts/joint_angle_sweep/
+artifacts/joint_leg_lift_sweep/
+artifacts/leg_lift_sweep/
+artifacts/one_leg_lift_newplan/
 build-low-level/
 __pycache__/
 *.pyc
