@@ -13,6 +13,7 @@ artifacts/joint_angle_sweep/
 artifacts/joint_leg_lift_sweep/
 artifacts/leg_lift_sweep/
 artifacts/one_leg_lift_newplan/
+artifacts/robust_fr_campaign/
 build-low-level/
 __pycache__/
 *.pyc
