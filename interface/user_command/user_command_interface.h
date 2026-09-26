@@ -46,6 +46,10 @@ public:
      */
     virtual void SetMotionStateFeedback(const MotionStateFeedback& msfb) = 0;
 
+    /** True while the input source is usable. Passive/software sources keep
+     * the historical always-connected default. */
+    virtual bool IsConnected() const { return true; }
+
     MotionStateFeedback msfb_;
 };
 };

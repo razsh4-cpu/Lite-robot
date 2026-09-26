@@ -91,6 +91,8 @@ private:
     bool supported_body_shift_finishing_{false};
     bool supported_body_shift_have_command_{false};
     double supported_body_shift_started_{0.0};
+    double supported_body_shift_verify_started_{0.0};
+    int supported_body_shift_level_{-1};
 
     std::string stand_status_{"LOCKED"}, abort_reason_;
     std::string stand_preflight_reason_{"not checked"};
@@ -107,6 +109,7 @@ private:
             (shutdown_signal_ && shutdown_signal_->load());
     }
     void StandStatus(const char* status) {
+        if(ri_ptr_) ri_ptr_->SetStandDiagnosticPhase(status);
         if(stand_status_!=status) { stand_status_=status; std::cout<<"STAND_TEST "<<status<<std::endl; }
     }
     supervised_stand::Sample StandSample(bool new_feedback) {
@@ -169,6 +172,10 @@ private:
         stand_armed_=stand_pending_=stand_active_=false;
         supported_leg_test_requested_=supported_leg_test_active_=
             supported_leg_test_finishing_=supported_leg_test_have_command_=false;
+        supported_body_shift_requested_=supported_body_shift_active_=
+            supported_body_shift_finishing_=supported_body_shift_have_command_=false;
+        supported_body_shift_level_=-1;
+        supported_body_shift_verify_started_=0.0;
         target_reached_started_=-1.0;
         rl_zero_active_=rl_forward_active_=false; rl_zero_permit_.reset();rl_forward_permit_.reset();
         stand_permit_.reset();
@@ -283,24 +290,8 @@ private:
 
         using P = SupportedBodyShiftPlan::Phase;
 
-        switch(typed_standup_controller_->SupportedBodyShiftPhase()) {
-            case P::ShiftWeight:
-                return "BODY_SHIFT_SHIFT_WEIGHT";
-            case P::HoldShift:
-                return "BODY_SHIFT_HOLD";
-            case P::UnloadFrontRight:
-                return "BODY_SHIFT_LIFT_FR";
-            case P::HoldUnload:
-                return "BODY_SHIFT_HOLD_FR";
-            case P::RestoreFrontRight:
-                return "BODY_SHIFT_LOWER_FR";
-            case P::Recenter:
-                return "BODY_SHIFT_RECENTER";
-            case P::Complete:
-                return "BODY_SHIFT_VERIFY_STAND";
-        }
-
-        return "BODY_SHIFT_INVALID";
+        return SupportedBodyShiftPlan::PhaseName(
+            typed_standup_controller_->SupportedBodyShiftPhase());
     }
 
     bool SupportedBodyShiftGuard() {
@@ -309,7 +300,7 @@ private:
            !ri_ptr_->IsControlRequestSent() || !ri_ptr_->JointCommandsEnabled() ||
            !stand_permit_ || !stand_permit_->RenewSupportedHold() ||
            stand_now_()-supported_body_shift_started_>
-               SupportedBodyShiftPlan::kTotalSeconds+0.75)
+               typed_standup_controller_->SupportedBodyShiftTotalSeconds()+0.75)
             return false;
 
         const auto s=ri_ptr_->GetStandFeedback();
@@ -503,6 +494,10 @@ public:
         std::lock_guard<std::mutex> lock(lifecycle_mutex_);
         return ri_ptr_ ? ri_ptr_->FeedbackAgeSeconds() : std::numeric_limits<double>::infinity();
     }
+    VecXf JointPositionSnapshot() const {
+        std::lock_guard<std::mutex> lock(lifecycle_mutex_);
+        return ri_ptr_ ? ri_ptr_->GetJointPosition() : VecXf{};
+    }
     bool JointCommandsEnabled() const {
         std::lock_guard<std::mutex> lock(lifecycle_mutex_);
         return ri_ptr_ && ri_ptr_->JointCommandsEnabled();
@@ -552,10 +547,12 @@ public:
         supported_leg_test_requested_=false;
         return false;
     }
-    bool RequestSupportedBodyShiftSafeOnce(const std::string& acknowledgement) {
+    bool RequestSupportedBodyShiftSafeOnce(
+        const std::string& acknowledgement,int level_index=-1) {
         std::lock_guard<std::mutex> lock(lifecycle_mutex_);
 
         if(acknowledgement!="SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED" ||
+           level_index < -1 || level_index > 22 ||
            !typed_standup_controller_ || !ri_ptr_ || !software_velocity_interface_ ||
            shutdown_complete_ || shutdown_intent_.load() ||
            ri_ptr_->IsControlRequestSent() || ri_ptr_->JointCommandsEnabled() ||
@@ -593,6 +590,7 @@ public:
                 return false;
             }
 
+            supported_body_shift_level_=level_index;
             supported_body_shift_requested_=true;
 
             if(!RequestStandLocked()) {
@@ -672,14 +670,18 @@ public:
         }
     }
 
-    bool RequestSupportedBodyShiftOnce(const std::string& acknowledgement) {
+    bool RequestSupportedBodyShiftOnce(
+        const std::string& acknowledgement,int level_index=-1) {
         std::lock_guard<std::mutex> lock(lifecycle_mutex_);
         if(acknowledgement!="SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED" ||
-           !typed_standup_controller_) return false;
+           !typed_standup_controller_ || level_index < -1 || level_index > 24)
+            return false;
         if(!AuthorizeStandTestLocked(true,true,true,true)) return false;
+        supported_body_shift_level_=level_index;
         supported_body_shift_requested_=true;
         if(RequestStandLocked()) return true;
         supported_body_shift_requested_=false;
+        supported_body_shift_level_=-1;
         return false;
     }
     std::string StandTestStatus() const {
@@ -891,15 +893,18 @@ public:
                     if(result==supervised_stand::Result::TargetReached && new_feedback) {
                         const auto now=stand_now_();
                         if(supported_body_shift_finishing_) {
-                            // Body shift completed and stand was verified.
-                            // Keep ownership and keep refreshing the supervised
-                            // stand command. Do NOT return here: current_controller_->Run()
-                            // below must execute on every fresh feedback tick.
-                            if(!stand_permit_ || !stand_permit_->RenewSupportedHold()) {
-                                AbortStandLocked("body shift final stand permit expired or cancelled");
+                            if(now-supported_body_shift_verify_started_ <
+                               SupportedBodyShiftPlan::kVerifyStandSeconds) {
+                                if(!stand_permit_ ||
+                                   !stand_permit_->RenewSupportedHold()) {
+                                    AbortStandLocked("body shift verify permit expired or cancelled");
+                                    return true;
+                                }
+                                StandStatus("BODY_SHIFT_VERIFY_STAND");
+                            } else {
+                                AbortStandLocked("body shift calibration complete");
                                 return true;
                             }
-                            StandStatus("BODY_SHIFT_HOLD_STAND");
                         }
                         if(supported_leg_test_finishing_) {
                             AbortStandLocked("supported leg lift complete"); return true;
@@ -911,9 +916,14 @@ public:
                                    true,
                                    SupportedBodyShiftPlan::kStandKp,
                                    SupportedBodyShiftPlan::kStandKd,
-                                   SupportedBodyShiftPlan::kMaxJointDeltaRad,
+                                   (supported_body_shift_level_==23 ||
+                                    supported_body_shift_level_==24)
+                                       ? SupportedBodyShiftPlan::
+                                           kPhysicalLargeLeanMaxJointDeltaRad
+                                       : SupportedBodyShiftPlan::kMaxJointDeltaRad,
                                    SupportedBodyShiftPlan::kMaxTargetSpeedRadS) ||
-                               !typed_standup_controller_->BeginSupportedBodyShift()) {
+                               !typed_standup_controller_->BeginSupportedBodyShift(
+                                   supported_body_shift_level_)) {
                                 AbortStandLocked("supported body shift entry failed"); return true;
                             }
 
@@ -925,23 +935,41 @@ public:
 
                             ri_ptr_->RecordStandEvent(
                                 1,
-                                "supported body shift: 15mm, all feet remain planted");
-                            StandStatus("BODY_SHIFT_SHIFT_WEIGHT");
+                                supported_body_shift_level_<0
+                                    ? "supported body shift calibration: 30/60/90 percent of IK-safe scale, all feet remain planted"
+                                    : "supported body shift calibration: one selected IK-safe level, all feet remain planted");
+                            StandStatus(SupportedBodyShiftPhaseStatus());
 
                         } else if(supported_leg_test_requested_) {
-                            if(!stand_permit_ || !stand_permit_->RenewSupportedHold() ||
-                               !ri_ptr_->EnableSupportedLegTestBounds(true) ||
-                               !typed_standup_controller_->BeginSupportedLegLift()) {
-                                AbortStandLocked("supported leg test entry failed"); return true;
+                            // Give the robot one continuous second at the reached
+                            // stand target before enabling the supported-leg test.
+                            if(target_reached_started_ < 0) {
+                                target_reached_started_ = now;
+                                StandStatus("LEG_TEST_SETTLING");
+                            } else if(now - target_reached_started_ < 1.0) {
+                                if(!stand_permit_ || !stand_permit_->RenewSupportedHold()) {
+                                    AbortStandLocked("leg test settling permit expired or cancelled");
+                                    return true;
+                                }
+                                StandStatus("LEG_TEST_SETTLING");
+                            } else {
+                                if(!stand_permit_ || !stand_permit_->RenewSupportedHold() ||
+                                   !ri_ptr_->EnableSupportedLegTestBounds(true) ||
+                                   !typed_standup_controller_->BeginSupportedLegLift()) {
+                                    AbortStandLocked("supported leg test entry failed");
+                                    return true;
+                                }
+
+                                supported_leg_test_requested_=false;
+                                supported_leg_test_active_=true;
+                                supported_leg_test_have_command_=false;
+                                supported_leg_test_started_=now;
+                                target_reached_started_=-1.0;
+
+                                ri_ptr_->RecordStandEvent(1,
+                                    "supported leg test: calculated body shift, 5mm FR lift");
+                                StandStatus("LEG_TEST_SHIFT_BODY");
                             }
-                            supported_leg_test_requested_=false;
-                            supported_leg_test_active_=true;
-                            supported_leg_test_have_command_=false;
-                            supported_leg_test_started_=now;
-                            target_reached_started_=-1.0;
-                            ri_ptr_->RecordStandEvent(1,
-                                "supported leg test: 5mm body shift, 2mm FR lift, 0.25s hold");
-                            StandStatus("LEG_TEST_SHIFT_BODY");
                         } else if(!supported_body_shift_finishing_) {
                             if(target_reached_started_<0) target_reached_started_=now;
                             if(now-target_reached_started_>=2.0) {
@@ -982,7 +1010,8 @@ public:
                         supported_body_shift_active_=false;
                         supported_body_shift_finishing_=true;
                         supported_body_shift_have_command_=false;
-                        stand_monitor_.Start(stand_now_());
+                        supported_body_shift_verify_started_=stand_now_();
+                        stand_monitor_.Start(supported_body_shift_verify_started_);
 
                         ri_ptr_->RecordStandEvent(
                             1,

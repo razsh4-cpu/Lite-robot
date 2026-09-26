@@ -15,6 +15,7 @@
 
 
 #include "policy_runner_base.hpp"
+#include "policy_model_path.hpp"
 #include <onnxruntime_cxx_api.h>
 
 #include <Eigen/Dense>
@@ -90,7 +91,7 @@ public:
         
         
         // .onnx model需要单独生成
-        model_path_ = GetAbsPath() + "/../policy/ppo/policy.onnx";        
+        model_path_ = ResolveLite3PolicyModelPath();
         
         // 调试信息
         std::cout << "[ONNX INIT] Loading model: " << model_path_ << std::endl;

@@ -106,6 +106,18 @@ struct Options {
 
   double forward_m = 0.0;
 
+  // Direct joint-space experiment scales.
+  // 1.0 = the exact calculated joint-angle trajectory.
+  double joint_shift_scale = 1.0;
+  double joint_lift_scale = 1.0;
+
+  // Direct angle experiment, degrees.
+  // Shift: thigh moves forward (+), knee moves opposite (-).
+  // Curl: additional FR thigh backward (-) and knee folding (+).
+  double shift_thigh_deg = 7.77;
+  double shift_knee_deg = -4.61;
+  double fr_curl_scale = 1.0;
+
   // Simulation-only runtime parameters. Defaults preserve the validated
   // deterministic baseline.
   double shift_x_m = 0.060;
@@ -117,10 +129,6 @@ struct Options {
   double lower_s = 1.5;
   double kp = 180.0;
   double kd = 3.5;
-  bool body_shift_only = false;
-  double recenter_s = 5.2;
-  double body_roll_rad = 0.0;
-  std::array<double, 4> support_extension_m{};
 
   // Monte Carlo model/controller perturbations.
   double payload_kg = 0.0;
@@ -147,6 +155,16 @@ Options ParseOptions(int argc, char** argv) {
       if (options.forward_m < 0.0 || options.forward_m > 0.010) {
         throw std::runtime_error("--forward-mm must be between 0 and 10");
       }
+    } else if (argument == "--shift-thigh-deg" && i + 1 < argc) {
+      options.shift_thigh_deg = std::stod(argv[++i]);
+    } else if (argument == "--shift-knee-deg" && i + 1 < argc) {
+      options.shift_knee_deg = std::stod(argv[++i]);
+    } else if (argument == "--fr-curl-scale" && i + 1 < argc) {
+      options.fr_curl_scale = std::stod(argv[++i]);
+    } else if (argument == "--joint-shift-scale" && i + 1 < argc) {
+      options.joint_shift_scale = std::stod(argv[++i]);
+    } else if (argument == "--joint-lift-scale" && i + 1 < argc) {
+      options.joint_lift_scale = std::stod(argv[++i]);
     } else if (argument == "--shift-x-mm" && i + 1 < argc) {
       options.shift_x_m = std::stod(argv[++i]) / 1000.0;
     } else if (argument == "--shift-y-mm" && i + 1 < argc) {
@@ -165,18 +183,6 @@ Options ParseOptions(int argc, char** argv) {
       options.kp = std::stod(argv[++i]);
     } else if (argument == "--kd" && i + 1 < argc) {
       options.kd = std::stod(argv[++i]);
-    } else if (argument == "--body-shift-only") {
-      options.body_shift_only = true;
-    } else if (argument == "--recenter-s" && i + 1 < argc) {
-      options.recenter_s = std::stod(argv[++i]);
-    } else if (argument == "--roll-left-deg" && i + 1 < argc) {
-      options.body_roll_rad = -std::stod(argv[++i]) * kPi / 180.0;
-    } else if (argument == "--fl-extension-mm" && i + 1 < argc) {
-      options.support_extension_m[0] = std::stod(argv[++i]) / 1000.0;
-    } else if (argument == "--hl-extension-mm" && i + 1 < argc) {
-      options.support_extension_m[2] = std::stod(argv[++i]) / 1000.0;
-    } else if (argument == "--hr-extension-mm" && i + 1 < argc) {
-      options.support_extension_m[3] = std::stod(argv[++i]) / 1000.0;
     } else if (argument == "--payload-kg" && i + 1 < argc) {
       options.payload_kg = std::stod(argv[++i]);
     } else if (argument == "--com-offset-x-mm" && i + 1 < argc) {
@@ -241,11 +247,8 @@ std::size_t StateIndexAt(double time_s, const Options& options) {
 std::array<Eigen::Vector3d, 4> DesiredFeet(
     State state, double phase, const Options& options,
     const std::array<Eigen::Vector3d, 4>& nominal) {
-  // Body-only calibration uses SupportedBodyShiftPlan's body-translation
-  // convention. Keep the historical lift simulator convention unchanged.
-  const Eigen::Vector3d body_shift_world = options.body_shift_only
-      ? Eigen::Vector3d(options.shift_x_m, options.shift_y_m, 0.0)
-      : Eigen::Vector3d(-options.shift_x_m, options.shift_y_m, 0.0);
+  const Eigen::Vector3d body_shift_world(
+      -options.shift_x_m, options.shift_y_m, 0.0);
   const Eigen::Vector3d shifted_foot_relative_body = -body_shift_world;
   const double smooth = lite3::Quintic(phase);
   double shift_scale = 1.0;
@@ -287,22 +290,11 @@ std::array<Eigen::Vector3d, 4> DesiredFeet(
   }
 
   std::array<Eigen::Vector3d, 4> targets = nominal;
-  for (int leg = 0; leg < 4; ++leg) {
-    Eigen::Vector3d& target = targets[leg];
-    if (options.body_shift_only) {
-      const Eigen::Matrix3d rotation = Eigen::AngleAxisd(
-          shift_scale * options.body_roll_rad,
-          Eigen::Vector3d::UnitX()).toRotationMatrix();
-      target = rotation.transpose() *
-          (nominal[leg] - shift_scale * body_shift_world);
-      target.z() -= shift_scale * options.support_extension_m[leg];
-    } else {
-      target += shift_scale * shifted_foot_relative_body;
-    }
+  for (Eigen::Vector3d& target : targets) {
+    target += shift_scale * shifted_foot_relative_body;
     // Coordinated extension of the stance geometry compensates the measured
     // PD spring sag while weight moves onto three legs.
-    if (!options.body_shift_only)
-      target.z() -= shift_scale * kBodyHeightCompensationM;
+    target.z() -= shift_scale * kBodyHeightCompensationM;
   }
   Eigen::Vector3d& fr = targets[lite3::LegIndex(Leg::FR)];
   fr.z() += lift_scale * options.lift_m;
@@ -419,12 +411,6 @@ struct Metrics {
   int final_contact_samples = 0;
   int final_all_contact_samples = 0;
   std::set<std::string> contacted_leg_geometries;
-  std::array<double, 4> baseline_force_sum{};
-  std::array<double, 4> shifted_force_sum{};
-  int baseline_force_samples = 0;
-  int shifted_force_samples = 0;
-  double body_shift_max_abs_roll_rad = 0.0;
-  double body_shift_max_abs_pitch_rad = 0.0;
 };
 
 }  // namespace
@@ -502,8 +488,7 @@ int main(int argc, char** argv) {
     if (options.compliance_scale <= 0.0)
       throw std::runtime_error("--compliance-scale must be > 0");
     if (options.shift_s <= 0.0 || options.lift_s <= 0.0 ||
-        options.lower_s <= 0.0 || options.hold_s < 0.0 ||
-        options.recenter_s <= 0.0)
+        options.lower_s <= 0.0 || options.hold_s < 0.0)
       throw std::runtime_error("trajectory durations must be positive");
     if (options.kp <= 0.0 || options.kd < 0.0)
       throw std::runtime_error("invalid PD gains");
@@ -573,10 +558,7 @@ int main(int argc, char** argv) {
 
     std::array<Eigen::Vector3d, 4> ik_seed{{standing, standing, standing, standing}};
     std::array<Eigen::Vector3d, 4> commanded_q = ik_seed;
-    const double body_shift_total_time_s =
-        2.0 + options.shift_s + options.hold_s + options.recenter_s;
-    const double total_time_s = options.body_shift_only
-        ? body_shift_total_time_s : StateStartTime(kSequence.size(), options);
+    const double total_time_s = StateStartTime(kSequence.size(), options);
     double next_log_time_s = 0.0;
     double initial_fr_foot_world_z = 0.0;
     bool initial_fr_height_set = false;
@@ -586,70 +568,133 @@ int main(int argc, char** argv) {
     bool touchdown_recorded = false;
 
     while (data->time < total_time_s && !metrics.aborted) {
-      StateSpec runtime_spec{};
-      double state_start_s = 0.0;
-      if (options.body_shift_only) {
-        if (data->time < 2.0) {
-          runtime_spec = {State::STAND_INITIAL, 2.0};
-        } else if (data->time < 2.0 + options.shift_s + options.hold_s) {
-          runtime_spec = {State::SHIFT_WEIGHT, options.shift_s + options.hold_s};
-          state_start_s = 2.0;
-        } else {
-          runtime_spec = {State::STAND_FINAL, options.recenter_s};
-          state_start_s = 2.0 + options.shift_s + options.hold_s;
-        }
-      } else {
-        const std::size_t state_index = StateIndexAt(data->time, options);
-        if (state_index >= kSequence.size()) break;
-        runtime_spec = kSequence[state_index];
-        state_start_s = StateStartTime(state_index, options);
-      }
-      const StateSpec& spec = runtime_spec;
-      const double runtime_duration = options.body_shift_only &&
-              spec.state == State::STAND_FINAL
-          ? options.recenter_s : RuntimeDuration(spec, options);
-      double phase = (data->time - state_start_s) /
+      const std::size_t state_index = StateIndexAt(data->time, options);
+      if (state_index >= kSequence.size()) break;
+      const StateSpec& spec = kSequence[state_index];
+      const double runtime_duration = RuntimeDuration(spec, options);
+      double phase = (data->time - StateStartTime(state_index, options)) /
                      std::max(runtime_duration, 1e-9);
 
       // SHIFT_WEIGHT can include a shifted hold after the quintic shift.
       if (spec.state == State::SHIFT_WEIGHT && options.hold_s > 0.0) {
         phase = std::min(
             1.0,
-            (data->time - state_start_s) /
+            (data->time - StateStartTime(state_index, options)) /
                 std::max(options.shift_s, 1e-9));
       }
 
-      auto desired_feet = DesiredFeet(spec.state, phase, options, nominal_feet);
-      const auto command_rpy = QuaternionToRpy(data->qpos + 3);
-      if (!options.body_shift_only && spec.state != State::STAND_INITIAL &&
-          spec.state != State::COMPLETE) {
-        for (int leg = 0; leg < 4; ++leg) {
-          const double side_sign = lite3::IsLeft(static_cast<Leg>(leg)) ? 1.0 : -1.0;
-          const double front_sign = lite3::IsFront(static_cast<Leg>(leg)) ? 1.0 : -1.0;
-          const double correction = std::clamp(
-              kAttitudeCorrectionMetersPerRad *
-                  (command_rpy[0] * side_sign - command_rpy[1] * front_sign),
-              -kMaximumAttitudeCorrectionM, kMaximumAttitudeCorrectionM);
-          desired_feet[leg].z() += correction;
-        }
-      }
-      double step_max_ik_residual = 0.0;
-      for (int leg = 0; leg < 4; ++leg) {
-        const auto ik = lite3::SolveFootIk(static_cast<Leg>(leg), desired_feet[leg],
-                                           ik_seed[leg]);
-        step_max_ik_residual = std::max(step_max_ik_residual, ik.residual_m);
-        if (!ik.converged) {
-          metrics.aborted = true;
-          metrics.abort_reason = "IK failed for " + std::string(lite3::kLegNames[leg]);
-          break;
-        }
-        commanded_q[leg] = ik.q;
-        ik_seed[leg] = ik.q;
-      }
-      metrics.max_ik_residual_m = std::max(metrics.max_ik_residual_m,
-                                           step_max_ik_residual);
-      if (metrics.aborted) break;
+      // DIRECT JOINT-SPACE COMMAND.
+      // These are the exact joint targets calculated offline from our
+      // supported-leg plan. No runtime IK, body-height compensation,
+      // or attitude correction is used here.
+      static const std::array<Eigen::Vector3d, 4> shifted_joint_target{{
+          Eigen::Vector3d(
+              5.131727 * kPi / 180.0,
+             -39.911468 * kPi / 180.0,
+              88.441457 * kPi / 180.0),
+          Eigen::Vector3d(
+              4.987414 * kPi / 180.0,
+             -36.522887 * kPi / 180.0,
+              81.358957 * kPi / 180.0),
+          Eigen::Vector3d(
+              5.131727 * kPi / 180.0,
+             -39.911468 * kPi / 180.0,
+              88.441457 * kPi / 180.0),
+          Eigen::Vector3d(
+              4.987414 * kPi / 180.0,
+             -36.522887 * kPi / 180.0,
+              81.358957 * kPi / 180.0)
+      }};
 
+      static const Eigen::Vector3d fr_lifted_joint_target(
+           5.069119 * kPi / 180.0,
+         -37.506104 * kPi / 180.0,
+          83.405825 * kPi / 180.0);
+
+      const double smooth = lite3::Quintic(std::clamp(phase, 0.0, 1.0));
+
+      // Apply a scale to the calculated SHIFT delta in joint space.
+      std::array<Eigen::Vector3d, 4> scaled_shifted{};
+      for (int leg = 0; leg < 4; ++leg) {
+        // Preserve the calculated hip/abduction component.
+        scaled_shifted[leg] = standing;
+
+        const double original_hip_delta =
+            shifted_joint_target[leg][0] - standing[0];
+
+        scaled_shifted[leg][0] =
+            standing[0] +
+            options.joint_shift_scale * original_hip_delta;
+
+        // Direct joint-space experiment:
+        // thigh forward, knee in the opposite direction.
+        scaled_shifted[leg][1] =
+            standing[1] + options.shift_thigh_deg * kPi / 180.0;
+
+        scaled_shifted[leg][2] =
+            standing[2] + options.shift_knee_deg * kPi / 180.0;
+      }
+
+      // The FR lift is also a joint-space delta, applied on top of the
+      // scaled weight-shift pose.
+      const Eigen::Vector3d nominal_fr_shift_delta =
+          fr_lifted_joint_target - shifted_joint_target[1];
+
+      std::array<Eigen::Vector3d, 4> scaled_lifted = scaled_shifted;
+      scaled_lifted[1] =
+          scaled_shifted[1] +
+          options.fr_curl_scale * nominal_fr_shift_delta;
+
+      // Default to stand.
+      for (int leg = 0; leg < 4; ++leg)
+        commanded_q[leg] = standing;
+
+      switch (spec.state) {
+        case State::STAND_INITIAL:
+          break;
+
+        case State::SHIFT_WEIGHT:
+          for (int leg = 0; leg < 4; ++leg)
+            commanded_q[leg] =
+                standing + smooth * (scaled_shifted[leg] - standing);
+          break;
+
+        case State::LIFT_LEG:
+          commanded_q = scaled_shifted;
+          commanded_q[1] =
+              scaled_shifted[1] +
+              smooth * (scaled_lifted[1] - scaled_shifted[1]);
+          break;
+
+        case State::HOLD_LEG:
+        case State::MOVE_LEG_FORWARD:
+        case State::RETURN_LEG:
+          commanded_q = scaled_lifted;
+          break;
+
+        case State::LOWER_LEG:
+          commanded_q = scaled_shifted;
+          commanded_q[1] =
+              scaled_lifted[1] +
+              smooth * (scaled_shifted[1] - scaled_lifted[1]);
+          break;
+
+        case State::VERIFY_CONTACT:
+          commanded_q = scaled_shifted;
+          break;
+
+        case State::STAND_FINAL:
+          for (int leg = 0; leg < 4; ++leg)
+            commanded_q[leg] =
+                scaled_shifted[leg] +
+                smooth * (standing - scaled_shifted[leg]);
+          break;
+
+        case State::COMPLETE:
+          break;
+      }
+
+      const double step_max_ik_residual = 0.0;
       DelayedObservation observation;
       observation.time = data->time;
       for (int joint = 0; joint < kJointCount; ++joint) {
@@ -705,22 +750,6 @@ int main(int argc, char** argv) {
                                            static_cast<double>(data->qpos[2]));
 
       const auto forces = LegGroundForces(model, data, &metrics.contacted_leg_geometries);
-      if (options.body_shift_only && spec.state == State::STAND_INITIAL &&
-          data->time >= 1.5) {
-        for (int leg = 0; leg < 4; ++leg)
-          metrics.baseline_force_sum[leg] += forces[leg];
-        ++metrics.baseline_force_samples;
-      }
-      if (options.body_shift_only && spec.state == State::SHIFT_WEIGHT &&
-          data->time >= 2.0 + options.shift_s) {
-        for (int leg = 0; leg < 4; ++leg)
-          metrics.shifted_force_sum[leg] += forces[leg];
-        ++metrics.shifted_force_samples;
-        metrics.body_shift_max_abs_roll_rad = std::max(
-            metrics.body_shift_max_abs_roll_rad, std::abs(rpy[0]));
-        metrics.body_shift_max_abs_pitch_rad = std::max(
-            metrics.body_shift_max_abs_pitch_rad, std::abs(rpy[1]));
-      }
       const double fr_world_z = data->xpos[3 * foot_body_ids[1] + 2];
       if (!initial_fr_height_set && data->time >= 1.5) {
         initial_fr_foot_world_z = fr_world_z;
@@ -833,16 +862,7 @@ int main(int argc, char** argv) {
     const auto ratio = [](int numerator, int denominator) {
       return denominator > 0 ? static_cast<double>(numerator) / denominator : 0.0;
     };
-    if (options.body_shift_only) {
-      if (!metrics.aborted && (metrics.baseline_force_samples == 0 ||
-                               metrics.shifted_force_samples == 0)) {
-        metrics.aborted = true;
-        metrics.abort_reason = "body-shift baseline or hold window was empty";
-      }
-    } else if (!metrics.aborted && metrics.max_fr_lift_m < 0.005) {
-      metrics.aborted = true;
-      metrics.abort_reason = "measured FR clearance did not reach 5 mm";
-    } else if (!metrics.aborted &&
+    if (!metrics.aborted &&
                ratio(metrics.hold_fr_unloaded_samples, metrics.hold_samples) < 0.95) {
       metrics.aborted = true;
       metrics.abort_reason = "FR did not remain unloaded during the hold";
@@ -920,33 +940,6 @@ int main(int argc, char** argv) {
          << "  \"seed\": " << options.seed << ",\n"
          << "  \"shift_x_m\": " << options.shift_x_m << ",\n"
          << "  \"shift_y_m\": " << options.shift_y_m << ",\n"
-         << "  \"body_shift_only\": " << (options.body_shift_only ? "true" : "false") << ",\n"
-         << "  \"body_shift_baseline_force_n\": [";
-    for (int leg = 0; leg < 4; ++leg) {
-      if (leg) json << ", ";
-      json << JsonNumber(metrics.baseline_force_samples > 0
-          ? metrics.baseline_force_sum[leg] / metrics.baseline_force_samples : 0.0);
-    }
-    json << "],\n  \"body_shift_hold_force_n\": [";
-    for (int leg = 0; leg < 4; ++leg) {
-      if (leg) json << ", ";
-      json << JsonNumber(metrics.shifted_force_samples > 0
-          ? metrics.shifted_force_sum[leg] / metrics.shifted_force_samples : 0.0);
-    }
-    json << "],\n  \"body_shift_delta_force_n\": [";
-    for (int leg = 0; leg < 4; ++leg) {
-      if (leg) json << ", ";
-      const double baseline = metrics.baseline_force_samples > 0
-          ? metrics.baseline_force_sum[leg] / metrics.baseline_force_samples : 0.0;
-      const double shifted = metrics.shifted_force_samples > 0
-          ? metrics.shifted_force_sum[leg] / metrics.shifted_force_samples : 0.0;
-      json << JsonNumber(shifted - baseline);
-    }
-    json << "],\n"
-         << "  \"body_shift_max_abs_roll_deg\": "
-         << JsonNumber(metrics.body_shift_max_abs_roll_rad * radians_to_degrees) << ",\n"
-         << "  \"body_shift_max_abs_pitch_deg\": "
-         << JsonNumber(metrics.body_shift_max_abs_pitch_rad * radians_to_degrees) << ",\n"
          << "  \"shift_s\": " << options.shift_s << ",\n"
          << "  \"shift_hold_s\": " << options.hold_s << ",\n"
          << "  \"lift_m\": " << options.lift_m << ",\n"

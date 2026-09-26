@@ -140,6 +140,8 @@ public:
 
             ri_ptr_->SetStandDiagnosticContext(
                 run_time_-time_stamp_record_);
+            ri_ptr_->SetStandDiagnosticPhase(
+                SupportedBodyShiftPlan::PhaseName(sample.phase));
 
             ri_ptr_->SetJointCommand(joint_cmd_);
             return;
@@ -187,12 +189,42 @@ public:
         ri_ptr_->SetStandDiagnosticContext(run_time_ - time_stamp_record_);
         ri_ptr_->SetJointCommand(joint_cmd_); // (current torque, not last torque, video content slip of the tongue)
     }
-    bool BeginSupportedBodyShift(){
+    bool BeginSupportedBodyShift(int level_index=-1){
         if(supported_body_shift_active_ || supported_body_shift_complete_ ||
-           supported_leg_lift_active_) return false;
+           supported_leg_lift_active_ || level_index < -1 || level_index > 24)
+            return false;
+        const auto mode=level_index<0
+            ? SupportedBodyShiftPlan::RunMode::FullSequence
+            : level_index==0 ? SupportedBodyShiftPlan::RunMode::Level30Only
+            : level_index==1 ? SupportedBodyShiftPlan::RunMode::Level60Only
+            : level_index==2 ? SupportedBodyShiftPlan::RunMode::Level90Only
+            : level_index==3 ? SupportedBodyShiftPlan::RunMode::Level30ReverseYOnly
+            : level_index==4 ? SupportedBodyShiftPlan::RunMode::Level30RefinedXOnly
+            : level_index==5 ? SupportedBodyShiftPlan::RunMode::Level30ZeroXOnly
+            : level_index==6 ? SupportedBodyShiftPlan::RunMode::LevelY5Only
+            : level_index==7 ? SupportedBodyShiftPlan::RunMode::LevelY65Only
+            : level_index==8 ? SupportedBodyShiftPlan::RunMode::LevelX4Y5Only
+            : level_index==9 ? SupportedBodyShiftPlan::RunMode::LevelX2Y5Roll025Only
+            : level_index==10 ? SupportedBodyShiftPlan::RunMode::LevelX2Y5Support05Only
+            : level_index==11 ? SupportedBodyShiftPlan::RunMode::LevelX2Y5Support075Only
+            : level_index==12 ? SupportedBodyShiftPlan::RunMode::PhysicalCandidate1Only
+            : level_index==13 ? SupportedBodyShiftPlan::RunMode::PhysicalCandidate2Only
+            : level_index==14 ? SupportedBodyShiftPlan::RunMode::PhysicalCandidate3Only
+            : level_index==15 ? SupportedBodyShiftPlan::RunMode::PhysicalPitchN025Only
+            : level_index==16 ? SupportedBodyShiftPlan::RunMode::PhysicalPitchP025Only
+            : level_index==17 ? SupportedBodyShiftPlan::RunMode::PhysicalHeightP05Only
+            : level_index==18 ? SupportedBodyShiftPlan::RunMode::PhysicalGeometryExpandOnly
+            : level_index==19 ? SupportedBodyShiftPlan::RunMode::PhysicalForceOpt1Only
+            : level_index==20 ? SupportedBodyShiftPlan::RunMode::PhysicalBalancedOnly
+            : level_index==21 ? SupportedBodyShiftPlan::RunMode::PhysicalForceOpt2Only
+            : level_index==22 ? SupportedBodyShiftPlan::RunMode::PhysicalForceOpt3Only
+            : level_index==23 ? SupportedBodyShiftPlan::RunMode::PhysicalLargeLeanOnly
+                              : SupportedBodyShiftPlan::RunMode::PhysicalStagedSupportTriangleOnly;
+        supported_body_shift_plan_=SupportedBodyShiftPlan(
+            SupportedBodyShiftPlan::GainStrategy::KeepStand,mode);
         GetRobotJointValue();
         supported_body_shift_start_=run_time_;
-        supported_body_shift_phase_=SupportedBodyShiftPlan::Phase::ShiftWeight;
+        supported_body_shift_phase_=supported_body_shift_plan_.At(0.0).phase;
         supported_body_shift_active_=true;
         return true;
     }
@@ -201,6 +233,12 @@ public:
     bool SupportedBodyShiftComplete() const { return supported_body_shift_complete_; }
     SupportedBodyShiftPlan::Phase SupportedBodyShiftPhase() const {
         return supported_body_shift_phase_;
+    }
+    double SupportedBodyShiftTotalSeconds() const {
+        return supported_body_shift_plan_.total_seconds();
+    }
+    double SupportedBodyShiftMaxJointDeltaRad() const {
+        return supported_body_shift_plan_.max_joint_delta_rad();
     }
 
     bool SupportedBodyShiftCommandWithinBounds(const MatXf& command) const {
@@ -216,7 +254,7 @@ public:
 
             if(command(i,0)<0 || command(i,0)>SupportedBodyShiftPlan::kStandKp+1e-4 ||
                command(i,2)<0 || command(i,2)>SupportedBodyShiftPlan::kStandKd+1e-4 ||
-               delta>SupportedBodyShiftPlan::kMaxJointDeltaRad+1e-7 ||
+               delta>supported_body_shift_plan_.max_joint_delta_rad()+1e-7 ||
                speed>SupportedBodyShiftPlan::kMaxTargetSpeedRadS+1e-7 ||
                command(i,4)!=0) {
 
@@ -226,7 +264,7 @@ public:
                     << " kp=" << command(i,0)
                     << " kd=" << command(i,2)
                     << " delta=" << delta
-                    << " delta_limit=" << SupportedBodyShiftPlan::kMaxJointDeltaRad
+                    << " delta_limit=" << supported_body_shift_plan_.max_joint_delta_rad()
                     << " speed=" << speed
                     << " speed_limit=" << SupportedBodyShiftPlan::kMaxTargetSpeedRadS
                     << " torque=" << command(i,4)
@@ -256,7 +294,7 @@ public:
             const double stand=supported_leg_lift_plan_.stand()[i/3][i%3];
             if(command(i,0)<0 || command(i,0)>SupportedLegLiftPlan::kKp+1e-4 ||
                command(i,2)<0 || command(i,2)>SupportedLegLiftPlan::kKd+1e-4 ||
-               std::abs(command(i,1)-stand)>0.0300001 ||
+               std::abs(command(i,1)-stand)>SupportedLegLiftPlan::kMaxJointDeltaRad+1e-7 ||
                std::abs(command(i,3))>0.1000001 || command(i,4)!=0) return false;
         }
         return true;

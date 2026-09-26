@@ -33,7 +33,7 @@ struct Record {
     uint64_t policy_started=0, policy_completed=0;
     std::array<double,3> normalized{{NAN,NAN,NAN}};
     double wall=0, elapsed=0, feedback_age=0, permit_remaining=0, tick=0;
-    double roll=0, pitch=0, max_error=0;
+    double roll=0, pitch=0, yaw=0, max_error=0;
     int joint=-1;
     bool permit_valid=false, gate=false, requested=false, sent=false;
     bool target_valid=false;
@@ -41,7 +41,10 @@ struct Record {
     Reason reason=Reason::OTHER;
     MonitorStatus monitor;
     std::string event_detail;
+    std::string phase{"UNSPECIFIED"};
     std::array<double,12> target{}, target_velocity{}, position{}, velocity{}, torque{};
+    std::array<double,4> contact_force_z{{NAN,NAN,NAN,NAN}};
+    std::array<double,4> world_frame_fz{{NAN,NAN,NAN,NAN}};
     bool policy_snapshot_valid=false;
     std::array<double,45> policy_observation{};
     std::array<double,12> policy_raw_action{};

@@ -15,6 +15,7 @@
 #include "stand_only_permit.hpp"
 #include "rl_zero_permit.hpp"
 #include "rl_forward_permit.hpp"
+#include "local_xbox_control_permit.hpp"
 #include "stand_diagnostics.hpp"
 
 using namespace types;
@@ -22,6 +23,7 @@ using namespace types;
 namespace interface{
 class RobotInterface{
     friend class ::StateMachine;
+    friend class ::LocalXboxStateMachine;
 protected:
     virtual bool OpenSupervisedStand(const std::shared_ptr<const StandOnlyPermit>&) { return false; }
     virtual bool EnableSupportedLegTestBounds(bool) { return false; }
@@ -30,6 +32,7 @@ protected:
     virtual bool EnableSupportedBodyShiftBounds(bool, float, float, double, double) { return false; }
     virtual bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>&) { return false; }
     virtual bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>&) { return false; }
+    virtual bool OpenLocalXboxControl(const std::shared_ptr<const LocalXboxControlPermit>&) { return false; }
 private:
     /* data */
 public:
@@ -81,6 +84,7 @@ public:
                 GetInterfaceTimeStamp(),FeedbackAgeSeconds(),IsFeedbackFresh()};
     }
     virtual void SetStandDiagnosticContext(double) {}
+    virtual void SetStandDiagnosticPhase(const char*) {}
     virtual void SetStandMonitorDiagnostics(const stand_diagnostics::MonitorStatus&) {}
     // Log-only metadata. Never a source for feedback, freshness or guard checks.
     virtual void RecordStandEntryMetadata(const VecXf&, const VecXf&, double) {}

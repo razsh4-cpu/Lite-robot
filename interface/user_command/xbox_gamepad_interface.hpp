@@ -10,7 +10,9 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include <cstring>
+#include <cerrno>
 #include <iostream>
 
 #define AXIS_STEP 0.1
@@ -33,10 +35,11 @@ class XboxGamepadInterface : public UserCommandInterface
      */
 private:
     UserCommand usr_cmd_;
-    bool start_thread_flag_;
+    std::atomic<bool> start_thread_flag_{false};
     std::thread gp_thread_;
     int js_fd_;
-    std::mutex mtx_;
+    mutable std::mutex mtx_;
+    std::atomic<bool> connected_{false};
 
     struct GamepadState {
         float left_axis_x = 0.0f;
@@ -74,6 +77,10 @@ private:
     }
 
 public:
+    static bool IsKnownBluetoothDeviceName(const std::string& name) {
+        return name.find("Xbox Wireless Controller")!=std::string::npos;
+    }
+
     XboxGamepadInterface(const std::string& js_device = "/dev/input/js0"){
         std::memset(&usr_cmd_, 0, sizeof(usr_cmd_));
         js_fd_ = -1;
@@ -86,7 +93,16 @@ public:
             std::cerr << "Make sure the gamepad is connected and you have permission to access it." << std::endl;
         } else {
             std::cout << "Gamepad opened successfully!" << std::endl;
-            DetectConnectionMode();
+            connected_=true;
+            char device_name[128]={};
+            if(ioctl(js_fd_,JSIOCGNAME(sizeof(device_name)),device_name)>=0 &&
+               IsKnownBluetoothDeviceName(device_name)) {
+                is_bluetooth_=true;
+                connection_mode_detected_=true;
+                std::cout << "[Gamepad] Detected Bluetooth mode from xpadneo device identity" << std::endl;
+            } else {
+                DetectConnectionMode();
+            }
         }
     }
 
@@ -127,6 +143,7 @@ public:
     }
 
     ~XboxGamepadInterface(){
+        Stop();
         if(js_fd_ >= 0) close(js_fd_);
     }
 
@@ -156,6 +173,8 @@ public:
         msfb_ = msfb;
         usr_cmd_.target_mode = msfb.current_state;
     }
+
+    bool IsConnected() const override { return connected_.load(); }
 
     void Run(){
         js_event js_ev;
@@ -266,6 +285,16 @@ public:
                         }
                         break;
                 }
+            }
+            if(errno==ENODEV || errno==EIO || errno==EBADF) {
+                std::lock_guard<std::mutex> lock(mtx_);
+                connected_=false;
+                usr_cmd_.forward_vel_scale=0;
+                usr_cmd_.side_vel_scale=0;
+                usr_cmd_.turnning_vel_scale=0;
+                usr_cmd_.target_mode=int(RobotMotionState::JointDamping);
+                start_thread_flag_=false;
+                continue;
             }
             
             std::lock_guard<std::mutex> lock(mtx_);

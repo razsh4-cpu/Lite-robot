@@ -160,6 +160,7 @@ file(GLOB_RECURSE STATE_MACHINE_SRC "state_machine/*.c*")
 
 add_executable(rl_deploy main.cpp ${STATE_MACHINE_SRC})
 add_executable(lite3_validation_console tools/lite3_validation_console.cpp ${STATE_MACHINE_SRC})
+add_executable(lite3_xbox_control tools/lite3_xbox_control.cpp ${STATE_MACHINE_SRC})
 add_executable(lite3_passive_stand_observer tools/lite3_passive_stand_observer.cpp)
 if(BUILD_PLATFORM STREQUAL "arm")
   set(PASSIVE_SDK_ARCH aarch64)
@@ -175,9 +176,11 @@ set_target_properties(lite3_passive_stand_observer PROPERTIES
 if(BUILD_SIM)
     target_link_libraries(rl_deploy run_policy interface dw -lpthread -lm -lrt -ldl -lstdc++)
     target_link_libraries(lite3_validation_console run_policy interface dw -lpthread -lm -lrt -ldl -lstdc++)
+    target_link_libraries(lite3_xbox_control run_policy interface dw -lpthread -lm -lrt -ldl -lstdc++)
 else()
     target_link_libraries(rl_deploy run_policy interface -lpthread -lm -lrt -ldl -lstdc++)
     target_link_libraries(lite3_validation_console run_policy interface -lpthread -lm -lrt -ldl -lstdc++)
+    target_link_libraries(lite3_xbox_control run_policy interface -lpthread -lm -lrt -ldl -lstdc++)
 endif()
 
 # if (USE_ONNX)
@@ -207,6 +210,11 @@ if (BUILD_PLATFORM STREQUAL "x86")
       pthread
       rt
   )
+  target_link_libraries(lite3_xbox_control
+      ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_x86_64.so
+      pthread
+      rt
+  )
 else()
   target_link_libraries(rl_deploy
       ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_aarch64.so
@@ -214,6 +222,11 @@ else()
       rt
   )
   target_link_libraries(lite3_validation_console
+      ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_aarch64.so
+      pthread
+      rt
+  )
+  target_link_libraries(lite3_xbox_control
       ${PROJECT_SOURCE_DIR}/third_party/Lite3_MotionSDK/lib/libdeeprobotics_legged_sdk_aarch64.so
       pthread
       rt
@@ -230,9 +243,23 @@ set_target_properties(lite3_validation_console PROPERTIES
     BUILD_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib"
     INSTALL_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib")
 target_link_options(lite3_validation_console PRIVATE "-Wl,--disable-new-dtags")
+set_target_properties(lite3_xbox_control PROPERTIES
+    BUILD_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib"
+    INSTALL_RPATH "${THIRD_PARTY}/Lite3_MotionSDK/lib;${ONNX_RUNTIME_ROOT}/lib")
+target_link_options(lite3_xbox_control PRIVATE "-Wl,--disable-new-dtags")
+
+# Offline-only JSONL analysis. This target does not link the MotionSDK transport
+# or any robot command/control component.
+add_executable(body_shift_load_analyzer tools/body_shift_load_analyzer.cpp)
+target_include_directories(body_shift_load_analyzer PRIVATE
+    ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/utils ${THIRD_PARTY}/eigen/)
 
 include(CTest)
 if (BUILD_TESTING)
+  add_executable(body_shift_load_proxy_test tests/body_shift_load_proxy_test.cpp)
+  target_include_directories(body_shift_load_proxy_test PRIVATE
+      ${PROJECT_SOURCE_DIR} ${THIRD_PARTY}/eigen/)
+  add_test(NAME body_shift_load_proxy_test COMMAND body_shift_load_proxy_test)
   add_executable(software_velocity_interface_test
       tests/software_velocity_interface_test.cpp)
   target_include_directories(software_velocity_interface_test PRIVATE
@@ -247,6 +274,14 @@ if (BUILD_TESTING)
       ${PROJECT_SOURCE_DIR}
       ${THIRD_PARTY}/eigen/)
   add_test(NAME supported_leg_lift_plan_test COMMAND supported_leg_lift_plan_test)
+  # Pure kinematics test: no state machine, SDK transport, ownership, or send path.
+  add_executable(offline_force_opt_lift_plan_test
+      tests/offline_force_opt_lift_plan_test.cpp)
+  target_include_directories(offline_force_opt_lift_plan_test PRIVATE
+      ${PROJECT_SOURCE_DIR}
+      ${THIRD_PARTY}/eigen/)
+  add_test(NAME offline_force_opt_lift_plan_test
+      COMMAND offline_force_opt_lift_plan_test)
   add_executable(supported_body_shift_plan_test
       tests/supported_body_shift_plan_test.cpp)
   target_include_directories(supported_body_shift_plan_test PRIVATE
@@ -259,6 +294,22 @@ if (BUILD_TESTING)
       state_machine/parameters/lite3_control_parameters.cpp)
   target_link_libraries(control_safety_test pthread)
   add_test(NAME control_safety_test COMMAND control_safety_test)
+  add_executable(local_xbox_runtime_test tests/local_xbox_runtime_test.cpp)
+  target_link_libraries(local_xbox_runtime_test pthread)
+  add_test(NAME local_xbox_runtime_test COMMAND local_xbox_runtime_test)
+  add_executable(command_source_arbiter_test tests/command_source_arbiter_test.cpp)
+  add_test(NAME command_source_arbiter_test COMMAND command_source_arbiter_test)
+  add_executable(local_xbox_startup_gate_test tests/local_xbox_startup_gate_test.cpp)
+  add_test(NAME local_xbox_startup_gate_test COMMAND local_xbox_startup_gate_test)
+  add_test(NAME xbox_startup_service_test
+      COMMAND ${PROJECT_SOURCE_DIR}/tests/xbox_startup_service_test.sh)
+  add_executable(xbox_device_identity_test tests/xbox_device_identity_test.cpp)
+  target_link_libraries(xbox_device_identity_test pthread)
+  add_test(NAME xbox_device_identity_test COMMAND xbox_device_identity_test)
+  add_executable(policy_model_path_test tests/policy_model_path_test.cpp)
+  target_include_directories(policy_model_path_test PRIVATE
+      ${PROJECT_SOURCE_DIR}/run_policy)
+  add_test(NAME policy_model_path_test COMMAND policy_model_path_test)
   add_executable(stand_recovery_test tests/stand_recovery_test.cpp
       state_machine/parameters/lite3_control_parameters.cpp)
   target_link_libraries(stand_recovery_test pthread)
@@ -382,6 +433,25 @@ if(USE_MJCPP)
     )
 
     target_link_libraries(one_leg_lift_sim PRIVATE
+        mujoco
+    )
+endif()
+
+if(USE_MJCPP)
+    add_executable(one_leg_lift_joint_sim
+        tools/one_leg_lift_joint_sim.cpp
+    )
+
+    target_include_directories(one_leg_lift_joint_sim PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${MUJOCO_ROOT}/include
+    )
+
+    target_link_directories(one_leg_lift_joint_sim PRIVATE
+        ${MUJOCO_ROOT}/lib
+    )
+
+    target_link_libraries(one_leg_lift_joint_sim PRIVATE
         mujoco
     )
 endif()

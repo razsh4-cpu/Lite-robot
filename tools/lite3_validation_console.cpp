@@ -22,6 +22,7 @@ using stand_signal::RequestShutdown;
 
 void PrintStatus(StateMachine& machine) {
     const auto command = machine.VelocitySnapshot();
+    const auto q = machine.JointPositionSnapshot();
     std::cout << "STATUS state=" << machine.CurrentMotionState()
               << " state_source=LOCAL_DEPLOY_STATE_MACHINE"
               << " stand_test=" << machine.StandTestStatus()
@@ -35,6 +36,12 @@ void PrintStatus(StateMachine& machine) {
               << " forward=" << command.forward_vel_scale
               << " lateral=" << command.side_vel_scale
               << " yaw=" << command.turnning_vel_scale << std::endl;
+    std::cout << "STATUS q=[";
+    for(int joint=0;joint<q.size();++joint) {
+        if(joint) std::cout << ',';
+        std::cout << q[joint];
+    }
+    std::cout << "]" << std::endl;
 }
 
 void PrintHelp() {
@@ -42,6 +49,31 @@ void PrintHelp() {
                  "stand_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "leg_lift_once SUPPORTED_ESTOP_LEG_TEST_LIMITS_CONFIRMED | "
                  "body_shift_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_30_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_30_reverse_y_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_30_refined_x_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_30_zero_x_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_y5_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_y65_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_x4_y5_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_x2_y5_roll025_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_x2_y5_support05_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_x2_y5_support075_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_c1_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_c2_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_c3_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_pitch_n025_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_pitch_p025_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_height_p05_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_geom_expand_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_force_opt1_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_balanced_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_force_opt2_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_force_opt3_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_physical_large_lean_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_staged_support_triangle_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_60_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
+                 "body_shift_90_once SUPPORTED_ESTOP_BODY_SHIFT_LIMITS_CONFIRMED | "
                  "stand | rl_zero_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "forward_once SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED | "
                  "record_start | record_stop | stop | release | quit. "
@@ -126,6 +158,7 @@ int main() {
                     ? "PITCH_RECORDING_STOPPED"
                     : "PITCH_RECORDING_STOP_FAILED")
                 << std::endl;
+        }
 
         if (command == "status") {
             PrintStatus(machine);
@@ -144,7 +177,11 @@ int main() {
         } else if (command == "stand_once") {
             std::string acknowledgement, extra;
             input >> acknowledgement;
-            const bool submitted=!(input>>extra) && machine.RequestStandOnce(acknowledgement);
+            bool submitted=false;
+            if(!(input>>extra) &&
+               acknowledgement=="SUPPORTED_ESTOP_HEALTH_LIMITS_CONFIRMED" &&
+               machine.AcquireHardwareControl())
+                submitted=machine.RequestStandOnce(acknowledgement);
             std::cout << "STAND_ONCE request " << (submitted ? "submitted" : "blocked")
                       << "; ownership UNCONFIRMED; RL/velocity remain disabled." << std::endl;
         } else if (command == "leg_lift_once") {
@@ -169,12 +206,63 @@ int main() {
             << "LEG_LIFT_ONCE request "
             << (submitted ? "submitted" : "blocked")
             << "; sequence: stand -> shift left/back -> "
-               "2mm FR lift -> lower -> recenter."
+               "5mm FR lift -> lower -> recenter."
             << std::endl;
 
-        } else if (command == "body_shift_once") {
+        } else if (command == "body_shift_once" ||
+                   command == "body_shift_30_once" ||
+                   command == "body_shift_30_reverse_y_once" ||
+                   command == "body_shift_30_refined_x_once" ||
+                   command == "body_shift_30_zero_x_once" ||
+                   command == "body_shift_y5_once" ||
+                   command == "body_shift_y65_once" ||
+                   command == "body_shift_x4_y5_once" ||
+                   command == "body_shift_x2_y5_roll025_once" ||
+                   command == "body_shift_x2_y5_support05_once" ||
+                   command == "body_shift_x2_y5_support075_once" ||
+                   command == "body_shift_physical_c1_once" ||
+                   command == "body_shift_physical_c2_once" ||
+                   command == "body_shift_physical_c3_once" ||
+                   command == "body_shift_physical_pitch_n025_once" ||
+                   command == "body_shift_physical_pitch_p025_once" ||
+                   command == "body_shift_physical_height_p05_once" ||
+                   command == "body_shift_physical_geom_expand_once" ||
+                   command == "body_shift_physical_force_opt1_once" ||
+                   command == "body_shift_physical_balanced_once" ||
+                   command == "body_shift_physical_force_opt2_once" ||
+                   command == "body_shift_physical_force_opt3_once" ||
+                   command == "body_shift_physical_large_lean_once" ||
+                   command == "body_shift_staged_support_triangle_once" ||
+                   command == "body_shift_60_once" ||
+                   command == "body_shift_90_once") {
             std::string acknowledgement, extra;
             input >> acknowledgement;
+
+            const int level_index=command=="body_shift_30_once" ? 0
+                : command=="body_shift_30_reverse_y_once" ? 3
+                : command=="body_shift_30_refined_x_once" ? 4
+                : command=="body_shift_30_zero_x_once" ? 5
+                : command=="body_shift_y5_once" ? 6
+                : command=="body_shift_y65_once" ? 7
+                : command=="body_shift_x4_y5_once" ? 8
+                : command=="body_shift_x2_y5_roll025_once" ? 9
+                : command=="body_shift_x2_y5_support05_once" ? 10
+                : command=="body_shift_x2_y5_support075_once" ? 11
+                : command=="body_shift_physical_c1_once" ? 12
+                : command=="body_shift_physical_c2_once" ? 13
+                : command=="body_shift_physical_c3_once" ? 14
+                : command=="body_shift_physical_pitch_n025_once" ? 15
+                : command=="body_shift_physical_pitch_p025_once" ? 16
+                : command=="body_shift_physical_height_p05_once" ? 17
+                : command=="body_shift_physical_geom_expand_once" ? 18
+                : command=="body_shift_physical_force_opt1_once" ? 19
+                : command=="body_shift_physical_balanced_once" ? 20
+                : command=="body_shift_physical_force_opt2_once" ? 21
+                : command=="body_shift_physical_force_opt3_once" ? 22
+                : command=="body_shift_physical_large_lean_once" ? 23
+                : command=="body_shift_staged_support_triangle_once" ? 24
+                : command=="body_shift_60_once" ? 1
+                : command=="body_shift_90_once" ? 2 : -1;
 
             bool submitted=false;
 
@@ -186,14 +274,40 @@ int main() {
                 if(acquired) {
                     submitted=
                         machine.RequestSupportedBodyShiftOnce(
-                            acknowledgement);
+                            acknowledgement,level_index);
                 }
             }
 
             std::cout << "BODY_SHIFT_ONCE request "
                       << (submitted ? "submitted" : "blocked")
-                      << "; 10mm body shift, all feet planted, "
-                         "2s hold, automatic recenter/release."
+                      << "; body-only "
+                      << (level_index<0 ? "30/60/90% sequence"
+                          : level_index==0 ? "30%-only"
+                          : level_index==3 ? "30%-only reversed-Y"
+                          : level_index==4 ? "30%-only refined-X"
+                          : level_index==5 ? "30%-only zero-X"
+                          : level_index==6 ? "X=-2mm Y=-5mm"
+                          : level_index==7 ? "X=-2mm Y=-6.5mm"
+                          : level_index==8 ? "X=-4mm Y=-5mm"
+                          : level_index==9 ? "X=-2mm Y=-5mm roll-left=0.25deg"
+                          : level_index==10 ? "X=-2mm Y=-5mm FL/HR extension=0.5mm"
+                          : level_index==11 ? "X=-2mm Y=-5mm FL/HR extension=0.75mm"
+                          : level_index==12 ? "physical C1 FL/HR=1.0mm"
+                          : level_index==13 ? "physical C2 FL=1.25mm HR=1.0mm"
+                          : level_index==14 ? "physical C3 FL/HR=1.25mm"
+                          : level_index==15 ? "physical pitch=-0.25deg FL/HR=1.0mm"
+                          : level_index==16 ? "physical pitch=+0.25deg FL/HR=1.0mm"
+                          : level_index==17 ? "physical height=+0.5mm over C1"
+                          : level_index==18 ? "physical coordinated support-triangle expansion"
+                          : level_index==19 ? "physical inverse-statics force-opt1"
+                          : level_index==20 ? "physical inverse-statics Balanced"
+                          : level_index==21 ? "physical structural Force_opt2"
+                          : level_index==22 ? "physical combined left/rear tilt identification"
+                          : level_index==23 ? "physical large -30mm X/-25mm Y, -2deg roll/pitch lean"
+                          : level_index==24 ? "staged FL/HL/HR support-foot placement and X=-14mm hold"
+                          : level_index==1 ? "60%-only" : "90%-only")
+                      << " calibration, "
+                         "stand between levels, automatic release."
                       << std::endl;
 
             PrintStatus(machine);

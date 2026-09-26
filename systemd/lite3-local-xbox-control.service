@@ -1,0 +1,26 @@
+[Unit]
+Description=Lite3 explicitly selected local Xbox command source
+Wants=bluetooth.service
+After=bluetooth.service
+ConditionPathExists=/run/lite3-control/MANUAL_CONTROL_AVAILABLE
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+SupplementaryGroups=input bluetooth
+WorkingDirectory=/home/abx/Lite-robot
+ExecCondition=/usr/bin/grep -qx true /run/lite3-control/MANUAL_CONTROL_AVAILABLE
+ExecCondition=/home/abx/Lite-robot/scripts/lite3_xbox_device_valid.sh /dev/input/js0
+ExecCondition=/home/abx/Lite-robot/scripts/lite3_command_source_none.sh /run/lite3-control/owner.lock
+Environment=LITE3_POLICY_MODEL=/home/abx/Lite-robot/policy/ppo/policy.onnx
+ExecStart=/home/abx/Lite-robot/build/lite3_xbox_control
+ExecStopPost=/home/abx/Lite-robot/scripts/lite3_mark_manual_unavailable.sh
+Restart=no
+TimeoutStopSec=15
+KillSignal=SIGTERM
+StandardOutput=journal
+StandardError=journal
+
+# Intentionally no [Install] section: this control source must never be
+# enabled at boot. Start it only through lite3_select_command_source.sh.

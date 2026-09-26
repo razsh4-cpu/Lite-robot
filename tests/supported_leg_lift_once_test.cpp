@@ -29,7 +29,10 @@ int main() {
             std::set<std::string> seen;
             double max_delta=0.0, max_target_velocity=0.0;
             const Eigen::Vector3d stand(0.0,-0.7729795255029084,1.5005003509817765);
-            for(int i=0;i<1500 && f.io->releases==0;++i) {
+            const int max_ticks =
+                static_cast<int>(
+                    (SupportedLegLiftPlan::kTotalSeconds + 7.0) / 0.01);
+            for(int i=0;i<max_ticks && f.io->releases==0;++i) {
                 f.Tick();
                 const auto status=f.machine->StandTestStatus();
                 seen.insert(status);
@@ -42,15 +45,21 @@ int main() {
                     Check(command(joint,4)==0, "feed-forward torque remains zero");
                 }
             }
-            for(const char* phase : {"LEG_TEST_SHIFT_BODY","LEG_TEST_HOLD_SHIFT",
-                    "LEG_TEST_LIFT_FR","LEG_TEST_HOLD_FR","LEG_TEST_LOWER_FR",
-                    "LEG_TEST_RECENTER","LEG_TEST_VERIFY_STAND"})
+            for(const char* phase : {"LEG_TEST_SETTLING","LEG_TEST_SHIFT_BODY",
+                    "LEG_TEST_HOLD_SHIFT","LEG_TEST_LIFT_FR","LEG_TEST_HOLD_FR",
+                    "LEG_TEST_LOWER_FR","LEG_TEST_RECENTER"})
                 Check(seen.count(phase)==1, "every bounded phase observed");
+            std::cerr << "DEBUG completion: releases=" << f.io->releases
+                      << " joint_enabled=" << f.hw->JointCommandsEnabled()
+                      << " status=" << f.machine->StandTestStatus()
+                      << " abort_reason=" << f.machine->StandAbortReason()
+                      << "\n";
             Check(f.io->releases==1 && !f.hw->JointCommandsEnabled(),
                   "completed action closes gate and releases once");
             Check(f.machine->StandAbortReason()=="supported leg lift complete",
                   "successful completion reason");
-            Check(max_delta<=0.03 && max_target_velocity<=0.10,
+            Check(max_delta<=SupportedLegLiftPlan::kMaxJointDeltaRad &&
+                  max_target_velocity<=SupportedLegLiftPlan::kMaxTargetSpeedRadS,
                   "trajectory remains inside reviewed limits");
             Check(!f.machine->RequestSupportedLegLiftOnce(kToken),
                   "one acquisition cannot repeat action");

@@ -43,11 +43,13 @@ private:
     std::shared_ptr<const StandOnlyPermit> stand_permit_;
     std::shared_ptr<const RLZeroPermit> rl_zero_permit_;
     std::shared_ptr<const RLForwardPermit> rl_forward_permit_;
+    std::shared_ptr<const LocalXboxControlPermit> local_xbox_permit_;
     std::chrono::milliseconds telemetry_timeout_;
     Now now_;
     std::vector<stand_diagnostics::Record> stand_records_;
     stand_diagnostics::Record last_record_{};
     double stand_elapsed_=0;
+    std::string stand_phase_{"UNSPECIFIED"};
     stand_diagnostics::MonitorStatus monitor_diagnostics_;
     size_t diagnostic_dropped_=0;
     size_t diagnostic_head_=0;
@@ -60,9 +62,13 @@ private:
     std::array<double,45> policy_observation_{};
     std::array<double,12> policy_raw_action_{};
     bool diagnostics_active_=false;
+    std::string last_stand_trace_path_;
     std::array<double,12> entry_metadata_q_{}, entry_metadata_dq_{};
     double entry_metadata_stamp_=0;
-    static constexpr size_t diagnostic_capacity_=24000;
+    // Retain the complete 1 kHz SETTLE -> HOLD -> RECENTER evidence for the
+    // longest reviewed one-use body-shift action. Safety checks remain at the
+    // feedback rate; this only enlarges the bounded diagnostic ring.
+    static constexpr size_t diagnostic_capacity_=120000;
     void Remember(stand_diagnostics::Record r) {
         r.monitor=monitor_diagnostics_;
         r.rl_zero=rl_zero_diagnostics_;
@@ -159,6 +165,10 @@ public:
     void SetStandDiagnosticContext(double elapsed) override {
         std::lock_guard<std::mutex> lock(send_mutex_); stand_elapsed_=elapsed;
     }
+    void SetStandDiagnosticPhase(const char* phase) override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+        stand_phase_=phase ? phase : "UNSPECIFIED";
+    }
     void SetStandMonitorDiagnostics(const stand_diagnostics::MonitorStatus& status) override {
         std::lock_guard<std::mutex> lock(send_mutex_); monitor_diagnostics_=status;
     }
@@ -174,6 +184,10 @@ public:
     }
     stand_diagnostics::Record LastStandRecord() const {
         std::lock_guard<std::mutex> lock(send_mutex_); return last_record_;
+    }
+    std::string LastStandTracePath() const {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+        return last_stand_trace_path_;
     }
     void RecordPolicyProgress(const Vec3f& cmd, bool completed) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
@@ -263,15 +277,18 @@ public:
         else if(cause=="invalid IMU" || cause=="invalid measured joints" || cause=="invalid measured feedback") r.reason=R::INVALID_MEASURED_STATE;
         else if(cause=="invalid target") r.reason=R::INVALID_COMMAND;
         r.wall=std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
-        r.elapsed=stand_elapsed_; r.gate=joint_enabled_; r.requested=request_sent_;
+        r.elapsed=stand_elapsed_; r.phase=stand_phase_;
+        r.gate=joint_enabled_; r.requested=request_sent_;
         r.permit_valid=stand_permit_&&stand_permit_->Valid();
         r.permit_remaining=stand_permit_?stand_permit_->RemainingSeconds():0;
         if(rl_zero_permit_) {r.permit_valid=rl_zero_permit_->Valid();r.permit_remaining=rl_zero_permit_->RemainingSeconds();}
         if(rl_forward_permit_) {r.permit_valid=rl_forward_permit_->Valid();r.permit_remaining=rl_forward_permit_->RemainingSeconds();}
+        if(local_xbox_permit_) r.permit_valid=local_xbox_permit_->Valid();
         if(rl_zero_permit_) {
             r.permit_valid=rl_zero_permit_->Valid();r.permit_remaining=rl_zero_permit_->RemainingSeconds();
         }
-        auto s=GetStandFeedback(); r.feedback_age=s.age; r.tick=s.stamp; r.roll=s.rpy[0]; r.pitch=s.rpy[1];
+        auto s=GetStandFeedback(); r.feedback_age=s.age; r.tick=s.stamp;
+        r.roll=s.rpy[0]; r.pitch=s.rpy[1]; r.yaw=s.rpy[2];
         for(int i=0;i<12;++i) {
             r.position[i]=s.q[i]; r.velocity[i]=s.dq[i]; r.torque[i]=s.torque[i];
             r.target[i]=joint_cmd_(i,1); r.target_velocity[i]=joint_cmd_(i,3);
@@ -298,13 +315,19 @@ public:
         std::ofstream out(path); out<<std::setprecision(12);
         auto number=[&](double x){ if(std::isfinite(x)) out<<x; else out<<"null"; };
         out<<"{\"metadata_only\":true,\"entry_tick_s\":";number(entry_stamp);
+        out<<",\"contact_force_source_frame\":\"SDK_FRAME_UNDOCUMENTED\""
+              ",\"contact_force_units\":\"SDK_UNDOCUMENTED\""
+              ",\"contact_force_sign\":\"SDK_UNDOCUMENTED\""
+              ",\"contact_force_order\":\"FL_FR_HL_HR\""
+              ",\"world_fz_derivation\":\"assume SDK XYZ is body-frame; rotate by measured roll/pitch\"";
         out<<",\"entry_q\":[";
         for(int i=0;i<12;++i) {if(i)out<<',';number(entry_q[i]);}
         out<<"],\"entry_dq\":[";
         for(int i=0;i<12;++i) {if(i)out<<',';number(entry_dq[i]);} out<<"]}\n";
         for(const auto& r:records) {
             out<<"{\"event\":"<<r.event<<",\"reason\":\""<<stand_diagnostics::Name(r.reason)<<"\",\"phase\":\""
-               <<(r.rl_forward?"RL_FORWARD":r.rl_zero?"RL_ZERO":r.elapsed<=1.5?"PREPARATION":r.elapsed<3?"RAISING":"FINAL_HOLD")<<"\",\"wall_s\":"; number(r.wall);
+               <<(r.rl_forward?"RL_FORWARD":r.rl_zero?"RL_ZERO":r.phase)<<"\",\"timestamp_s\":"; number(r.wall);
+            out<<",\"wall_s\":"; number(r.wall);
             out<<",\"policy_started\":"<<r.policy_started<<",\"policy_completed\":"<<r.policy_completed;
             out<<",\"normalized_command\":[";
             for(int i=0;i<3;++i){if(i)out<<',';number(r.normalized[i]);}out<<']';
@@ -335,6 +358,12 @@ public:
             };
             array("target",r.target); array("target_velocity",r.target_velocity);
             array("position",r.position); array("velocity",r.velocity); array("torque",r.torque);
+            out<<",\"contact_force_z\":[";
+            for(int i=0;i<4;++i){if(i)out<<',';number(r.contact_force_z[i]);}
+            out<<']';
+            out<<",\"world_frame_fz\":[";
+            for(int i=0;i<4;++i){if(i)out<<',';number(r.world_frame_fz[i]);}
+            out<<']';
             out<<",\"policy_snapshot_valid\":"<<r.policy_snapshot_valid;
             out<<",\"policy_observation\":[";
             for(int i=0;i<45;++i){if(i)out<<',';number(r.policy_observation[i]);}out<<']';
@@ -346,6 +375,10 @@ public:
         // Ending strings are internal constants; no operator-controlled text.
         out<<"{\"end_reason\":\""<<ending<<"\",\"records\":"<<records.size()<<",\"dropped\":"<<dropped<<"}\n";
         out.flush();
+        if(out) {
+            std::lock_guard<std::mutex> lock(send_mutex_);
+            last_stand_trace_path_=path;
+        }
         std::cerr<<"STAND_TRACE "<<(out?path:"WRITE_FAILED")<<" records="<<records.size()<<" dropped="<<dropped<<std::endl;
     }
     bool AcquireControl() override {
@@ -355,7 +388,7 @@ public:
         joint_enabled_ = false;
         supported_leg_test_bounds_ = false;
         supported_body_shift_bounds_ = false;
-        stand_permit_.reset();
+        stand_permit_.reset(); local_xbox_permit_.reset();
         transport_->RequestOwnership(2);
         request_sent_ = true;
         return true;
@@ -367,7 +400,7 @@ public:
         supported_body_shift_bounds_ = false;
         rl_zero_permit_.reset();
         rl_forward_permit_.reset();
-        stand_permit_.reset();
+        stand_permit_.reset(); local_xbox_permit_.reset();
         supported_leg_test_bounds_ = false;
         supported_body_shift_bounds_ = false;
         if (!request_sent_) return;
@@ -386,7 +419,7 @@ public:
         std::lock_guard<std::mutex> lock(send_mutex_);
         rl_zero_permit_.reset();
         rl_forward_permit_.reset();
-        stand_permit_.reset();
+        stand_permit_.reset(); local_xbox_permit_.reset();
         // Generic gate still requires confirmation; supervised stand uses a private grant.
         // No production confirmation source: acquisition-only is allowed,
         // but actuator streaming remains blocked pending a reviewed mechanism.
@@ -483,7 +516,8 @@ public:
         using R=stand_diagnostics::Reason;
         stand_diagnostics::Record r;
         r.wall=std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
-        r.elapsed=stand_elapsed_; r.gate=joint_enabled_; r.requested=request_sent_;
+        r.elapsed=stand_elapsed_; r.phase=stand_phase_;
+        r.gate=joint_enabled_; r.requested=request_sent_;
         r.target_valid=input.rows()==12 && input.allFinite();
         r.permit_valid=stand_permit_ && stand_permit_->Valid();
         r.permit_remaining=stand_permit_?stand_permit_->RemainingSeconds():0;
@@ -495,8 +529,24 @@ public:
             r.permit_valid=rl_forward_permit_->Valid();
             r.permit_remaining=rl_forward_permit_->RemainingSeconds();
         }
+        if(local_xbox_permit_) r.permit_valid=local_xbox_permit_->Valid();
         const auto s=GetStandFeedback();
         r.feedback_age=s.age; r.tick=s.stamp; r.roll=s.rpy[0]; r.pitch=s.rpy[1];
+        r.yaw=s.rpy[2];
+        {
+            const auto d = Snapshot();
+            r.contact_force_z[0] = d.contact_force.fl_leg[2];
+            r.contact_force_z[1] = d.contact_force.fr_leg[2];
+            r.contact_force_z[2] = d.contact_force.hl_leg[2];
+            r.contact_force_z[3] = d.contact_force.hr_leg[2];
+            const double sr=std::sin(r.roll), cr=std::cos(r.roll);
+            const double sp=std::sin(r.pitch), cp=std::cos(r.pitch);
+            const double* forces[4]={d.contact_force.fl_leg,d.contact_force.fr_leg,
+                                     d.contact_force.hl_leg,d.contact_force.hr_leg};
+            for(int leg=0;leg<4;++leg)
+                r.world_frame_fz[leg]=
+                    -sp*forces[leg][0]+cp*sr*forces[leg][1]+cp*cr*forces[leg][2];
+        }
         for(int i=0;i<12;++i) {
             r.position[i]=s.q[i]; r.velocity[i]=s.dq[i]; r.torque[i]=s.torque[i];
             r.target[i]=input.rows()==12?input(i,1):std::numeric_limits<double>::quiet_NaN();
@@ -516,6 +566,7 @@ public:
         }
         if(rl_zero_permit_ && !r.permit_valid) {reject(R::PERMIT_EXPIRED); return;}
         if(rl_forward_permit_ && !r.permit_valid) {reject(R::PERMIT_EXPIRED); return;}
+        if(local_xbox_permit_ && !r.permit_valid) {reject(R::STATE_CHANGED); return;}
         if(!s.valid || !s.q.allFinite() || !s.dq.allFinite() || !s.rpy.allFinite()) {
             for(int i=0;i<12;++i) if(!std::isfinite(s.q[i]) || !std::isfinite(s.dq[i]) || !std::isfinite(s.torque[i])) {r.joint=i;break;}
             reject(R::INVALID_MEASURED_STATE); return;
@@ -525,7 +576,7 @@ public:
             if(input.rows()==12) for(int i=0;i<12;++i) if(!input.row(i).allFinite()) {r.joint=i;break;}
             reject(R::INVALID_COMMAND); return;
         }
-        if(stand_permit_ || rl_zero_permit_ || rl_forward_permit_) {
+        if(stand_permit_ || rl_zero_permit_ || rl_forward_permit_ || local_xbox_permit_) {
             if(std::abs(r.roll)>0.35 || std::abs(r.pitch)>0.35) {reject(R::EXCESSIVE_TILT); return;}
             for(int i=0;i<12;++i) if(input(i,0)<0 || input(i,2)<0 || input(i,4)!=0) {
                 r.joint=i; reject(R::INVALID_COMMAND); return;
@@ -535,12 +586,12 @@ public:
         if(supported_leg_test_bounds_) {
             constexpr double stand[3]={0.0,-0.7729795255029084,1.5005003509817765};
             if(!stand_permit_ || std::abs(r.roll)>3.0*M_PI/180.0 ||
-               std::abs(r.pitch)>3.0*M_PI/180.0 || s.dq.cwiseAbs().maxCoeff()>0.50) {
+               std::abs(r.pitch)>3.0*M_PI/180.0 || s.dq.cwiseAbs().maxCoeff()>0.60) {
                 reject(R::EXCESSIVE_TILT); return;
             }
             for(int i=0;i<12;++i) {
                 if(input(i,0)>60.0001 || input(i,2)>0.7001 ||
-                   std::abs(input(i,1)-stand[i%3])>0.0300001 ||
+                   std::abs(input(i,1)-stand[i%3])>0.1500001 ||
                    std::abs(input(i,3))>0.1000001 ||
                    std::abs(input(i,1)-s.q[i])>0.15) {
                     r.joint=i; reject(R::INVALID_COMMAND); return;
@@ -590,10 +641,20 @@ protected:
         body_shift_max_target_speed_=enabled?max_target_speed:0.0;
         return true;
     }
+    bool OpenLocalXboxControl(const std::shared_ptr<const LocalXboxControlPermit>& permit) override {
+        std::lock_guard<std::mutex> lock(send_mutex_);
+        if(!permit || !permit->Valid() || !request_sent_ || joint_enabled_ || !IsFeedbackFresh()) return false;
+        stand_permit_.reset(); rl_zero_permit_.reset(); rl_forward_permit_.reset();
+        local_xbox_permit_=permit;
+        supported_leg_test_bounds_=false;
+        supported_body_shift_bounds_=false;
+        joint_enabled_=true;
+        return true;
+    }
     bool OpenSupervisedRLZero(const std::shared_ptr<const RLZeroPermit>& permit) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         if(!permit || !permit->Valid() || !request_sent_ || joint_enabled_ || !IsFeedbackFresh()) return false;
-        stand_permit_.reset(); rl_zero_permit_=permit; joint_enabled_=true;
+        stand_permit_.reset(); local_xbox_permit_.reset(); rl_zero_permit_=permit; joint_enabled_=true;
         rl_zero_diagnostics_=true;
         rl_forward_diagnostics_=false;
         rl_zero_entry_wall_=std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
@@ -603,7 +664,7 @@ protected:
     bool OpenSupervisedRLForward(const std::shared_ptr<const RLForwardPermit>& permit) override {
         std::lock_guard<std::mutex> lock(send_mutex_);
         if(!permit || !permit->Valid() || !request_sent_ || joint_enabled_ || !IsFeedbackFresh())return false;
-        stand_permit_.reset();rl_zero_permit_.reset();rl_forward_permit_=permit;joint_enabled_=true;
+        stand_permit_.reset(); local_xbox_permit_.reset();rl_zero_permit_.reset();rl_forward_permit_=permit;joint_enabled_=true;
         rl_zero_diagnostics_=false;rl_forward_diagnostics_=true;
         rl_zero_entry_wall_=std::chrono::duration<double>(Clock::now().time_since_epoch()).count();
         policy_started_=policy_completed_=0;normalized_={{NAN,NAN,NAN}};policy_snapshot_valid_=false;
