@@ -29,3 +29,12 @@ instructions but may never weaken these safety or Git requirements.
 - A build/test pass proves software behavior only, never hardware safety.
 - Before handoff, review the diff and report branch, full SHA, tests, hardware
   commands sent, evidence limitations, and the next safe action.
+
+## Architecture source of truth
+
+- Before changing product architecture, read
+  `docs/architecture/ARCHITECTURE.md` and
+  `docs/architecture/ROBOT_PLATFORM.md`.
+- Preserve the dependency direction and the single-owner runtime boundaries
+  documented there. Update the architecture record when an approved change
+  alters those boundaries.

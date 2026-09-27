@@ -1,0 +1,19 @@
+schema_version: 1
+command_sources:
+  - NONE
+  - LOCAL_XBOX
+  - LAPTOP_XBOX
+  - AUTONOMY
+default_command_source: NONE
+ownership:
+  state_file: /run/lite3-control/COMMAND_SOURCE
+  lock_file: /run/lite3-control/owner.lock
+  exclusive_lease_required: true
+command_watchdog_s: 0.30
+telemetry_timeout_s: 1.0
+localization:
+  minimum_confidence: 0.80
+  consecutive_samples: 3
+minimum_navigation_battery_percent: 25.0
+safe_zero_on_stale_or_release: true
+posture_requires_fresh_state: true

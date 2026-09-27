@@ -1,0 +1,17 @@
+schema_version: 1
+interface:
+  velocity_input_topic: /cmd_vel
+  approved_adapter_topic: /lite3/autonomy/cmd_vel
+  odometry_topic: /odom
+
+# Conservative Day-2 limits enforced by the AUTONOMY command source.
+limits:
+  forward_mps: 0.10
+  backward_mps: 0.10
+  lateral_mps: 0.05
+  yaw_rps: 0.20
+
+vendor_transport:
+  robot_ip: 192.168.1.120
+  command_port: 43893
+  owner_service: lite3-high-level-runtime.service

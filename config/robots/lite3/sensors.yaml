@@ -1,0 +1,23 @@
+schema_version: 1
+odometry:
+  topic: /odom
+  frame: odom
+  child_frame: base_link
+  owner_service: lite3-high-level-runtime.service
+laser_scan:
+  topic: /scan
+  frame: lidar_link
+  owner_service: lite3-lidar.service
+battery:
+  topic: /lite3/battery_percent
+  owner_service: lite3-high-level-runtime.service
+telemetry:
+  udp_port: 43897
+  receiver_owner_service: lite3-high-level-runtime.service
+  single_receiver_required: true
+ultrasound:
+  topic: /lite3/ultrasound
+  owner_service: lite3-high-level-runtime.service
+realsense:
+  mode: on_demand
+  required_for_day2_navigation: false

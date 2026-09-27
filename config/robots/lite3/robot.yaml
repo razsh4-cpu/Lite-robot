@@ -1,0 +1,29 @@
+schema_version: 1
+identity:
+  robot_id: robot_01
+  manufacturer: DeepRobotics
+  model: Lite3 Venture
+  adapter: lite3
+
+dimensions:
+  length_m: 0.610
+  width_m: 0.370
+
+# Capabilities exposed above the adapter.  They describe the existing
+# HIGH-LEVEL product path, not the separate low-level R&D path.
+capabilities:
+  - motion.forward
+  - motion.backward
+  - motion.lateral
+  - motion.yaw
+  - posture.stand
+  - posture.down
+  - odometry
+  - battery
+  - telemetry
+
+runtime:
+  machine: abx-fit-001
+  service: lite3-high-level-runtime.service
+  ros_node: /lite3_high_level_runtime
+  single_owner: true
