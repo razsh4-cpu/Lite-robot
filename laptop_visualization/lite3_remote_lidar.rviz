@@ -1,0 +1,180 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views / Zoom
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Enabled: true
+      Name: Ground grid
+      Cell Size: 0.5
+      Plane: XY
+      Plane Cell Count: 40
+      Reference Frame: <Fixed Frame>
+    - Class: rviz_default_plugins/LaserScan
+      Enabled: true
+      Name: Live Lite3 RPLIDAR S2
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /scan
+      Style: Points
+      Size (m): 0.035
+      Size (Pixels): 4
+      Color: 255; 60; 40
+      Use Fixed Frame: true
+    - Class: rviz_default_plugins/TF
+      Enabled: false
+      Name: TF
+      Frame Timeout: 15
+      Show Axes: true
+      Show Names: true
+    - Class: rviz_default_plugins/Odometry
+      Enabled: false
+      Name: Lite3 high-level odometry
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odom
+      Shape:
+        Axes Length: 0.35
+        Axes Radius: 0.025
+    - Class: rviz_default_plugins/Map
+      Enabled: true
+      Name: Saved map
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+    - Class: rviz_default_plugins/Pose
+      Enabled: true
+      Name: Lite3 live heading (BLUE)
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /localization/pose
+      Shape: Arrow
+      Color: 0; 90; 255
+      Alpha: 1
+      Shaft Length: 0.35
+      Shaft Radius: 0.025
+      Head Length: 0.18
+      Head Radius: 0.07
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Lite3 body (BLUE, 0.610 x 0.370 m)
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /lite3/robot_body
+    - Class: rviz_default_plugins/Polygon
+      Enabled: true
+      Name: Lite3 footprint
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/published_footprint
+      Color: 0; 90; 255
+      Alpha: 1
+    - Class: rviz_default_plugins/Pose
+      Enabled: true
+      Name: Preview Goal (NO MOTION)
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /day2/preview_goal
+      Shape: Arrow
+      Color: 180; 80; 255
+      Alpha: 1
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Planned obstacle-avoidance path
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /planned_path
+      Line Style: Lines
+      Line Width: 0.05
+      Color: 40; 220; 120
+      Alpha: 1
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Active Nav2 path
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /plan
+      Line Style: Lines
+      Line Width: 0.035
+      Color: 255; 165; 0
+      Alpha: 1
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: RealSense RGB
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/camera/color/image_raw
+      Transport Hint: raw
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: RealSense aligned depth
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/camera/aligned_depth_to_color/image_raw
+      Transport Hint: raw
+  Global Options:
+    Background Color: 28; 28; 32
+    Fixed Frame: map
+    Frame Rate: 30
+  Name: Lite3 remote visualization
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Name: Preview Goal (NO MOTION)
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /day2/preview_goal
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Top-down LiDAR view
+      Scale: 8
+      Target Frame: map

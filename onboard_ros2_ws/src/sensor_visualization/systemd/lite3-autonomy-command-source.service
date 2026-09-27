@@ -1,0 +1,24 @@
+[Unit]
+Description=Lite3 optional AUTONOMY /cmd_vel command source
+After=lite3-high-level-runtime.service
+Requires=lite3-high-level-runtime.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_localization_gate --minimum 0.80
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_autonomy_command_source --ros-args -p startup_timeout_s:=30.0 -p command_timeout_s:=0.30 -p max_forward:=0.10 -p max_lateral:=0.05 -p max_yaw:=0.20'
+ExecStopPost=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_release_autonomy
+Restart=no
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=5
+StandardOutput=journal
+StandardError=journal
+
+# No boot enablement section: Day-2 activation must be explicit.

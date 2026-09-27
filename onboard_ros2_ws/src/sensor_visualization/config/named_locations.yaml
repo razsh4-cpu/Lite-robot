@@ -1,0 +1,19 @@
+# Day-3 placeholder registry. Coordinates must be surveyed and validated live.
+map: Home_Map
+frame_id: map
+locations:
+  gate:
+    configured: false
+    x: null
+    y: null
+    yaw: null
+  entrance:
+    configured: false
+    x: null
+    y: null
+    yaw: null
+  parking:
+    configured: false
+    x: null
+    y: null
+    yaw: null

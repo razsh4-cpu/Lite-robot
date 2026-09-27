@@ -1,0 +1,24 @@
+[Unit]
+Requires=lite3-ros-network-ready.service
+Description=Lite3 headless RPLIDAR S2 bringup
+Wants=network-online.target
+After=network-online.target lite3-ros-network-ready.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+SupplementaryGroups=dialout
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 launch sensor_visualization lite3_lidar_bringup.launch.py use_rviz:=false'
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

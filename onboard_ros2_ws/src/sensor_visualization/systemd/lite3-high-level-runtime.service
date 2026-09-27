@@ -1,0 +1,27 @@
+[Unit]
+Requires=lite3-ros-network-ready.service
+Description=Lite3 persistent high-level Motion Host transport and odometry
+After=network-online.target lite3-ros-network-ready.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+EnvironmentFile=-/etc/default/lite3-high-level-runtime
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStart=/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_high_level_runtime
+Restart=always
+RestartSec=2
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

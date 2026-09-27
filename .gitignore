@@ -17,3 +17,15 @@ artifacts/robust_fr_campaign/
 build-low-level/
 __pycache__/
 *.pyc
+
+# ROS 2 and Python generated state
+install/
+log/
+.pytest_cache/
+**/.pytest_cache/
+*.egg-info/
+
+# Host-specific diagnostics and temporary editor backups
+Lite3_Diagnostics/
+*.orig
+*.bak

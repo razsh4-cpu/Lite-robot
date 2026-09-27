@@ -1,0 +1,19 @@
+[Unit]
+Description=Lite3 optional local Xbox command-source input
+After=bluetooth.service network-online.target lite3-high-level-runtime.service
+Wants=bluetooth.service lite3-high-level-runtime.service
+ConditionPathExists=/dev/input/js0
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+SupplementaryGroups=input bluetooth
+WorkingDirectory=/home/abx/ros2_ws
+ExecStart=/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_high_level_xbox_runtime
+Restart=no
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal

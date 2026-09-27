@@ -1,0 +1,25 @@
+[Unit]
+Requires=lite3-ros-network-ready.service
+Description=Lite3 saved-map localization (map_server + AMCL)
+Wants=network-online.target lite3-high-level-runtime.service lite3-lidar.service
+After=network-online.target lite3-ros-network-ready.service lite3-high-level-runtime.service lite3-lidar.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_localization_supervisor
+Restart=no
+KillMode=control-group
+KillSignal=SIGINT
+TimeoutStartSec=0
+TimeoutStopSec=20
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

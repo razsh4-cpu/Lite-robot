@@ -1,0 +1,28 @@
+[Unit]
+Description=Lite3 Day-2 Nav2 servers (no command-source ownership)
+Requires=lite3-ros-network-ready.service
+Wants=network-online.target lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service lite3-nav2-safety-monitor.service
+After=network-online.target lite3-ros-network-ready.service lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_ros_inputs_ready
+ExecStartPre=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_localization_gate --minimum 0.80
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/Desktop/robotdog_ws/install/setup.bash && exec ros2 launch sensor_visualization nav2_day2.launch.py'
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+KillSignal=SIGINT
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+# Installable, but deliberately not enabled before physical Day-2 validation.
+[Install]
+WantedBy=multi-user.target

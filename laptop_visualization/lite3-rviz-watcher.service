@@ -1,0 +1,17 @@
+[Unit]
+Description=Open Lite3 RViz when live remote LiDAR data becomes available
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/home/raz/ros-robot-cc/laptop_visualization/lite3_rviz_watcher.sh
+Restart=always
+RestartSec=10
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

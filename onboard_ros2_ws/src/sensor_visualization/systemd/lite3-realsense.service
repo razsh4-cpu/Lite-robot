@@ -1,0 +1,21 @@
+[Unit]
+Description=Lite3 headless Intel RealSense D455 bringup
+After=multi-user.target
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+SupplementaryGroups=video plugdev
+WorkingDirectory=/home/abx/ros2_ws
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 launch realsense2_camera rs_launch.py align_depth.enable:=true pointcloud.enable:=true'
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+KillSignal=SIGINT
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+# Intentionally no [Install] section: the D455 is optional for the current
+# LiDAR-based Day-2 stack and is started on demand with lite3-headless.

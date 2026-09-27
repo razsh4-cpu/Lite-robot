@@ -1,0 +1,19 @@
+[Unit]
+Description=Lite3 Nav2 independent health abort monitor
+PartOf=lite3-nav2.service
+After=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/Desktop/robotdog_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_nav2_safety_monitor'
+Restart=on-failure
+RestartSec=2
+KillSignal=SIGINT
+TimeoutStopSec=5
+StandardOutput=journal
+StandardError=journal

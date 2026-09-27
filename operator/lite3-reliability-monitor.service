@@ -1,0 +1,22 @@
+[Unit]
+Description=Lite3 Mini-PC persistent reliability sampler
+After=local-fs.target systemd-journald.service
+Before=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/lite3-reliability-monitor
+Restart=always
+RestartSec=5
+Nice=15
+IOSchedulingClass=idle
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/log/lite3-reliability
+MemoryMax=64M
+CPUQuota=5%
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+[Unit]
+Description=Lite3 stable network gate before ROS 2 DDS participants
+Wants=network-online.target
+After=network-online.target NetworkManager-wait-online.service
+Before=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_ros_network_ready
+RemainAfterExit=yes
+TimeoutStartSec=55
+
+[Install]
+WantedBy=multi-user.target

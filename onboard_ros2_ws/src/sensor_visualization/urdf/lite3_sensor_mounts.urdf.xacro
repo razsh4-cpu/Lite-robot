@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!--
+    Sensor-frame macro only. Mount values must be physically measured before
+    navigation; this file deliberately contains no guessed Lite3 extrinsics.
+  -->
+  <xacro:macro name="lite3_sensor_mounts"
+               params="parent
+                       lidar_xyz lidar_rpy
+                       camera_xyz camera_rpy
+                       imu_xyz imu_rpy">
+    <link name="lidar_link"/>
+    <joint name="base_to_lidar" type="fixed">
+      <parent link="${parent}"/>
+      <child link="lidar_link"/>
+      <origin xyz="${lidar_xyz}" rpy="${lidar_rpy}"/>
+    </joint>
+
+    <link name="camera_link"/>
+    <link name="camera_color_optical_frame"/>
+    <link name="camera_depth_optical_frame"/>
+    <joint name="base_to_camera" type="fixed">
+      <parent link="${parent}"/>
+      <child link="camera_link"/>
+      <origin xyz="${camera_xyz}" rpy="${camera_rpy}"/>
+    </joint>
+    <!-- ROS optical frames: +Z forward, +X right, +Y down. -->
+    <joint name="camera_to_color_optical" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_color_optical_frame"/>
+      <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    </joint>
+    <joint name="camera_to_depth_optical" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_depth_optical_frame"/>
+      <origin xyz="0 0 0" rpy="-1.570796 0 -1.570796"/>
+    </joint>
+
+    <link name="imu_link"/>
+    <joint name="base_to_imu" type="fixed">
+      <parent link="${parent}"/>
+      <child link="imu_link"/>
+      <origin xyz="${imu_xyz}" rpy="${imu_rpy}"/>
+    </joint>
+  </xacro:macro>
+</robot>

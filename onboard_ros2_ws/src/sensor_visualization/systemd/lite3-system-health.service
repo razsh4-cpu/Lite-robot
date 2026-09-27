@@ -1,0 +1,25 @@
+[Unit]
+Description=Lite3 continuous non-motion system health monitor
+Wants=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+After=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStartPre=+/usr/bin/chown -R abx:abx /run/lite3-control
+ExecStartPre=+/usr/bin/chmod -R g+rwX /run/lite3-control
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_system_health
+Restart=always
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

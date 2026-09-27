@@ -1,0 +1,18 @@
+[Unit]
+Description=Lite3 C2 laptop Xbox ROS joystick input
+After=graphical-session.target bluetooth.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/bin/bash -lc 'while [[ ! -e /dev/input/js0 ]]; do sleep 5; done; source /opt/ros/jazzy/setup.bash; exec ros2 run joy game_controller_node --ros-args -p device_id:=0'
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

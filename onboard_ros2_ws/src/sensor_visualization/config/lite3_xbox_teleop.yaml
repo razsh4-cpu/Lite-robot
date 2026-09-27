@@ -1,0 +1,16 @@
+teleop_twist_joy_node:
+  ros__parameters:
+    # Xbox Series controller mapping verified on this laptop.
+    axis_linear:
+      x: 1
+      y: 0
+    scale_linear:
+      x: 0.10
+      y: 0.10
+    axis_angular:
+      yaw: 2
+    scale_angular:
+      yaw: 0.10
+    # The Lite3 standing/Auto-mode gate remains on the robot side.
+    require_enable_button: false
+    enable_button: -1

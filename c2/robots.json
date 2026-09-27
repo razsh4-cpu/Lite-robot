@@ -1,0 +1,16 @@
+{
+  "robots": [
+    {
+      "robot_id": "robot_01",
+      "address": "192.168.2.32",
+      "transport": "ros2",
+      "ros_domain_id": 0,
+      "namespace": "/c2/robot_01",
+      "connection_status": "unknown",
+      "last_heartbeat_time": null,
+      "current_command_source": "NONE",
+      "operational_state": "unknown",
+      "pose_topic": "/odom"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[Unit]
+Description=Lite3 explicit SLAM mapping mode
+Requires=lite3-ros-network-ready.service
+Wants=network-online.target lite3-high-level-runtime.service lite3-lidar.service
+After=network-online.target lite3-ros-network-ready.service lite3-high-level-runtime.service lite3-lidar.service
+Conflicts=lite3-localization.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/Desktop/robotdog_ws/install/setup.bash && exec ros2 launch sensor_visualization slam_mapping.launch.py'
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+KillSignal=SIGINT
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+# Mapping is always selected explicitly by the operator.
+[Install]

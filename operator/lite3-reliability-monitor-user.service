@@ -1,0 +1,19 @@
+[Unit]
+Description=Lite3 Mini-PC persistent reliability sampler (user)
+After=default.target
+
+[Service]
+Type=simple
+Environment=LITE3_RELIABILITY_LOG_DIR=%h/.local/state/lite3-reliability
+ExecStart=%h/.local/bin/lite3-reliability-monitor
+Restart=always
+RestartSec=5
+Nice=15
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryMax=64M
+CPUQuota=5%
+
+[Install]
+WantedBy=default.target

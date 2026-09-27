@@ -1,0 +1,23 @@
+[Unit]
+Description=Lite3 operator-approved bounded localization recovery motion
+After=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+Requires=lite3-high-level-runtime.service lite3-lidar.service lite3-localization.service
+Conflicts=lite3-autonomy-command-source.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_relocalization_run
+ExecStopPost=/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_release_autonomy
+Restart=no
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Intentionally no [Install]: this service can never start at boot.

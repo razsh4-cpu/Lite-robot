@@ -1,0 +1,4 @@
+# Safe commissioning default: validate the complete input/state path without
+# transmitting robot UDP packets until a supervised online test is approved.
+LITE3_XBOX_TRANSMIT=false
+LITE3_XBOX_ZERO_ONLY=true

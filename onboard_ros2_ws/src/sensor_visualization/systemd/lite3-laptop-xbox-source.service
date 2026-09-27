@@ -1,0 +1,25 @@
+[Unit]
+Description=Lite3 robot-side LAPTOP_XBOX command-source relay
+After=network-online.target lite3-ros-network-ready.service lite3-high-level-runtime.service
+Wants=network-online.target
+Requires=lite3-ros-network-ready.service lite3-high-level-runtime.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_laptop_xbox_source --ros-args -p robot_id:=robot_01'
+Restart=always
+RestartSec=2
+KillSignal=SIGTERM
+TimeoutStopSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

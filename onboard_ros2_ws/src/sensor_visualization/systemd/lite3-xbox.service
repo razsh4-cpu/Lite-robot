@@ -1,0 +1,21 @@
+[Unit]
+Description=Lite3 finite Xbox startup connection window
+Wants=bluetooth.service
+After=bluetooth.service multi-user.target
+
+[Service]
+Type=simple
+User=root
+UMask=0002
+ExecStartPre=/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStartPre=/usr/sbin/rfkill unblock bluetooth
+ExecStartPre=/usr/sbin/modprobe hid_xpadneo
+ExecStartPre=/usr/bin/bluetoothctl power on
+ExecStart=/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_xbox_startup
+Restart=no
+TimeoutStopSec=15
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

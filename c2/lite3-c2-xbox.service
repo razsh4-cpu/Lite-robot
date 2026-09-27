@@ -1,0 +1,20 @@
+[Unit]
+Description=Lite3 C2 single-robot Xbox publisher (safe disabled by default)
+After=graphical-session.target lite3-c2-joy.service
+Wants=lite3-c2-joy.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && exec python3 /home/raz/ros-robot-cc/c2/lite3_c2_xbox.py --ros-args -p registry:=/home/raz/ros-robot-cc/c2/robots.json -p selected_robot:=robot_01 -p manual_enabled:=false'
+Restart=on-failure
+RestartSec=3
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
