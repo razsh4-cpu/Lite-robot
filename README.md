@@ -1,3 +1,10 @@
+## HIGH-LEVEL ROS 2 / Nav2 product path
+
+The current patrol/product stack and its evidence-backed Day-1/Day-2 status are
+recorded in [docs/HIGH_LEVEL_NAV2_CLOSEOUT_2026-09-27.md](docs/HIGH_LEVEL_NAV2_CLOSEOUT_2026-09-27.md).
+It is deliberately separate from the low-level ONNX/MotionSDK locomotion R&D
+path documented elsewhere in this repository.
+
 [English](./README_EN.md)
 
 [![Discord](https://img.shields.io/badge/-Discord-5865F2?style=flat&logo=Discord&logoColor=white)](https://discord.gg/gdM9mQutC8)
