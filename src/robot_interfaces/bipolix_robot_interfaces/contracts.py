@@ -81,6 +81,15 @@ class VelocityCommand:
     linear_y: float = 0.0
     angular_z: float = 0.0
 
+    @classmethod
+    def stop(cls) -> "VelocityCommand":
+        """Return the vendor-neutral safe-zero motion intent."""
+        return cls()
+
+    @property
+    def is_stop(self) -> bool:
+        return self.linear_x == self.linear_y == self.angular_z == 0.0
+
 
 @dataclass(frozen=True)
 class RobotCapabilities:

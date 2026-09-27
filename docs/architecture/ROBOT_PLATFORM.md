@@ -1,5 +1,9 @@
 # Lite3 current robot platform
 
+Architecture Baseline companions: [component inventory](COMPONENT_INVENTORY.md),
+[safety/arbitration](SAFETY_AND_ARBITRATION.md), and
+[configuration/calibration/data](CONFIGURATION_CALIBRATION_DATA.md).
+
 This inventory records the real implementation at Architecture Phase 1. It is
 not a proposed rewrite. Paths are repository paths; deployed Mini-PC paths are
 under `/home/abx/ros2_ws` or `/home/abx/Desktop/robotdog_ws` as encoded by the

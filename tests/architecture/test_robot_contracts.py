@@ -60,6 +60,12 @@ def test_velocity_rejects_unsupported_axis():
         validate_velocity(VelocityCommand(linear_y=0.01), limits, forward_only)
 
 
+def test_stop_is_an_explicit_zero_motion_intent():
+    stop = VelocityCommand.stop()
+    assert stop.is_stop
+    assert (stop.linear_x, stop.linear_y, stop.angular_z) == (0.0, 0.0, 0.0)
+
+
 def test_valid_velocity_is_accepted():
     config = load_robot_platform_config(CONFIG)
     validate_velocity(
