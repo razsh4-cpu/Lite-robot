@@ -14,7 +14,7 @@ from bipolix_robot_interfaces.contracts import (
 
 
 ROOT = Path(__file__).resolve().parents[2]
-CONFIG = ROOT / "config" / "robots" / "lite3"
+CONFIG = ROOT / "platform" / "config" / "robots" / "lite3"
 
 
 def test_lite3_configuration_loads_identity_capabilities_and_limits():
@@ -76,7 +76,7 @@ def test_valid_velocity_is_accepted():
 
 
 def test_generic_layer_has_no_robot_vendor_or_transport_dependency():
-    generic = ROOT / "src" / "robot_interfaces"
+    generic = ROOT / "platform" / "robot_interfaces"
     text = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted(generic.rglob("*.py"))

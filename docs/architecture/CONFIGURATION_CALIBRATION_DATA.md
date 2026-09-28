@@ -27,7 +27,7 @@ to improve one localization score.
 
 | Concern | Current source(s) |
 |---|---|
-| Robot identity/capabilities/dimensions | Phase-1 `config/robots/lite3/*.yaml`; C2 instance registry remains `c2/robots.json` |
+| Robot identity/capabilities/dimensions | Phase-1 `platform/config/robots/lite3/*.yaml`; C2 instance registry remains `c2/robots.json` |
 | HIGH-LEVEL transport/gates | `lite3_high_level_runtime.launch.py`, bridge defaults, systemd environment/default file |
 | AUTONOMY limits/watchdog | `lite3-autonomy-command-source.service` plus `lite3_autonomy_command_source.py` |
 | Nav2 footprint/planner/controller/costmaps | `sensor_visualization/config/nav2_day2.yaml` and BT XML |
@@ -39,7 +39,7 @@ to improve one localization score.
 | DDS/network startup | systemd units and `lite3_ros_network_ready.sh`; ROS domain 0, SUBNET, UDPv4 |
 | RViz | canonical laptop `laptop_visualization/lite3_remote_lidar.rviz` and session/watcher scripts |
 
-The Phase-1 files under `config/robots/lite3/` are contract/configuration
+The Phase-1 files under `platform/config/robots/lite3/` are contract/configuration
 targets. Existing launch and unit files remain operationally authoritative
 until a consumer, migration test and rollback exist.
 
@@ -90,7 +90,7 @@ sites/
     └── restricted_zones.yaml
 ```
 
-The current `config/robots/lite3/robot.yaml` contains both type and the first
+The current `platform/config/robots/lite3/robot.yaml` contains both type and the first
 instance for compatibility. A future schema migration should split it only
 after all consumers accept the split.
 

@@ -21,7 +21,7 @@ low-level control, or bypass the Command Arbiter.
 
 ## Pure contract now available
 
-`src/missions/bipolix_missions` defines:
+`product/missions/bipolix_missions` defines:
 
 - `SavedLocationTarget(name)`;
 - `AdHocTarget(x, y, yaw, frame_id=map)`;

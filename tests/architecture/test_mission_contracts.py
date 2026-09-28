@@ -29,6 +29,6 @@ def test_minimal_mission_lifecycle_and_cancel_are_explicit():
         mission.transition(MissionState.NAVIGATING)
 
 def test_mission_contract_has_no_ros_vendor_or_motion_execution_dependency():
-    body = "\n".join(path.read_text(encoding="utf-8") for path in (ROOT / "src/missions").rglob("*.py"))
+    body = "\n".join(path.read_text(encoding="utf-8") for path in (ROOT / "product/missions").rglob("*.py"))
     for forbidden in ("DeepRobotics", "MotionSDK", "SIT_STAND", "rclpy", "NavigateToPose", "/cmd_vel", "COMMAND_SOURCE", "43897"):
         assert forbidden not in body

@@ -75,7 +75,8 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `build-offline/` | Main offline CMake/test output tree | R&D/testing build | generated, ignored, untracked | Offline | Test binaries include safety fixtures; not deployed source | **LOW**; rebuild rather than migrate |
 | `build-robust-fr/` | Robust front-right leg simulation build | R&D build | generated, ignored, untracked | Offline | None on Product | **LOW**; rebuild rather than migrate |
 | `c2/` | Laptop Xbox discovery/validation, robot selection, control/release CLI, ROS C2 publisher, registry and user units; referenced by its tests, docs and installed wrappers | Product / Operator-C2 | source/config; current laptop authority, with deployment-path debt | Laptop | Manual ownership and safe release are safety-critical | **HIGH**; keep until wrappers and user units stop referring to `/home/raz/ros-robot-cc/c2` |
-| `config/` | Phase-1 generic robot type/config (`robot`, `motion`, `safety`, `sensors`) read by `src/robot_interfaces/.../config.py` and architecture tests | Product platform contracts | source/config; target authority only, not yet production runtime authority | Shared | Values overlap with live Nav2/source limits but are not yet their consumer | **MEDIUM**; keep, then migrate consumers one value family at a time; never create a second writable authority |
+| `platform/` | Vendor-neutral robot contracts, robot-specific adapters and target robot configuration; imported only by architecture tests | Platform contracts/adapters/config | source/config; authoritative architectural baseline, not deployed runtime | Shared/offline | No sockets, nodes or commands; future safety boundary | **MEDIUM**; preserve Platform ownership and migrate consumers deliberately |
+| `product/` | Robot-agnostic mission contracts; imported only by architecture tests and intentionally dormant | Product missions | source; authoritative contract baseline, not deployed runtime | Shared/offline | No runtime effect; must not bypass generic Robot Interface | **LOW/MEDIUM**; preserve public imports and dormant status |
 | `docs/` | Architecture, operations, requirements, tests, experiment reports and committed handoff evidence | Documentation/evidence | documentation and captured artifacts; authoritative by document scope | Shared | Architecture/safety procedures are operationally important | **MEDIUM**; keep top-level. Large evidence needs a retention policy, not blind relocation |
 | `interface/` | C++ Low-Level robot/user-command abstractions, MotionSDK hardware transport, permits/lease, Xbox input and simulation adapters. Built by root CMake as static `interface` library | R&D / Low-Level Control; some reusable safety concepts | source; authoritative for root C++ path | Offline and legacy Mini-PC hardware path | **Very high**: direct ownership, joint commands and vendor SDK | **HIGH**; do not move until root CMake and all C++ includes are made target-scoped and low-level deployment is isolated |
 | `laptop_visualization/` | Canonical laptop RViz session/watcher scripts, robot marker and RViz config; user service executes absolute path | Product / Operator visualization | source/config; current laptop authority | Laptop | Read-only visualization, but wrong config can mislead operator | **HIGH** due installed service and absolute paths; keep until package-relative install/wrapper exists |
@@ -84,9 +85,8 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `operator/` | Laptop CLIs, deployment/install scripts, Day-2 planning/execution/obstacle tests, reliability tools and unit templates | Product Operator/Deployment plus engineering validation | source; mixed authoritative operator wrappers and one-off deployment/test tooling | Laptop, installing to Mini-PC | Several commands can acquire ownership or trigger motion after approval | **HIGH**; first inventory into stable CLI vs deployment vs experiment; installed wrapper paths must be preserved |
 | `policy/` | `policy.onnx` and PyTorch-to-ONNX converter | R&D / Policies | binary model + source converter; authoritative for root ONNX runner | Offline/legacy low-level Mini-PC | Model can produce joint-level policy output through R&D runtime | **HIGH**; keep with `run_policy` until model manifest and deploy path replace `LITE3_POLICY_MODEL` assumptions |
 | `run_policy/` | ONNX policy loader, model resolver and policy interface; root CMake static library | R&D / Policies and Low-Level Control | source; authoritative for root RL/ONNX path | Offline/legacy hardware path | Joint-policy safety impact | **HIGH**; move only with root CMake, model and state-machine boundary together |
-| `rnd/` | Curated R&D hierarchy containing legacy evidence plus the Group-3A MuJoCo experiment entry points under `mujoco/experiments/` | R&D / MuJoCo / evidence | source plus artifact archive; authoritative for migrated experiments | Offline R&D | Simulation-only entry points; no Product runtime or safety impact | **LOW/MEDIUM**; continue only through reviewed dependency-safe migrations |
+| `rnd/` | Curated R&D hierarchy containing legacy evidence plus the Group-3 MuJoCo experiment entry points under `mujoco/experiments/` | R&D / MuJoCo / evidence | source plus artifact archive; authoritative for migrated experiments | Offline R&D | Simulation-only entry points; no Product runtime or safety impact | **LOW/MEDIUM**; continue only through reviewed dependency-safe migrations |
 | `scripts/` | Legacy direct local-Xbox connection/lease/readiness scripts plus file-transfer and sweep launchers. Root C++ test and root units reference them | Mixed: legacy low-level runtime, R&D deployment/experiments | source; legacy/divergent relative to ROS-package scripts | Mini-PC legacy path and Laptop | Xbox/ownership scripts are safety-critical if installed | **HIGH** for control scripts; **LOW/MEDIUM** for transfer/sweep scripts. Do not merge same-named files by assumption |
-| `src/` | Pure Python generic Robot Interface/config, Lite3 state-normalization adapter, and dormant Mission contracts; imported only by architecture tests through explicit `sys.path` | Product architecture contracts / Missions | source; authoritative architectural baseline, not deployed runtime | Shared/offline | No sockets/nodes/commands; future safety boundary | **LOW** to package formally, but keep current paths until imports/tests are changed together |
 | `state_machine/` | C++ Idle/Stand/JointDamping/RL states, local Xbox state machine, low-level supported body/leg plans and control parameters; globbed into root executables | R&D / Low-Level Control | source; authoritative for root C++ runtime | Offline and legacy real-hardware validation | Direct robot-state/joint-command safety impact | **HIGH**; remain exactly where it is during Product/R&D split |
 | `systemd/` | Older direct local-Xbox services using `/home/abx/Lite-robot/build/lite3_xbox_control`; tested by `tests/xbox_startup_service_test.sh` | Legacy Low-Level deployment | source/config; legacy, not canonical high-level Product units | Mini-PC legacy path | Can start hardware-facing C++ runtime | **HIGH**; do not delete/move until confirmed absent from every deployed host and tests are retired/replaced |
 | `tests/` | Root C++ low-level tests, fake SDK, Xbox service tests and `tests/architecture` Product contract tests | Mixed R&D safety tests and Product architecture tests | source/tests; authoritative verification | Offline | Protects permits, ownership, watchdogs and contracts | **MEDIUM/HIGH**; split only after build/test discovery is updated with no loss of coverage |
@@ -156,11 +156,11 @@ patrol Product. “Product” does not mean every file is currently enabled.
   obstacle-test implementation; deployment/install scripts are supporting
   operations rather than onboard runtime.
 - `laptop_visualization/`: canonical operator RViz config, marker and watcher.
-- `src/robot_interfaces`, `src/robot_adapters/lite3` and `src/missions`: pure
+- `platform/robot_interfaces`, `platform/robot_adapters/lite3` and `product/missions`: pure
   architecture contracts/scaffolds; currently exercised only by offline tests.
-  Each component now has independent in-place packaging metadata; no deployed
+  Each component now has independent packaging metadata; no deployed
   runtime consumes these packages.
-- `config/robots/lite3`: target generic configuration; not yet the values read
+- `platform/config/robots/lite3`: target generic configuration; not yet the values read
   by the deployed Nav2/HIGH-LEVEL processes.
 
 ### Product package files that are development/legacy candidates
@@ -213,12 +213,12 @@ lower safety importance.
 
 1. **Two Robot Interface concepts**:
    `interface/robot/robot_interface.h` is a joint-level C++ R&D hardware API;
-   `src/robot_interfaces/bipolix_robot_interfaces` is a vendor-neutral Product
+   `platform/robot_interfaces/bipolix_robot_interfaces` is a vendor-neutral Platform
    contract. Their names overlap but their abstraction level does not. They
    should be renamed/separated eventually, not merged mechanically.
 2. **Types split**: root `types/` contains legacy Eigen/joint/control structs;
    generic Product types are dataclasses/enums in
-   `src/robot_interfaces/.../contracts.py`; ROS messages are used directly in
+   `platform/robot_interfaces/.../contracts.py`; ROS messages are used directly in
    `sensor_visualization`. This is three representation layers with no formal
    translation package yet.
 3. **Arbitration split**: C++ `CommandSourceLease`, Python source-specific file
@@ -328,7 +328,7 @@ currently deployed split workspaces.
    Xbox/readiness scripts, RViz, localization launches, model assets and mixed
    operator/tools directories.
 4. **Generic-interface fragmentation:** legacy joint-level C++ `interface/` +
-   legacy C++ `types/` + generic Python `src/robot_interfaces` + ROS-native
+   legacy C++ `types/` + generic Python `platform/robot_interfaces` + ROS-native
    messages. They require adapters, not a wholesale merge.
 5. **Generated files:** build/install/log/cache trees are correctly untracked;
    experiment artifacts still need an evidence-lifecycle policy; legacy logs and

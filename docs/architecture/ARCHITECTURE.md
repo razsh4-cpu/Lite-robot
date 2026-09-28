@@ -99,7 +99,7 @@ layers never import Lite3/DeepRobotics code. Circular dependencies are forbidden
 ## Robot Interface baseline
 
 The generic contract is implemented as pure types in
-`src/robot_interfaces/bipolix_robot_interfaces`. It exposes:
+`platform/robot_interfaces/bipolix_robot_interfaces`. It exposes:
 
 - planar `linear.x`, `linear.y`, `angular.z` intent and stop as the all-zero
   velocity command;
@@ -228,12 +228,12 @@ simulation evidence.
 ## Current Phase-1/Architecture-Baseline code boundary
 
 ```text
-src/robot_interfaces/bipolix_robot_interfaces/   # generic pure contracts
-src/robot_adapters/lite3/bipolix_lite3_adapter/ # Lite3 state normalization
-src/missions/bipolix_missions/                   # dormant pure Day-3 contracts
-config/robots/lite3/                             # target contract configuration
-tests/architecture/                              # offline contract/baseline checks
-docs/architecture/                               # source of truth and decisions
+platform/robot_interfaces/bipolix_robot_interfaces/       # generic pure contracts
+platform/robot_adapters/lite3/bipolix_lite3_adapter/     # Lite3 normalization
+platform/config/robots/lite3/                            # target robot configuration
+product/missions/bipolix_missions/                       # dormant Day-3 contracts
+tests/architecture/                                      # offline contract checks
+docs/architecture/                                       # architecture source of truth
 ```
 
 Each of the three pure Python component roots owns independent `pyproject.toml`

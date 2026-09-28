@@ -32,11 +32,10 @@ workspace for onboard ROS packages:
 ├── product/
 │   ├── onboard_ros2_ws/
 │   │   └── src/
-│   │       ├── bipolix_robot_adapter_lite3/  # HIGH-LEVEL + normalized state
 │   │       ├── bipolix_safety/               # leases, watchdogs, gates
 │   │       ├── bipolix_navigation/           # localization, mapping, Nav2
 │   │       ├── bipolix_perception/           # LiDAR/D455 sensor management
-│   │       └── bipolix_missions/             # dormant until Day 3 approval
+│   ├── missions/                             # dormant until Day 3 approval
 │   ├── c2/                                   # laptop selection/manual source
 │   ├── operator/                             # stable operator CLI
 │   ├── visualization/                        # laptop RViz only
@@ -45,6 +44,8 @@ workspace for onboard ROS packages:
 │       └── install/
 ├── platform/
 │   ├── robot_interfaces/                     # vendor-neutral contracts
+│   ├── robot_adapters/
+│   │   └── lite3/                             # DeepRobotics-specific adapter
 │   ├── config/
 │   │   ├── robot_types/
 │   │   ├── robot_instances/
@@ -165,8 +166,8 @@ remain compatible.
 - **Source:** `src/robot_interfaces`, `src/robot_adapters/lite3`,
   `src/missions`, and `config/robots/lite3`.
 - **Destination:** initially package in place; later
-  `platform/robot_interfaces`, `product/.../robot_adapter_lite3`, and
-  `product/.../missions` after packaging is proven.
+  `platform/robot_interfaces`, `platform/robot_adapters/lite3`,
+  `platform/config/robots/lite3`, and `product/missions` after packaging is proven.
 - **Reason:** remove test-only `sys.path` injection and make dependency direction
   explicit without connecting to runtime.
 - **References requiring updates:** `tests/architecture/conftest.py`, imports,
@@ -185,6 +186,12 @@ remain compatible.
   test-only `sys.path` mutation. No file location, public import, runtime entry
   point, configuration authority, or behavior changed. Isolated source-package
   builds and architecture tests passed.
+- **Group 4B result:** architectural ownership was approved explicitly. The
+  generic interface and robot configuration moved to `platform/`; the
+  DeepRobotics-specific adapter moved to `platform/robot_adapters/lite3`; and
+  robot-agnostic mission contracts moved to `product/missions`. Public Python
+  imports, package metadata, contract semantics, and offline-only status are
+  unchanged. No runtime or deployment path consumes these components.
 
 ### Group 5 — split laptop operator validation tools from stable CLI
 
@@ -240,10 +247,11 @@ remain compatible.
 ### Group 8 — split Product ROS package by responsibility
 
 - **Source:** `onboard_ros2_ws/src/sensor_visualization`.
-- **Destination:** multiple packages under the same colcon workspace:
-  `bipolix_robot_adapter_lite3`, `bipolix_safety`, `bipolix_navigation`,
-  `bipolix_perception`; keep compatibility executables/launch aliases during
-  migration.
+- **Destination:** adapter-specific implementation under
+  `platform/robot_adapters/lite3/`; Product-owned `bipolix_safety`,
+  `bipolix_navigation`, and `bipolix_perception` packages remain within the
+  colcon Product workspace. Keep compatibility executables/launch aliases
+  during migration.
 - **Reason:** the current package spans every Product layer and its name is
   misleading.
 - **References requiring updates:** CMake/package manifests, every launch file,
@@ -353,9 +361,7 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 4A — in-place package formalization** is complete. The next proposed
-subgroup is the physical Group-4 layout move, but its authoritative destination
-must first be resolved: the target model places robot adapters under
-`platform/robot_adapters`, while the earlier group plan names
-`product/.../robot_adapter_lite3`. This is an ambiguous-boundary RED gate; do
-not move the packages until the architect selects the authority.
+**Group 4 — pure generic Product contracts** is complete. Group 4A added
+in-place package metadata and Group 4B applied the approved Platform/Product
+ownership. **Group 5 — operator organization** is the recommended next group;
+begin with dependency analysis and split only behavior-neutral support files.
