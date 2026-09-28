@@ -13,6 +13,9 @@ does not include the separate low-level R&D path and does not expand the ODD.
 | Day-2 closeout | `1462847` | Evidence/status documentation for the accepted physical system |
 | Robot Interface Phase 1 | `0c2a742` | Pure generic contracts/Lite3 mapping/config foundation; no runtime replacement |
 | Architecture Baseline | `7d5bc92` | Architecture/source-of-truth expansion; no product runtime change |
+| Platform foundation | `bf223eb` | Baseline, tests, experiments, safety/failure, requirements and workflow documentation |
+| Built-in obstacle CLI | `7ae1688` | Reusable guarded operator test and bounded diagnostic snapshots; offline tested only as a new wrapper |
+| Dormant Day-3/D455 preparation | `b6848f9` | Pure Mission contracts and on-demand D455 RViz profile; no runtime activation |
 
 The exact installed Mini-PC package hashes at the instant of the physical run
 were not captured as a release manifest. Therefore `abf9900` plus the closeout
@@ -39,6 +42,38 @@ Evidence classification: `PHYSICALLY PROVEN` unless a bullet states otherwise.
 Attempt 1 travelled approximately 1.64 m and avoided the chair but was
 interrupted by Mini-PC power loss/reboot; it is useful evidence, not a completed
 goal PASS. Attempt 2 above is the accepted baseline.
+
+## Offline/software proven
+
+- vendor-neutral Robot Interface contracts and Lite3 telemetry/state mapping;
+- configuration loading, capability/limit validation and architecture ownership
+  invariants;
+- obstacle-test approval, status, cancel, override cleanup, packaging and
+  diagnostic-snapshot behavior through mocks/static tests;
+- dormant Mission target/lifecycle contracts and unconfigured registry;
+- current focused offline regression: 223 tests passed on 2026-09-28.
+
+These results prove deterministic software behavior only, not installation, DDS,
+physical clearance, sensor alignment or hardware response.
+
+## Implemented but not physically validated
+
+- the reusable `nav test obstacle` operator wrapper as a new installed workflow
+  (its underlying navigation/avoidance path is physically proven above);
+- dedicated `robot down` CLI acceptance;
+- explicit relocalization CLI physical maneuver and cleanup as one end-to-end run;
+- clean Mini-PC installation/import of the latest obstacle-test package;
+- D455 map/scan/robot/path/point-cloud RViz profile; camera-to-base TF remains unconfigured and requires live calibration;
+- Mission contracts (execution deliberately disabled).
+
+## Planned
+
+- active Day-3 Mission Manager and `go`/status/cancel operator commands;
+- validated named-location coordinates and ad-hoc Mission integration;
+- unified bounded experiment recorder/black box;
+- D455 perception or Nav2 costmap integration;
+- simulation adapter, HIL/fault injection, CI/release installer, backup/restore,
+  update/rollback, security hardening and fleet/multi-robot operation.
 
 ## Baseline operational parameters
 
