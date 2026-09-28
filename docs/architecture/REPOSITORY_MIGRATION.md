@@ -213,6 +213,11 @@ remain compatible.
   operator sources explicitly from the repository root. No command source,
   installed wrapper, executable, service, deployment file, or CLI behavior
   changed.
+- **Group 5B result:** the uninstalled, read-only localization probe and
+  reliability collection script moved byte-for-byte to
+  `product/operator/diagnostics/`. Repository-wide reference searches found no
+  build, test, launch, service, deployment, documentation, or runtime consumer;
+  installed reliability-monitor sources remain at their existing paths.
 
 ### Group 6 — laptop C2 and visualization packaging
 
@@ -368,6 +373,6 @@ remain compatible.
 
 **Group 4 — pure generic Product contracts** is complete. Group 4A added
 in-place package metadata and Group 4B applied the approved Platform/Product
-ownership. **Group 5A — operator test separation** is complete. Continue Group 5 by
-classifying deployment, diagnostics, validation, and stable CLI consumers before
-moving any installed or motion-capable operator path.
+ownership. **Group 5A–5B** separated regression tests and two uninstalled read-only
+diagnostics. Continue Group 5 by classifying planning-only validation tools; do
+not move installed, deployment, or motion-capable paths without equivalence.
