@@ -5,3 +5,4 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src" / "robot_interfaces"))
 sys.path.insert(0, str(ROOT / "src" / "robot_adapters" / "lite3"))
+sys.path.insert(0, str(ROOT / "src" / "missions"))

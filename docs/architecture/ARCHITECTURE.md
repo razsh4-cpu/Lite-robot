@@ -52,6 +52,7 @@ Detailed evidence and policies:
 - [Configuration, calibration and data](CONFIGURATION_CALIBRATION_DATA.md)
 - [Platform operations, perception and deployment](PLATFORM_OPERATIONS.md)
 - [Gradual migration plan](MIGRATION_PLAN.md)
+- [Dormant Day-3 Mission contract](DAY3_MISSION_CONTRACT.md)
 - [Patrol MVP requirements](../requirements/MVP_REQUIREMENTS.md)
 - [Operational Design Domain](../requirements/ODD.md)
 - [Definition of Done](../testing/DEFINITION_OF_DONE.md)
@@ -186,17 +187,18 @@ proves otherwise. AI can propose an alert or mission; it cannot publish
 protected motion, acquire ownership or bypass deterministic localization,
 Nav2, arbitration or HIGH-LEVEL safety.
 
-## Mission architecture (defined, not implemented)
+## Mission architecture (contract scaffold only; runtime not activated)
 
-Future mission types: `GoTo`, `Patrol`, `Inspect`, `RespondToAlert`,
-`ReturnHome`, `Cancel`. States: `PENDING`, `RUNNING`, `ARRIVED`, `FAILED`,
-`CANCELLED`, `RECOVERING`.
+The dormant pure contract defines saved-location and ad-hoc `map` targets plus
+`IDLE`, `VALIDATING`, `NAVIGATING`, `ARRIVED`, `FAILED` and `CANCELLED`. Future
+mission types include `GoTo`, `Patrol`, `Inspect`, `RespondToAlert`,
+`ReturnHome` and `Cancel`. `RECOVERING` remains deferred until a concrete
+recovery policy is justified.
 
-Targets may be a named site location or an ad-hoc map pose. Alert coordinates
-are not automatically destinations; policy derives a safe observation pose.
-Mission Manager decides *what* and tracks results; Nav2 performs navigation.
-This baseline does not activate the existing saved-location scaffold or start
-Day 3.
+Alert coordinates are not automatically destinations; policy derives a safe
+observation pose. Mission Manager decides *what* and tracks results; Nav2
+performs navigation. The pure types and unconfigured registry start no node,
+send no goal and acquire no ownership. See `DAY3_MISSION_CONTRACT.md`.
 
 ## Safety, health and offline-first operation
 
@@ -228,6 +230,7 @@ simulation evidence.
 ```text
 src/robot_interfaces/bipolix_robot_interfaces/   # generic pure contracts
 src/robot_adapters/lite3/bipolix_lite3_adapter/ # Lite3 state normalization
+src/missions/bipolix_missions/                   # dormant pure Day-3 contracts
 config/robots/lite3/                             # target contract configuration
 tests/architecture/                              # offline contract/baseline checks
 docs/architecture/                               # source of truth and decisions

@@ -113,3 +113,33 @@ def test_architecture_links_to_phase_one_foundation():
         "decisions/ADR-005-motion-through-existing-safety-path.md",
     ):
         assert link in body
+
+
+def test_day3_contract_is_dormant_and_vendor_neutral():
+    document = text("docs/architecture/DAY3_MISSION_CONTRACT.md")
+    for item in ("SavedLocationTarget", "AdHocTarget", "EXECUTION DISABLED"):
+        assert item in document
+    assert "publish `/cmd_vel`" in document and "must never" in document
+    assert not list(ROOT.glob("**/*mission-manager*.service"))
+
+
+def test_d455_nav2_profile_is_complete_but_realsense_stays_on_demand():
+    rviz = text("onboard_ros2_ws/src/sensor_visualization/rviz/d455_s2_map.rviz")
+    for topic in (
+        "/map", "/scan", "/localization/pose", "/lite3/robot_body",
+        "/camera/camera/depth/color/points", "/plan", "/goal_pose",
+    ):
+        assert f"Value: {topic}" in rviz
+    assert "REQUIRES LIVE TF" in rviz
+    unit = text("onboard_ros2_ws/src/sensor_visualization/systemd/lite3-realsense.service")
+    assert "pointcloud.enable:=true" in unit
+    assert "WantedBy=" not in unit
+
+
+def test_known_failures_include_snapshot_packaging_and_wrong_map():
+    body = text("docs/operations/ENGINEERING_KNOWLEDGE_BASE.md")
+    for marker in (
+        "reconstructable snapshot", "executable but not importable",
+        "Wrong saved map selected",
+    ):
+        assert marker in body

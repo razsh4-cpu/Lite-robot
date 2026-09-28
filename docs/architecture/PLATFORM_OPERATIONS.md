@@ -13,6 +13,14 @@ devices, configure serial ports or start drivers.
 | Vendor odometry/telemetry | base motion, posture, battery, ultrasound and robot link evidence | Required HIGH-LEVEL source; sole UDP receiver | Lite3 Adapter normalizes robot state |
 | IMU fields | orientation/motion information inside vendor telemetry; alternate SDK bridge can publish research topics | Not a separately fused production source | State Estimation may fuse after calibration and single-owner design |
 | RealSense D455 | aligned depth/point cloud experiments and future perception | On-demand; not used by current LiDAR Nav2 | Perception pipeline with explicit stream/resource profile |
+
+The offline RViz profile `sensor_visualization/rviz/d455_s2_map.rviz` combines
+the map, red `/scan`, blue Lite3 body/heading, Nav2 path/goal and the existing
+D455 point-cloud topic. It does not invent `base_link→camera` calibration. Live
+Mini-PC/D455 work must verify the real camera frames and TF alignment before
+that point cloud is treated as spatially registered. `lite3-realsense.service`
+remains on-demand and is not a boot dependency because its previous workload
+was approximately one CPU core.
 | Ultrasonic | four values exposed on `/lite3/ultrasound` | Available telemetry, not in current navigation safety policy | Near-field safety input after validation, diagnostics and fault policy |
 
 Deterministic obstacle and localization sensing remains separate from future AI

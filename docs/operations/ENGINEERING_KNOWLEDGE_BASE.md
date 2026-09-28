@@ -122,3 +122,44 @@ live or physical validation.
   count as PASS.
 - **Status:** `MITIGATED`; hardware power robustness remains operational debt.
 
+## Obstacle investigation lacked a reconstructable snapshot
+
+- **Symptom:** an offline review could not identify the exact 8 mm clearance
+  pose/cell after the live chair dry run.
+- **Root Cause:** the required scan, both costmaps, TF, candidates and
+  per-pose clearance evidence had not all been preserved together.
+- **Fix:** the built-in obstacle test now writes a bounded session snapshot with
+  the live inputs, every candidate, selected path, footprint/settings and
+  limiting cell.
+- **Regression Prevention:** dry planning tests assert inert behavior and the
+  required evidence fields; interrupted or incomplete sessions are not PASS.
+- **Status:** `IMPLEMENTED`; offline regression tested; next live obstacle run
+  must confirm the installed artifact set.
+
+## Obstacle-test Python helper was executable but not importable
+
+- **Symptom:** `lite3_nav2_preflight` could execute the override helper but
+  `from lite3_nav_test_override import read` failed after a clean install.
+- **Root Cause:** CMake installed only an extensionless renamed executable, not
+  an importable `lite3_nav_test_override.py` module.
+- **Fix:** CMake installs both the operator executable and the `.py` module in
+  the package library directory. No manual install-tree copy is required.
+- **Regression Prevention:** static packaging test requires both install rules;
+  deployment performs a clean package build.
+- **Status:** `IMPLEMENTED`; offline regression tested; Mini-PC clean-build
+  import remains a deployment validation item.
+
+## Wrong saved map selected for localization/test
+
+- **Symptom:** scan quality appeared stable near 75–79%, but localization did
+  not reach the normal gate and the planned obstacle test referenced the old
+  `Home_Map` rather than the newly mapped environment.
+- **Root Cause:** operator/test preflight did not make the active map identity
+  sufficiently prominent before interpreting confidence.
+- **Fix:** obstacle-test status/preflight records and displays the active map
+  YAML; the runbook requires selecting the intended existing map before any
+  threshold or planning decision.
+- **Regression Prevention:** never tune AMCL or use a test override until active
+  map identity is verified; snapshots preserve the map reference.
+- **Status:** `IMPLEMENTED` in tooling/documentation; requires live deployment
+  verification with the intended map.

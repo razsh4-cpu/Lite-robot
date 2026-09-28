@@ -6,7 +6,7 @@ Visualization Manager:
   Displays:
     - Class: rviz_default_plugins/Map
       Enabled: true
-      Name: Saved room map
+      Name: Saved map (grayscale)
       Topic:
         Depth: 5
         Durability Policy: Transient Local
@@ -15,25 +15,88 @@ Visualization Manager:
         Value: /map
     - Class: rviz_default_plugins/LaserScan
       Enabled: true
-      Name: Live RPLIDAR S2 scan
+      Name: Live RPLIDAR S2 (RED)
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /scan
+      Color: 255; 60; 40
       Size (m): 0.03
       Style: Points
       Use Fixed Frame: true
-    - Class: rviz_default_plugins/PoseWithCovariance
+    - Class: rviz_default_plugins/Pose
       Enabled: true
-      Name: AMCL estimate
+      Name: Lite3 live heading (BLUE)
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /localization/pose
+      Shape: Arrow
+      Color: 0; 90; 255
+      Alpha: 1
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Lite3 body (BLUE)
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /lite3/robot_body
+    - Class: rviz_default_plugins/Polygon
+      Enabled: true
+      Name: Lite3 footprint
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /amcl_pose
+        Value: /local_costmap/published_footprint
+      Color: 0; 90; 255
+      Alpha: 1
+    - Class: rviz_default_plugins/PointCloud2
+      Enabled: true
+      Name: D455 RGB-coloured point cloud (REQUIRES LIVE TF)
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /camera/camera/depth/color/points
+      Style: Points
+      Size (m): 0.008
+      Size (Pixels): 2
+      Color Transformer: RGB8
+      Position Transformer: XYZ
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Planned path
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /plan
+      Line Style: Lines
+      Line Width: 0.04
+      Color: 255; 165; 0
+      Alpha: 1
+    - Class: rviz_default_plugins/Pose
+      Enabled: true
+      Name: Goal
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /goal_pose
+      Shape: Arrow
+      Color: 180; 80; 255
+      Alpha: 1
     - Class: rviz_default_plugins/Image
       Enabled: true
       Name: D455 RGB
@@ -54,22 +117,24 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /camera/camera/aligned_depth_to_color/image_raw
       Transport Hint: raw
+    - Class: rviz_default_plugins/TF
+      Enabled: false
+      Name: TF (hidden; active internally)
   Global Options:
     Background Color: 48; 48; 48
     Fixed Frame: map
     Frame Rate: 30
-  Name: root
+  Name: Lite3 D455 on-demand Nav2 view
   Tools:
     - Class: rviz_default_plugins/Interact
     - Class: rviz_default_plugins/MoveCamera
     - Class: rviz_default_plugins/Select
     - Class: rviz_default_plugins/SetInitialPose
       Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
         Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
   Views:
     Current:
       Class: rviz_default_plugins/TopDownOrtho
