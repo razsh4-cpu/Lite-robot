@@ -218,6 +218,10 @@ remain compatible.
   `product/operator/diagnostics/`. Repository-wide reference searches found no
   build, test, launch, service, deployment, documentation, or runtime consumer;
   installed reliability-monitor sources remain at their existing paths.
+- **Group 5C result:** three uninstalled planning-only utilities moved
+  byte-for-byte to `product/operator/validation/`. They use
+  `ComputePathToPose` and preview topics only; they contain no `NavigateToPose`,
+  `/cmd_vel`, AUTONOMY, ownership, or hardware-control path.
 
 ### Group 6 — laptop C2 and visualization packaging
 
@@ -373,6 +377,6 @@ remain compatible.
 
 **Group 4 — pure generic Product contracts** is complete. Group 4A added
 in-place package metadata and Group 4B applied the approved Platform/Product
-ownership. **Group 5A–5B** separated regression tests and two uninstalled read-only
-diagnostics. Continue Group 5 by classifying planning-only validation tools; do
-not move installed, deployment, or motion-capable paths without equivalence.
+ownership. **Group 5A–5C** separated tests, uninstalled read-only diagnostics, and
+uninstalled planning-only validation tools. Remaining Group-5 files are stable
+CLIs, installed helpers, deployment sources, services, or motion-capable tools.

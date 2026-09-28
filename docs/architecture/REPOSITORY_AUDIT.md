@@ -164,6 +164,8 @@ patrol Product. “Product” does not mean every file is currently enabled.
   by the deployed Nav2/HIGH-LEVEL processes.
 - `product/operator/diagnostics`: uninstalled, read-only localization and host
   reliability collection tools; no deployed consumer.
+- `product/operator/validation`: uninstalled planning-only Nav2 preview tools;
+  no motion action, command-source, or hardware-control path.
 
 ### Product package files that are development/legacy candidates
 
