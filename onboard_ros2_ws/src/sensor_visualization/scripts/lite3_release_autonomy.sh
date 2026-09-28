@@ -5,6 +5,10 @@ set -euo pipefail
 readonly state_dir="${LITE3_STATE_DIR:-/run/lite3-control}"
 readonly source_file="$state_dir/COMMAND_SOURCE"
 readonly lock_file="$state_dir/owner.lock"
+readonly test_override="$state_dir/NAV_TEST_OVERRIDE.json"
+
+# Every service stop/failure restores the normal 80% x3 gate.
+rm -f -- "$test_override"
 
 [[ -d "$state_dir" && -e "$source_file" && -e "$lock_file" ]] || exit 0
 

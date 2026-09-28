@@ -19,6 +19,7 @@ def test_required_real_operator_commands_are_registered():
         "maps", "mapping",
         "relocalize status", "relocalize", "relocalize cancel",
         "status", "commands",
+        "nav test obstacle", "nav test obstacle status", "nav test obstacle cancel",
     }
     assert required <= commands
 
@@ -27,10 +28,12 @@ def test_registry_is_unique_and_motion_is_explicitly_marked():
     commands = [entry.command for entry in REGISTRY.COMMANDS]
     assert len(commands) == len(set(commands))
     tags = {entry.command: entry.tag for entry in REGISTRY.COMMANDS}
-    for command in ("robot stand", "robot down", "relocalize"):
+    for command in ("robot stand", "robot down", "relocalize", "nav test obstacle"):
         assert tags[command] == "MOTION"
-    for command in ("robot status", "relocalize status", "status", "commands"):
+    for command in ("robot status", "relocalize status", "status", "commands",
+                    "nav test obstacle status"):
         assert tags[command] == "READ ONLY"
+    assert tags["nav test obstacle cancel"] == "SAFETY"
 
 
 def test_menu_is_local_and_has_no_robot_side_effect_path():

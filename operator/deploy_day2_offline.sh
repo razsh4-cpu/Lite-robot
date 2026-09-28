@@ -34,6 +34,7 @@ scp "$package/config/nav2_day2.yaml" \
     "$package/config/named_locations.yaml" "$robot:$remote_pkg/config/"
 scp "$package/launch/nav2_day2.launch.py" "$robot:$remote_pkg/launch/"
 scp "$package/scripts/lite3_nav2_preflight.py" \
+    "$package/scripts/lite3_nav_test_override.py" \
     "$package/scripts/lite3_nav2_safety_monitor.py" \
     "$package/scripts/lite3_relocalization_motion.py" \
     "$package/scripts/lite3_relocalization_run.sh" \
@@ -56,6 +57,7 @@ scp "$package/systemd/lite3-nav2.service" \
     "$package/systemd/lite3-localization.service" \
     "$robot:$remote_pkg/systemd/"
 scp "$package/test/test_day2_nav2_static.py" \
+    "$package/test/test_nav_test_override.py" \
     "$package/test/test_localization_startup_supervisor.py" \
     "$package/test/test_day3_mission_registry.py" "$robot:$remote_pkg/test/"
 scp "$state_package/package.xml" "$state_package/setup.py" \

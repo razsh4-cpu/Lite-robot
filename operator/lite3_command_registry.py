@@ -54,6 +54,12 @@ COMMANDS = (
     Command("MAPS & LOCALIZATION", "relocalize cancel", "SAFETY",
             "Stop recovery, command zero and release ownership", "relocalize"),
 
+    Command("NAVIGATION & VALIDATION", "nav test obstacle", "MOTION",
+            "Plan, approve and run a bounded obstacle-avoidance test", "nav"),
+    Command("NAVIGATION & VALIDATION", "nav test obstacle status", "READ ONLY",
+            "Show current/last obstacle-test and live preflight state", "nav"),
+    Command("NAVIGATION & VALIDATION", "nav test obstacle cancel", "SAFETY",
+            "Cancel Nav2, zero/release AUTONOMY and stop the test", "nav"),
     Command("NAVIGATION & VALIDATION", "day2-ready", "READ ONLY",
             "Run the Nav2 go/no-go preflight", "day2-ready"),
     Command("NAVIGATION & VALIDATION", "day1-acceptance", "READ ONLY",

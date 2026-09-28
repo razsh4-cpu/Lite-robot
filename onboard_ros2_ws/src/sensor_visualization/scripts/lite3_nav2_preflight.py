@@ -11,6 +11,9 @@ import shlex
 import subprocess
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lite3_nav_test_override import read as read_test_override
+
 
 STATE_DIR = Path(os.environ.get("LITE3_STATE_DIR", "/run/lite3-control"))
 ENV_MARKER = "LITE3_NAV2_PREFLIGHT_ENV"
@@ -109,12 +112,25 @@ def action_available(name: str) -> bool:
     return result.returncode == 0 and name in result.stdout.splitlines()
 
 
+def map_yaml() -> str | None:
+    result = run("timeout 4 ros2 param get /map_server yaml_filename", 7)
+    if result.returncode != 0:
+        return None
+    prefix = "String value is: "
+    for line in result.stdout.splitlines():
+        if line.startswith(prefix):
+            return line[len(prefix):].strip() or None
+    return None
+
+
 def collect() -> dict:
     fraction, state = localization_status()
     battery = topic_float("/lite3/battery_percent")
     source = command_source()
     startup = ((STATE_DIR / "LOCALIZATION_STARTUP_STATE").read_text(encoding="utf-8").strip()
                if (STATE_DIR / "LOCALIZATION_STARTUP_STATE").is_file() else "UNKNOWN")
+    override = read_test_override(STATE_DIR)
+    minimum = float(override["threshold"]) if override else 0.80
     checks = {
         "high_level": service_active("lite3-high-level-runtime.service"),
         "telemetry_odom": topic_fresh("/odom"),
@@ -122,8 +138,10 @@ def collect() -> dict:
         "battery_safe": battery is not None and battery >= 25.0,
         "tf_map_base": tf_available("map", "base_link"),
         "tf_base_lidar": tf_available("base_link", "lidar_link"),
-        "localization": state == "LOCALIZED" and fraction >= 0.80,
+        "localization": state == "LOCALIZED" and fraction >= minimum,
         "navigation_ready": startup == "NAVIGATION_READY",
+        "map_server": lifecycle_active("map_server"),
+        "amcl": lifecycle_active("amcl"),
         "planner": lifecycle_active("planner_server"),
         "controller": lifecycle_active("controller_server"),
         "bt_navigator": lifecycle_active("bt_navigator"),
@@ -142,6 +160,11 @@ def collect() -> dict:
         "command_source": source,
         "udp_43897_receivers": udp_receiver_count(),
         "battery_percent": battery,
+        "map_yaml": map_yaml(),
+        "nav2_service_active": service_active("lite3-nav2.service"),
+        "localization_threshold": minimum,
+        "test_override_active": override is not None,
+        "test_override_session": override.get("session_id") if override else None,
         "motion_command_sent": False,
     }
 

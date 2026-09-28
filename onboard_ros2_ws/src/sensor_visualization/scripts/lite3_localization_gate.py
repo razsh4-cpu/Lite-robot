@@ -6,6 +6,10 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import time
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lite3_nav_test_override import read as read_test_override
 
 
 def localization_ready(state_dir: Path, minimum: float = 0.80,
@@ -37,8 +41,13 @@ def main() -> int:
     parser.add_argument("--minimum", type=float, default=0.80)
     parser.add_argument("--max-age", type=float, default=2.5)
     args = parser.parse_args()
+    state_dir = Path(args.state_dir)
+    override = read_test_override(state_dir)
+    minimum = float(override["threshold"]) if override else args.minimum
     ready, _score, reason = localization_ready(
-        Path(args.state_dir), args.minimum, args.max_age)
+        state_dir, minimum, args.max_age)
+    if override:
+        reason = "TEST OVERRIDE ACTIVE — " + reason
     print(reason)
     return 0 if ready else 2
 

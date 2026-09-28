@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Persist a reconstruction-complete, planning-only Lite3 chair dry run.
+"""Persist a reconstruction-complete, planning-only Lite3 obstacle dry run.
 
 This tool never publishes velocity, invokes NavigateToPose, or acquires a
 command-source lease.  It uses ComputePathToPose only and writes one bounded
-diagnostic package for an explicitly requested obstacle-test session.
+diagnostic package for an explicitly requested general obstacle-test session.
 """
 
 from __future__ import annotations
@@ -20,9 +20,9 @@ from typing import Iterable
 os.environ.setdefault("FASTDDS_BUILTIN_TRANSPORTS", "UDPv4")
 
 import rclpy
-from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped, Twist
 from nav2_msgs.action import ComputePathToPose
-from nav_msgs.msg import OccupancyGrid, Path as PathMessage
+from nav_msgs.msg import OccupancyGrid, Odometry, Path as PathMessage
 from rclpy.action import ActionClient
 from rclpy.node import Node
 from rclpy.qos import (
@@ -160,6 +160,7 @@ class DryRun(Node):
         self.planner = ActionClient(self, ComputePathToPose, "/compute_path_to_pose")
         self.scan = self.local = self.global_cost = self.static_map = None
         self.amcl = self.localization = None
+        self.odom = self.cmd_vel = None
         latched = QoSProfile(depth=1)
         latched.reliability = ReliabilityPolicy.RELIABLE
         latched.durability = DurabilityPolicy.TRANSIENT_LOCAL
@@ -169,6 +170,8 @@ class DryRun(Node):
         self.create_subscription(OccupancyGrid, "/map", self._set_map, latched)
         self.create_subscription(PoseWithCovarianceStamped, "/amcl_pose", self._set_amcl, latched)
         self.create_subscription(String, "/localization/status", self._set_localization, latched)
+        self.create_subscription(Odometry, "/odom", self._set_odom, qos_profile_sensor_data)
+        self.create_subscription(Twist, "/cmd_vel", self._set_cmd_vel, qos_profile_sensor_data)
         self.path_pub = self.create_publisher(PathMessage, "/planned_path", latched)
         self.goal_pub = self.create_publisher(PoseStamped, "/day2/preview_goal", 10)
 
@@ -178,6 +181,8 @@ class DryRun(Node):
     def _set_map(self, value): self.static_map = value
     def _set_amcl(self, value): self.amcl = value
     def _set_localization(self, value): self.localization = value
+    def _set_odom(self, value): self.odom = value
+    def _set_cmd_vel(self, value): self.cmd_vel = value
 
     def lookup(self, target, source):
         try:
@@ -213,7 +218,7 @@ def write_json(path: Path, value, compressed=False):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-root", default=str(Path.home() / "lite3_diagnostics" / "chair"))
+    parser.add_argument("--output-root", default=str(Path.home() / "lite3_diagnostics" / "obstacle"))
     parser.add_argument("--max-candidates", type=int, default=80)
     args = parser.parse_args()
     session = time.strftime("%Y%m%dT%H%M%S")
@@ -228,10 +233,10 @@ def main():
             rclpy.spin_once(node, timeout_sec=0.1)
             map_base = node.lookup("map", "base_link")
             if all((node.scan, node.local, node.global_cost, node.static_map,
-                    node.amcl, node.localization, map_base)):
+                    node.amcl, node.localization, node.odom, map_base)):
                 break
         if not all((node.scan, node.local, node.global_cost, node.static_map,
-                    node.amcl, node.localization, map_base)):
+                    node.amcl, node.localization, node.odom, map_base)):
             raise SystemExit("SNAPSHOT BLOCKED: required live data unavailable")
         if not node.planner.wait_for_server(timeout_sec=8):
             raise SystemExit("SNAPSHOT BLOCKED: planner unavailable")
@@ -301,6 +306,17 @@ def main():
             "command_source_required": "NONE",
             "robot_pose": {"x": start_x, "y": start_y, "yaw": heading},
             "localization": localization,
+            "odom": {"frame_id": node.odom.header.frame_id,
+                     "child_frame_id": node.odom.child_frame_id,
+                     "stamp": stamp(node.odom.header.stamp),
+                     "pose": pose_dict(node.odom.pose.pose),
+                     "twist": {"vx": node.odom.twist.twist.linear.x,
+                               "vy": node.odom.twist.twist.linear.y,
+                               "wz": node.odom.twist.twist.angular.z}},
+            "cmd_vel_at_snapshot": ({"vx": node.cmd_vel.linear.x,
+                                      "vy": node.cmd_vel.linear.y,
+                                      "wz": node.cmd_vel.angular.z}
+                                     if node.cmd_vel is not None else None),
             "amcl_covariance": list(node.amcl.pose.covariance),
             "raw_body": {"length": 0.610, "width": 0.370},
             "footprint": [[0.355, 0.235], [0.355, -0.235],

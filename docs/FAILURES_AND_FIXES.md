@@ -1,3 +1,26 @@
+# Obstacle-test preflight and deployment
+
+- **Symptom:** `nav test obstacle status` reports `Nav2 planner unavailable`
+  while Map Server and AMCL are active.
+  **Cause:** localization and the Nav2 navigation layer are separate services;
+  `lite3-nav2.service` was not running. **Fix:** the motion command may start
+  only the existing Nav2 service after all non-Nav2 preconditions pass, then it
+  verifies planner, controller, BT Navigator and both costmaps. The read-only
+  `status` command never starts it.
+- **Symptom:** `ModuleNotFoundError: lite3_nav_test_override` after a successful
+  build. **Cause:** CMake installed only the extensionless executable, which is
+  not an importable Python module. **Fix:** install both the executable wrapper
+  and `lite3_nav_test_override.py` beside it; callers add their own installed
+  script directory to `sys.path`. Do not rely on manually copied artifacts.
+- **Symptom:** localization collapses after selecting/restarting a map that does
+  not describe the current site. **Cause:** wrong static map, not necessarily
+  AMCL or LiDAR tuning. **Fix:** inspect the active Map Server YAML reported by
+  obstacle-test status and select the correct existing/pending map. Do not
+  remap, alter origin, or change extrinsics merely to fit the wrong map.
+- **Safety invariant:** the normal localization gate remains 80% x3. The
+  optional 70% x3 obstacle-test token is explicit, bounded, stored in `/run`,
+  and removed on every completion/failure/cancel/stop/reboot path.
+
 # Failures and fixes
 
 | Failure/evidence | Implemented response | Proof/remaining limit |

@@ -19,6 +19,8 @@ if(BUILD_TESTING)
     test/test_laptop_xbox_c2.py)
   ament_add_pytest_test(day2_nav2_static
     test/test_day2_nav2_static.py)
+  ament_add_pytest_test(nav_test_override
+    test/test_nav_test_override.py)
   ament_add_pytest_test(localization_startup_supervisor
     test/test_localization_startup_supervisor.py)
   ament_add_pytest_test(day3_mission_registry
@@ -153,6 +155,11 @@ install(PROGRAMS scripts/lite3_ros_inputs_ready.py
 install(PROGRAMS scripts/lite3_nav2_preflight.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_nav2_preflight)
+install(PROGRAMS scripts/lite3_nav_test_override.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME lite3_nav_test_override)
+install(FILES scripts/lite3_nav_test_override.py
+  DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/lite3_release_autonomy.sh
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_release_autonomy)

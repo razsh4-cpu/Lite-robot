@@ -243,4 +243,4 @@ def test_relocalization_is_explicit_and_does_not_weaken_normal_gate():
     text = AUTONOMY_SCRIPT.read_text(encoding="utf-8")
     assert "LITE3_RELOCALIZATION_APPROVED" in text
     assert "relocalization_mode" in text
-    assert "elif not localization_ready" in text
+    assert "if not localization_ready" in text

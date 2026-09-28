@@ -8,12 +8,16 @@ import os
 from pathlib import Path
 import signal
 import time
+import sys
 
 os.environ.setdefault('FASTDDS_BUILTIN_TRANSPORTS', 'UDPv4')
 import rclpy
 from geometry_msgs.msg import Twist
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lite3_nav_test_override import read as read_test_override
 
 
 @dataclass(frozen=True)
@@ -172,12 +176,17 @@ class AutonomyCommandSource(Node):
             if not relocalization_inputs_ready(state_dir, max_age):
                 raise RuntimeError(
                     'relocalization blocked: localization telemetry unavailable or stale')
-        elif not localization_ready(
-                state_dir,
-                self.get_parameter('minimum_localization').value,
-                max_age):
-            raise RuntimeError(
-                'AUTONOMY blocked: localization is unavailable, stale, or below 80%')
+        else:
+            override = read_test_override(Path(state_dir))
+            minimum = (float(override['threshold']) if override else
+                       self.get_parameter('minimum_localization').value)
+            if not localization_ready(state_dir, minimum, max_age):
+                raise RuntimeError(
+                    'AUTONOMY blocked: localization is unavailable, stale, '
+                    f'or below {100.0 * minimum:.0f}%')
+            if override:
+                self.get_logger().warning(
+                    'LOCALIZATION TEST OVERRIDE ACTIVE — obstacle test only')
         # Construct every ROS entity before acquiring ownership. If systemd
         # stops us during slow DDS entity creation, no stale AUTONOMY marker
         # can be left by a partially constructed node.

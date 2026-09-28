@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import subprocess
 import time
+import sys
 
 os.environ.setdefault("FASTDDS_BUILTIN_TRANSPORTS", "UDPv4")
 import rclpy
@@ -17,6 +18,9 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float32, String
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lite3_nav_test_override import read as read_test_override
 
 
 class Nav2SafetyCore:
@@ -59,7 +63,8 @@ class Nav2SafetyCore:
         self.cmd = (float(vx), float(vy), float(wz))
         self.touch("cmd_vel", now)
 
-    def failure(self, now, require_cmd=True, allow_low_localization=False):
+    def failure(self, now, require_cmd=True, allow_low_localization=False,
+                localization_soft_override=None):
         for name, timeout in self.timeouts.items():
             if name == "cmd_vel" and not require_cmd:
                 continue
@@ -73,14 +78,16 @@ class Nav2SafetyCore:
                 self.localization_fraction < self.localization_hard_min):
             self.localization_below_soft_since = None
             return "localization below hard safety threshold"
+        soft_min = (self.localization_soft_min if localization_soft_override is None
+                    else float(localization_soft_override))
         if (not allow_low_localization and
                 (self.localization_state != "LOCALIZED" or
-                 self.localization_fraction < self.localization_soft_min)):
+                 self.localization_fraction < soft_min)):
             if self.localization_below_soft_since is None:
                 self.localization_below_soft_since = float(now)
             elif (float(now) - self.localization_below_soft_since >=
                   self.localization_grace):
-                return "localization below 80% beyond grace period"
+                return f"localization below {100.0 * soft_min:.0f}% beyond grace period"
         else:
             self.localization_below_soft_since = None
         if (self.battery_percent is None or
@@ -104,6 +111,7 @@ class Nav2SafetyMonitor(Node):
         self.core = Nav2SafetyCore()
         self.autonomy_since = None
         self.tripped = False
+        self.test_override_was_active = False
         sensor_qos = QoSProfile(depth=10)
         sensor_qos.reliability = ReliabilityPolicy.BEST_EFFORT
         status_qos = QoSProfile(depth=1)
@@ -156,6 +164,7 @@ class Nav2SafetyMonitor(Node):
         if self._source() != "AUTONOMY":
             self.autonomy_since = None
             self.tripped = False
+            self.test_override_was_active = False
             return
         if self.autonomy_since is None:
             self.autonomy_since = now
@@ -176,11 +185,23 @@ class Nav2SafetyMonitor(Node):
                        now - self.autonomy_since >= 30.0)
         recovery_marker = self.source_path.parent / "RELOCALIZATION_ACTIVE"
         recovery_active = recovery_marker.is_file()
+        test_override = read_test_override(self.source_path.parent)
+        if test_override:
+            self.test_override_was_active = True
+        elif self.test_override_was_active:
+            reason = "localization test override expired or was cleared"
+            self._trip(reason)
+            return
         reason = self.core.failure(
             now, require_cmd=require_cmd,
-            allow_low_localization=recovery_active)
+            allow_low_localization=recovery_active,
+            localization_soft_override=(
+                float(test_override["threshold"]) if test_override else None))
         if reason is None:
             return
+        self._trip(reason)
+
+    def _trip(self, reason):
         self.tripped = True
         self.get_logger().error(
             f"AUTONOMY ABORT: {reason}; stopping lease-owning adapter")

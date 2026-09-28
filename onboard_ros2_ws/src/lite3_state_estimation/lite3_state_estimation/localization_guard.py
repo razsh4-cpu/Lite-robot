@@ -4,6 +4,7 @@ import json
 import math
 import os
 from pathlib import Path
+import time
 
 import rclpy
 from geometry_msgs.msg import PoseStamped, PoseWithCovarianceStamped
@@ -50,6 +51,7 @@ class LocalizationGuard(Node):
         self._global_started = None
         self._odom_pose = None
         self._global_origin = None
+        self._policy_signature = None
 
         self.create_subscription(OccupancyGrid, "/map", self._on_map, latched)
         self.create_subscription(LaserScan, "/scan", self._on_scan, qos_profile_sensor_data)
@@ -131,6 +133,31 @@ class LocalizationGuard(Node):
             temp.replace(path)
         except OSError as exc:
             self.get_logger().warning(f"cannot write {path}: {exc}")
+
+    def _localization_policy(self):
+        """Return (threshold, test_active) from a fail-closed /run token."""
+        normal = float(self.get_parameter("minimum_match_fraction").value)
+        try:
+            value = json.loads(self._state_path(
+                "NAV_TEST_OVERRIDE.json").read_text(encoding="utf-8"))
+            samples = [float(item) for item in value["localization_samples"]]
+            created = float(value["created_unix"])
+            expires = float(value["expires_unix"])
+            valid = (
+                value.get("purpose") == "obstacle_test"
+                and value.get("operator_approved") is True
+                and bool(value.get("session_id"))
+                and float(value.get("normal_threshold", -1.0)) == normal
+                and float(value.get("threshold", -1.0)) == 0.70
+                and len(samples) >= 3
+                and all(0.70 <= item <= 1.0 for item in samples[-3:])
+                and created <= time.time() < expires
+                and 0.0 < expires - created <= 600.0)
+            if valid:
+                return 0.70, True
+        except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+            pass
+        return normal, False
 
     def _set_status(self, state, score, reason):
         self._localized = state == "LOCALIZED"
@@ -278,7 +305,13 @@ class LocalizationGuard(Node):
                 return
             self._hypothesis_started = self.get_clock().now()
         score, reason = self._score()
-        threshold = float(self.get_parameter("minimum_match_fraction").value)
+        threshold, test_active = self._localization_policy()
+        policy_signature = (threshold, test_active)
+        if policy_signature != self._policy_signature:
+            self._good_cycles = 0
+            self._policy_signature = policy_signature
+        if test_active:
+            reason = "LOCALIZATION TEST OVERRIDE ACTIVE; " + reason
         if score is not None and score >= threshold:
             self._good_cycles += 1
             state = "LOCALIZED" if self._good_cycles >= 3 else "VERIFYING"
