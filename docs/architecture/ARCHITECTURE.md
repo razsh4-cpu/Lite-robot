@@ -236,6 +236,10 @@ tests/architecture/                              # offline contract/baseline che
 docs/architecture/                               # source of truth and decisions
 ```
 
+Each of the three pure Python component roots owns independent `pyproject.toml`
+metadata. Their public import names are unchanged; pytest uses declarative
+`pythonpath` entries rather than test-code mutation of `sys.path`.
+
 These files start no ROS node, service or socket. Existing production units and
 launch files remain authoritative until a controlled migration.
 

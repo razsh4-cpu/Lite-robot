@@ -178,6 +178,13 @@ remain compatible.
 - **Rollback:** retain prior import compatibility shim for one release; revert
   commit if imports differ.
 - **Prerequisites:** none, but execute after hygiene groups for a clean baseline.
+- **Group 4A result:** the three pure Python components are now independently
+  packaged in place with explicit `pyproject.toml` metadata. The Lite3 adapter
+  declares its dependency on the generic robot-interface distribution; missions
+  remain independent and dormant. Declarative pytest paths replace the removed
+  test-only `sys.path` mutation. No file location, public import, runtime entry
+  point, configuration authority, or behavior changed. Isolated source-package
+  builds and architecture tests passed.
 
 ### Group 5 — split laptop operator validation tools from stable CLI
 
@@ -346,5 +353,9 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 4 — formalize pure generic Product contracts** is the recommended next
-group. Begin with in-place packaging/import cleanup before any physical tree move.
+**Group 4A — in-place package formalization** is complete. The next proposed
+subgroup is the physical Group-4 layout move, but its authoritative destination
+must first be resolved: the target model places robot adapters under
+`platform/robot_adapters`, while the earlier group plan names
+`product/.../robot_adapter_lite3`. This is an ambiguous-boundary RED gate; do
+not move the packages until the architect selects the authority.

@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bipolix-lite3-adapter"
+version = "0.1.0"
+description = "DeepRobotics Lite3 adapter for the Bipolix robot contracts"
+requires-python = ">=3.10"
+dependencies = ["bipolix-robot-interfaces==0.1.0"]
+
+[tool.setuptools]
+packages = ["bipolix_lite3_adapter"]

@@ -158,6 +158,8 @@ patrol Product. “Product” does not mean every file is currently enabled.
 - `laptop_visualization/`: canonical operator RViz config, marker and watcher.
 - `src/robot_interfaces`, `src/robot_adapters/lite3` and `src/missions`: pure
   architecture contracts/scaffolds; currently exercised only by offline tests.
+  Each component now has independent in-place packaging metadata; no deployed
+  runtime consumes these packages.
 - `config/robots/lite3`: target generic configuration; not yet the values read
   by the deployed Nav2/HIGH-LEVEL processes.
 
