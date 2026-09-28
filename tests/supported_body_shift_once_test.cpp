@@ -800,8 +800,13 @@ int main() {
             Check(f.machine->RequestSupportedBodyShiftOnce(kToken,24),
                   "staged-stance action accepted");
             std::set<std::string> seen;
+            const SupportedBodyShiftPlan staged_plan(
+                SupportedBodyShiftPlan::GainStrategy::KeepStand,
+                SupportedBodyShiftPlan::RunMode::
+                    PhysicalStagedSupportTriangleOnly);
             const int max_ticks=static_cast<int>(
-                (85.0+SupportedBodyShiftPlan::kVerifyStandSeconds+12.0)/0.01);
+                (staged_plan.total_seconds()+
+                 SupportedBodyShiftPlan::kVerifyStandSeconds+12.0)/0.01);
             for(int i=0;i<max_ticks && f.io->releases==0;++i) {
                 f.Tick();
                 const auto status=f.machine->StandTestStatus();
