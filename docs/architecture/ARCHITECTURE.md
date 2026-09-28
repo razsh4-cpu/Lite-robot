@@ -52,6 +52,14 @@ Detailed evidence and policies:
 - [Configuration, calibration and data](CONFIGURATION_CALIBRATION_DATA.md)
 - [Platform operations, perception and deployment](PLATFORM_OPERATIONS.md)
 - [Gradual migration plan](MIGRATION_PLAN.md)
+- [Patrol MVP requirements](../requirements/MVP_REQUIREMENTS.md)
+- [Operational Design Domain](../requirements/ODD.md)
+- [Definition of Done](../testing/DEFINITION_OF_DONE.md)
+- [Test catalog](../testing/TEST_CATALOG.md)
+- [Known-good baseline](../testing/KNOWN_GOOD_BASELINE.md)
+- [Safety/failure matrix](../operations/FAILURE_MATRIX.md)
+- [Engineering knowledge base](../operations/ENGINEERING_KNOWLEDGE_BASE.md)
+- [Daily engineering workflow](../operations/DAILY_WORKFLOW.md)
 
 ## Major layer contracts
 
@@ -234,6 +242,7 @@ launch files remain authoritative until a controlled migration.
 - [ADR-002: generic interface and Lite3 adapter](decisions/ADR-002-generic-interface-lite3-adapter.md)
 - [ADR-003: low-level work remains R&D](decisions/ADR-003-low-level-rnd-separation.md)
 - [ADR-004: onboard runtime and laptop operator split](decisions/ADR-004-onboard-runtime-laptop-operator.md)
+- [ADR-005: all motion uses the existing safety path](decisions/ADR-005-motion-through-existing-safety-path.md)
 
 ## Change rule
 

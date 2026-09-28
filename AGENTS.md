@@ -26,6 +26,9 @@ instructions but may never weaken these safety or Git requirements.
 ## Validation and handoff
 
 - Run focused offline tests, the relevant full suite, and `git diff --check`.
+- Follow `docs/operations/DAILY_WORKFLOW.md`, the project-wide Definition of
+  Done, and the maintained test catalog; define PASS/FAIL/ABORT before a
+  physical experiment.
 - A build/test pass proves software behavior only, never hardware safety.
 - Before handoff, review the diff and report branch, full SHA, tests, hardware
   commands sent, evidence limitations, and the next safe action.
