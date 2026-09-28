@@ -2,8 +2,7 @@
 
 This plan follows the Phase-A evidence in
 [REPOSITORY_AUDIT.md](REPOSITORY_AUDIT.md). Migration Group 1 is complete;
-Group 2 and dependency-safe Group 3A are complete; Group 3B and Groups 4–13
-remain unexecuted.
+Groups 2 and 3 are complete; Groups 4–13 remain unexecuted.
 
 Rule for every group:
 
@@ -137,30 +136,29 @@ remain compatible.
   narrowly ignored. Offline build passed, CTest passed `25/25`, the Python
   regression suite passed `242`, and no runtime or safety source was changed.
 
-### Group 3 — root MuJoCo experiment entry points (subgroup 3A completed)
+### Group 3 — root MuJoCo experiment entry points (completed)
 
-- **Source:** completed: `grid_162.py` and `sensitivity_test.py`; pending
-  separate subgroup: `single_leg_sweep.py`.
+- **Source:** `grid_162.py`, `sensitivity_test.py`, and `single_leg_sweep.py`.
 - **Destination:** `rnd/mujoco/experiments/`.
 - **Reason:** remove R&D experiments from repository root and place them beside
   their simulation responsibility.
 - **References requiring updates:** replace hard-coded
   `/home/raz/ros-robot-cc/Lite-robot`; update runner/model/artifact discovery,
-  handoff docs and any human command examples. `single_leg_sweep.py` derives
-  repository root from its current parent and therefore must be a second commit
-  within the group or a separate subgroup.
+  handoff docs and any human command examples. `single_leg_sweep.py` required a separate Group-3B commit because its
+  prior repository-root discovery depended on its root-level location.
 - **Tests:** AST/CLI dry validation with subprocess mocked; one offline smoke
   fixture; root MuJoCo build; the maintained full regression suite.
 - **Risk:** **LOW/MEDIUM**.
 - **Rollback:** revert commit; output artifacts are not rewritten by migration.
 - **Prerequisites:** Group 1 so generated log behavior is understood.
-- **Group 3A result:** `grid_162.py` and `sensitivity_test.py` moved to
+- **Group 3 result:** `grid_162.py` and `sensitivity_test.py` moved to
   `rnd/mujoco/experiments/`. Their experiment parameters, MuJoCo runner,
   model and artifact destinations are unchanged; hard-coded home paths were
-  replaced by repository-marker discovery. `single_leg_sweep.py` remains at the
-  repository root for Group 3B. Python compilation, three-working-directory
-  path checks and a mocked runner smoke passed; offline build passed, CTest
-  passed `25/25`, and the Python regression suite passed `242`.
+  replaced by repository-marker discovery. Group 3B moved `single_leg_sweep.py` to the same
+  authoritative experiments directory with identical CLI and output semantics. Python compilation, three-working-directory
+  path checks and mocked runner smokes passed for both subgroups; Group 3B also
+  preserved the `--smoke`/`--batch` CLI. Offline build passed, CTest passed
+  `25/25`, and the Python regression suite passed `242`.
 
 ### Group 4 — formalize pure generic Product contracts
 
@@ -348,6 +346,5 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 3B — migrate `single_leg_sweep.py`** is the recommended next subgroup.
-It requires an explicit path-resolution update and CLI/dry-run validation because
-the script currently derives the repository root from its own root-level location.
+**Group 4 — formalize pure generic Product contracts** is the recommended next
+group. Begin with in-place packaging/import cleanup before any physical tree move.

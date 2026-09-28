@@ -11,7 +11,7 @@ launch, systemd or deployment consumer referenced these snapshot paths.
 
 | Original path | Authoritative current file | SHA-256 |
 |---|---|---|
-| `single_leg_sweep.py.pre_real_sweep` | `single_leg_sweep.py` | `5c3184cabfd4779c095f04cefeb97ef313098cff3eb02d5cb5cadd6414429770` |
+| `single_leg_sweep.py.pre_real_sweep` | `rnd/mujoco/experiments/single_leg_sweep.py` | `5c3184cabfd4779c095f04cefeb97ef313098cff3eb02d5cb5cadd6414429770` |
 | `state_machine/state_machine.hpp.before_body_shift_finish_fix` | `state_machine/state_machine.hpp` | `7251dd67db9fa1cbb72a48ac82edadd51b91d4445dbc484dae3654cc2a93168d` |
 | `state_machine/state_machine.hpp.before_safe_body_shift` | `state_machine/state_machine.hpp` | `f21f1888826d76fc992c2adb125646249a808d13438d17f16d756e8dc2ec7f02` |
 | `state_machine/state_machine.hpp.save` | `state_machine/state_machine.hpp` | `3cbc2e2e68d8758a0f03e0b1ae08b57a3d16c6f9656215d6484b781e9724229c` |

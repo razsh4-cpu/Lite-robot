@@ -9,7 +9,18 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+
+def find_repository_root(script_path):
+    for candidate in script_path.resolve().parents:
+        if (
+            (candidate / "CMakeLists.txt").is_file()
+            and (candidate / "tools" / "run_one_leg_lift_sim.sh").is_file()
+        ):
+            return candidate
+    raise RuntimeError("Lite-robot repository root not found")
+
+
+ROOT = find_repository_root(Path(__file__))
 RUNNER = ROOT / "tools" / "run_one_leg_lift_sim.sh"
 MODEL = ROOT / "third_party/deep_robotics_model/Lite3/Lite3_mjcf/mjcf/Lite3.xml"
 OUTROOT = ROOT / "artifacts" / "single_leg_sweep"

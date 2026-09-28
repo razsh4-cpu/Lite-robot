@@ -4,8 +4,8 @@ Evidence date: 2026-09-28
 Audited commit: `a8926266069e71f7b254c6465ac8e84a78b47303`
 Post-audit repository state: Migration Group 1 completed at
 `497743e04da11ca0a3cb1a19b2f0bbbcc6e56b06`; Group 2 is recorded by the
-commit containing this updated audit; Group 3A is recorded by the commit containing
-this revision.
+commit containing this updated audit; Group 3 is recorded by the commits
+containing this revision.
 
 This is a static repository audit. No file was moved, renamed or deleted, no
 runtime was started, and no robot or Mini-PC was contacted. Classification is
@@ -109,7 +109,6 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `fix_policy_path.py` | One-off symlink repair from repository model to parent `policy/`; referenced only by a handoff document | R&D deployment helper; legacy/obsolete candidate | **LOW**; archive after policy deployment is manifest-based; do not run during Product setup |
 | `main.cpp` | Root `rl_deploy` entry point; constructs C++ `StateMachine(RobotType::Lite3)` | R&D Low-Level runtime source | **HIGH**; remain with state machine and CMake |
 | `pytest.ini` | Limits default Python discovery to `test_*.py` | Test configuration; authoritative | **MEDIUM**; remain at root while tests span multiple trees |
-| `single_leg_sweep.py` | Main Monte-Carlo/sweep driver; repository root is derived from its current file location | R&D experiment source; active/supporting | **MEDIUM**; moving it changes root resolution and must include tests/path update |
 
 ## Current Product runtime (Patrol / high-level)
 
@@ -181,8 +180,8 @@ The R&D boundary is:
 - `policy/` and `run_policy/`;
 - most of `tools/`, especially body-shift, leg-lift, kinematics, MuJoCo and
   robustness code;
-- `rnd/mujoco/experiments/{grid_162.py,sensitivity_test.py}` plus root
-  `single_leg_sweep.py` and their artifacts;
+- `rnd/mujoco/experiments/{grid_162.py,sensitivity_test.py,single_leg_sweep.py}`
+  and their artifacts;
 - `Lite3_description/`, `third_party/mujoco`,
   `third_party/onnxruntime`, `third_party/deep_robotics_model` and relevant
   portions of MotionSDK/Eigen;
@@ -259,8 +258,9 @@ lower safety importance.
 - `/home/raz/ros-robot-cc/c2/...` in the C2 user service.
 - `/home/raz/ros-robot-cc/laptop_visualization/...` in RViz scripts/service.
 - Several operator installers derive or copy to fixed laptop locations.
-- Migrated `rnd/mujoco/experiments/{grid_162.py,sensitivity_test.py}` now
-  discover the repository root from repository markers, independent of the user home directory and the process working directory.
+- Migrated experiment entry points under `rnd/mujoco/experiments/` now
+  discover the repository root from repository markers, independent of the user
+  home directory and the process working directory.
 
 ### Mini-PC
 
