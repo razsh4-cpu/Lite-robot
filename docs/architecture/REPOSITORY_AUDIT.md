@@ -4,7 +4,8 @@ Evidence date: 2026-09-28
 Audited commit: `a8926266069e71f7b254c6465ac8e84a78b47303`
 Post-audit repository state: Migration Group 1 completed at
 `497743e04da11ca0a3cb1a19b2f0bbbcc6e56b06`; Group 2 is recorded by the
-commit containing this updated audit.
+commit containing this updated audit; Group 3A is recorded by the commit containing
+this revision.
 
 This is a static repository audit. No file was moved, renamed or deleted, no
 runtime was started, and no robot or Mini-PC was contacted. Classification is
@@ -83,7 +84,7 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `operator/` | Laptop CLIs, deployment/install scripts, Day-2 planning/execution/obstacle tests, reliability tools and unit templates | Product Operator/Deployment plus engineering validation | source; mixed authoritative operator wrappers and one-off deployment/test tooling | Laptop, installing to Mini-PC | Several commands can acquire ownership or trigger motion after approval | **HIGH**; first inventory into stable CLI vs deployment vs experiment; installed wrapper paths must be preserved |
 | `policy/` | `policy.onnx` and PyTorch-to-ONNX converter | R&D / Policies | binary model + source converter; authoritative for root ONNX runner | Offline/legacy low-level Mini-PC | Model can produce joint-level policy output through R&D runtime | **HIGH**; keep with `run_policy` until model manifest and deploy path replace `LITE3_POLICY_MODEL` assumptions |
 | `run_policy/` | ONNX policy loader, model resolver and policy interface; root CMake static library | R&D / Policies and Low-Level Control | source; authoritative for root RL/ONNX path | Offline/legacy hardware path | Joint-policy safety impact | **HIGH**; move only with root CMake, model and state-machine boundary together |
-| `rnd/` | Curated R&D hierarchy introduced by Migration Group 1; currently contains only the two preserved legacy MuJoCo logs under `evidence/legacy/mujoco/` | R&D / evidence | artifact archive; supporting | Offline R&D | No Product runtime or safety impact | **LOW** for the current evidence files; keep as the target boundary for reviewed R&D migrations |
+| `rnd/` | Curated R&D hierarchy containing legacy evidence plus the Group-3A MuJoCo experiment entry points under `mujoco/experiments/` | R&D / MuJoCo / evidence | source plus artifact archive; authoritative for migrated experiments | Offline R&D | Simulation-only entry points; no Product runtime or safety impact | **LOW/MEDIUM**; continue only through reviewed dependency-safe migrations |
 | `scripts/` | Legacy direct local-Xbox connection/lease/readiness scripts plus file-transfer and sweep launchers. Root C++ test and root units reference them | Mixed: legacy low-level runtime, R&D deployment/experiments | source; legacy/divergent relative to ROS-package scripts | Mini-PC legacy path and Laptop | Xbox/ownership scripts are safety-critical if installed | **HIGH** for control scripts; **LOW/MEDIUM** for transfer/sweep scripts. Do not merge same-named files by assumption |
 | `src/` | Pure Python generic Robot Interface/config, Lite3 state-normalization adapter, and dormant Mission contracts; imported only by architecture tests through explicit `sys.path` | Product architecture contracts / Missions | source; authoritative architectural baseline, not deployed runtime | Shared/offline | No sockets/nodes/commands; future safety boundary | **LOW** to package formally, but keep current paths until imports/tests are changed together |
 | `state_machine/` | C++ Idle/Stand/JointDamping/RL states, local Xbox state machine, low-level supported body/leg plans and control parameters; globbed into root executables | R&D / Low-Level Control | source; authoritative for root C++ runtime | Offline and legacy real-hardware validation | Direct robot-state/joint-command safety impact | **HIGH**; remain exactly where it is during Product/R&D split |
@@ -106,10 +107,8 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `PROGRESS.md` | Historical/current project progress with host paths | Documentation; supporting and partly historical | **LOW** to reorganize later; keep while links/handoff use it |
 | `README.md`, `README_EN.md` | Root low-level RL controller build/use documentation, not a complete description of the current patrol Product | Documentation; authoritative for legacy/R&D build, incomplete for platform | **MEDIUM**; retain and eventually label/move under R&D while adding a platform root README |
 | `fix_policy_path.py` | One-off symlink repair from repository model to parent `policy/`; referenced only by a handoff document | R&D deployment helper; legacy/obsolete candidate | **LOW**; archive after policy deployment is manifest-based; do not run during Product setup |
-| `grid_162.py` | Runs a 162-case MuJoCo leg experiment using `tools/run_one_leg_lift_sim.sh`; hard-codes `/home/raz/ros-robot-cc/Lite-robot`; writes `artifacts/grid_162` | R&D experiment source | **LOW/MEDIUM**; good early R&D move after converting root discovery to package-relative/configured path |
 | `main.cpp` | Root `rl_deploy` entry point; constructs C++ `StateMachine(RobotType::Lite3)` | R&D Low-Level runtime source | **HIGH**; remain with state machine and CMake |
 | `pytest.ini` | Limits default Python discovery to `test_*.py` | Test configuration; authoritative | **MEDIUM**; remain at root while tests span multiple trees |
-| `sensitivity_test.py` | MuJoCo single-leg sensitivity driver; hard-coded repository path; writes R&D artifacts | R&D experiment source | **LOW/MEDIUM**; same migration group as `grid_162.py` after path fix |
 | `single_leg_sweep.py` | Main Monte-Carlo/sweep driver; repository root is derived from its current file location | R&D experiment source; active/supporting | **MEDIUM**; moving it changes root resolution and must include tests/path update |
 
 ## Current Product runtime (Patrol / high-level)
@@ -182,8 +181,8 @@ The R&D boundary is:
 - `policy/` and `run_policy/`;
 - most of `tools/`, especially body-shift, leg-lift, kinematics, MuJoCo and
   robustness code;
-- root `grid_162.py`, `sensitivity_test.py`, `single_leg_sweep.py` and their
-  artifacts;
+- `rnd/mujoco/experiments/{grid_162.py,sensitivity_test.py}` plus root
+  `single_leg_sweep.py` and their artifacts;
 - `Lite3_description/`, `third_party/mujoco`,
   `third_party/onnxruntime`, `third_party/deep_robotics_model` and relevant
   portions of MotionSDK/Eigen;
@@ -260,8 +259,8 @@ lower safety importance.
 - `/home/raz/ros-robot-cc/c2/...` in the C2 user service.
 - `/home/raz/ros-robot-cc/laptop_visualization/...` in RViz scripts/service.
 - Several operator installers derive or copy to fixed laptop locations.
-- Root R&D `grid_162.py` and `sensitivity_test.py` hard-code
-  `/home/raz/ros-robot-cc/Lite-robot`.
+- Migrated `rnd/mujoco/experiments/{grid_162.py,sensitivity_test.py}` now
+  discover the repository root from repository markers, independent of the user home directory and the process working directory.
 
 ### Mini-PC
 

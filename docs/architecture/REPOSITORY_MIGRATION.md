@@ -2,7 +2,8 @@
 
 This plan follows the Phase-A evidence in
 [REPOSITORY_AUDIT.md](REPOSITORY_AUDIT.md). Migration Group 1 is complete;
-Group 2 is complete; Groups 3–13 remain unexecuted.
+Group 2 and dependency-safe Group 3A are complete; Group 3B and Groups 4–13
+remain unexecuted.
 
 Rule for every group:
 
@@ -136,10 +137,10 @@ remain compatible.
   narrowly ignored. Offline build passed, CTest passed `25/25`, the Python
   regression suite passed `242`, and no runtime or safety source was changed.
 
-### Group 3 — root MuJoCo experiment entry points
+### Group 3 — root MuJoCo experiment entry points (subgroup 3A completed)
 
-- **Source:** `grid_162.py`, `sensitivity_test.py`, then separately
-  `single_leg_sweep.py`.
+- **Source:** completed: `grid_162.py` and `sensitivity_test.py`; pending
+  separate subgroup: `single_leg_sweep.py`.
 - **Destination:** `rnd/mujoco/experiments/`.
 - **Reason:** remove R&D experiments from repository root and place them beside
   their simulation responsibility.
@@ -153,6 +154,13 @@ remain compatible.
 - **Risk:** **LOW/MEDIUM**.
 - **Rollback:** revert commit; output artifacts are not rewritten by migration.
 - **Prerequisites:** Group 1 so generated log behavior is understood.
+- **Group 3A result:** `grid_162.py` and `sensitivity_test.py` moved to
+  `rnd/mujoco/experiments/`. Their experiment parameters, MuJoCo runner,
+  model and artifact destinations are unchanged; hard-coded home paths were
+  replaced by repository-marker discovery. `single_leg_sweep.py` remains at the
+  repository root for Group 3B. Python compilation, three-working-directory
+  path checks and a mocked runner smoke passed; offline build passed, CTest
+  passed `25/25`, and the Python regression suite passed `242`.
 
 ### Group 4 — formalize pure generic Product contracts
 
@@ -340,7 +348,6 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 3 — root MuJoCo experiment entry points** is the recommended next
-group. It must remain split into dependency-safe subgroups because
-`single_leg_sweep.py` derives the repository root from its current location,
-while the other experiment drivers contain hard-coded repository paths.
+**Group 3B — migrate `single_leg_sweep.py`** is the recommended next subgroup.
+It requires an explicit path-resolution update and CLI/dry-run validation because
+the script currently derives the repository root from its own root-level location.
