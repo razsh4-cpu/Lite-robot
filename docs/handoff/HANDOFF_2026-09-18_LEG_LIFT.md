@@ -229,10 +229,9 @@ Avoid repeated full ctest runs unless structural changes were made.
 
 ## Git / development notes
 
-Do not blindly commit:
-- state_machine/state_machine.hpp.save
-- fix_policy_path.py
+The historical `state_machine.hpp.save` snapshot is preserved at:
+- `docs/handoff_evidence/source_snapshots/group2-legacy-backups/state_machine/state_machine.hpp.save`
 
-Review before adding them.
+Do not blindly commit `fix_policy_path.py`; review it before adding.
 
 Do not merge automatically.

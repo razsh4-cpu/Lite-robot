@@ -27,5 +27,6 @@ log/
 
 # Host-specific diagnostics and temporary editor backups
 Lite3_Diagnostics/
+.marscode/
 *.orig
 *.bak

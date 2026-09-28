@@ -3,7 +3,8 @@
 Evidence date: 2026-09-28
 Audited commit: `a8926266069e71f7b254c6465ac8e84a78b47303`
 Post-audit repository state: Migration Group 1 completed at
-`497743e04da11ca0a3cb1a19b2f0bbbcc6e56b06`.
+`497743e04da11ca0a3cb1a19b2f0bbbcc6e56b06`; Group 2 is recorded by the
+commit containing this updated audit.
 
 This is a static repository audit. No file was moved, renamed or deleted, no
 runtime was started, and no robot or Mini-PC was contacted. Classification is
@@ -63,7 +64,7 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | Path | Real responsibility and references | Layer / domain | Kind; authority | Machine | Safety/runtime impact | Move risk and recommendation |
 |---|---|---|---|---|---|---|
 | `.git/` | Git object database, refs and worktree metadata; consumed only by Git | Repository infrastructure | generated metadata; authoritative for history | N/A | No runtime impact; destructive changes lose history | **HIGH**; remain exactly where it is |
-| `.marscode/` | Contains tracked `deviceInfo.json`; no code/build/runtime reference found | Developer tooling | host/editor artifact; non-authoritative | Laptop | None | **LOW**; eventually remove from source control, not a runtime migration |
+| `.marscode/` | Local editor state; Group 2 removed its tracked host identifier and added a narrow ignore rule | Developer tooling | generated local metadata; non-authoritative | Laptop | None | **LOW**; remain ignored and untracked |
 | `.pytest_cache/` | Pytest cache; ignored and untracked | Testing cache | generated | Laptop/offline | None | **LOW**; remain ignored, delete locally only as housekeeping |
 | `__pycache__/` | Python bytecode; ignored and untracked | Runtime/test cache | generated | Shared | None | **LOW**; remain ignored |
 | `artifacts/` | Outputs of leg-lift, body-shift, sensitivity and robustness experiments. Producers include root sweep scripts and `tools/*sweep*` | R&D / evidence | generated experiment artifact; partially retained evidence | Offline R&D | No Product runtime; evidence may matter to research decisions | **MEDIUM**; do not mass-move. 404 files are tracked (`grid_162` 325, `single_leg_sensitivity` 43, `single_leg_sweep` 36); other 2,694+ files are ignored. Define evidence retention first |
@@ -89,7 +90,7 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `systemd/` | Older direct local-Xbox services using `/home/abx/Lite-robot/build/lite3_xbox_control`; tested by `tests/xbox_startup_service_test.sh` | Legacy Low-Level deployment | source/config; legacy, not canonical high-level Product units | Mini-PC legacy path | Can start hardware-facing C++ runtime | **HIGH**; do not delete/move until confirmed absent from every deployed host and tests are retired/replaced |
 | `tests/` | Root C++ low-level tests, fake SDK, Xbox service tests and `tests/architecture` Product contract tests | Mixed R&D safety tests and Product architecture tests | source/tests; authoritative verification | Offline | Protects permits, ownership, watchdogs and contracts | **MEDIUM/HIGH**; split only after build/test discovery is updated with no loss of coverage |
 | `third_party/` | Vendored Eigen, MotionSDK, MuJoCo and ONNX Runtime; Gamepad source; robot model Gitlink. Root CMake links these directly. Includes binary `.so` files | Vendor / third-party | third-party source/binary/Gitlinks; authoritative dependencies for R&D | Shared builds | MotionSDK and runtimes are ABI-critical | **HIGH**; remain exactly where it is. Git metadata is inconsistent: Gitlinks exist for `Lite3_MotionSDK/URDF` and `gamepad/example/fmt`, but `.gitmodules` declares only `deep_robotics_model` |
-| `tools/` | Mostly low-level validators, simulations, kinematics, body/leg sweep tooling and robustness pipeline; root CMake builds several. Includes hardware-facing validation console and Xbox executable | R&D / Low-Level Control and engineering tools | source plus tracked backup snapshots | Offline and explicit legacy hardware validation | Some tools can command hardware; others are pure analysis/simulation | **HIGH** as a whole. Split hardware tools from offline tools only after target-by-target CMake changes |
+| `tools/` | Mostly low-level validators, simulations, kinematics, body/leg sweep tooling and robustness pipeline; root CMake builds several. Includes hardware-facing validation console and Xbox executable | R&D / Low-Level Control and engineering tools | source; historical backup snapshots moved to curated evidence by Group 2 | Offline and explicit legacy hardware validation | Some tools can command hardware; others are pure analysis/simulation | **HIGH** as a whole. Split hardware tools from offline tools only after target-by-target CMake changes |
 | `types/` | Legacy C++ robot/action/user-command/feedback structs used across `interface`, `state_machine`, `run_policy`, tests and utils | R&D / Low-Level shared types | source; authoritative for root C++ path | Shared low-level build | Broad compile-time dependency; includes Eigen and OS timing | **HIGH**; remain until namespaces/includes are refactored in a dedicated low-level phase |
 | `utils/` | Legacy C++ math, JSON and UDP/file streaming helpers; URDF-to-MJCF conversion script | R&D shared utilities | source; authoritative/supporting for root C++ path | Offline/legacy hardware | `data_streaming.hpp` has network/file behavior; `basic_function` feeds policy | **HIGH** for C++ helpers, **LOW** for conversion script if isolated; do not move wholesale |
 
@@ -110,7 +111,6 @@ behavior. The maintained Python regression baseline is `242 passed`.
 | `pytest.ini` | Limits default Python discovery to `test_*.py` | Test configuration; authoritative | **MEDIUM**; remain at root while tests span multiple trees |
 | `sensitivity_test.py` | MuJoCo single-leg sensitivity driver; hard-coded repository path; writes R&D artifacts | R&D experiment source | **LOW/MEDIUM**; same migration group as `grid_162.py` after path fix |
 | `single_leg_sweep.py` | Main Monte-Carlo/sweep driver; repository root is derived from its current file location | R&D experiment source; active/supporting | **MEDIUM**; moving it changes root resolution and must include tests/path update |
-| `single_leg_sweep.py.pre_real_sweep` | Historical snapshot of the sweep script; no runtime reference | Backup artifact; tracked legacy | **LOW**; archive/remove from source only after history/evidence decision |
 
 ## Current Product runtime (Patrol / high-level)
 
@@ -205,8 +205,8 @@ lower safety importance.
 | `artifacts/grid_162`, `single_leg_sensitivity`, `single_leg_sweep` | Yes, retained evidence | 404 files tracked | Decide evidence policy/LFS/archive before changing |
 | other `artifacts/*` campaigns | Yes | ignored/untracked | Keep out of Git unless curated evidence is promoted |
 | `rnd/evidence/legacy/mujoco/{root,interface-simulation}-MUJOCO_LOG.TXT` | Yes, retained legacy evidence | tracked; moved by Migration Group 1 with content hashes preserved | Keep as curated R&D evidence; no runtime/build consumers |
-| `*.before_*`, `*.pre_*`, `*.save` first-party files | Manual backups | tracked | Obsolete candidates; Git history should replace them after comparison |
-| `.marscode/deviceInfo.json` | Host/editor state | tracked | Candidate to untrack and ignore |
+| `docs/handoff_evidence/source_snapshots/group2-legacy-backups/` | Curated historical source snapshots | tracked; unique snapshots archived by Group 2 | Retain with provenance manifest; exact duplicates remain recoverable from Git history |
+| `.marscode/` | Host/editor state | ignored/untracked after Group 2 | Keep local host metadata out of Git |
 | `Lite3_description` meshes | Vendor/model assets, not generated by this build | tracked | Treat as third-party model data; do not delete as cache |
 
 ## Concrete duplication and fragmentation
@@ -303,12 +303,12 @@ currently deployed split workspaces.
 - `third_party/` binary/runtime dependencies and Gitlinks.
 - tracked experimental evidence until retention and provenance are recorded.
 
-## Obsolete candidates — no deletion authorized
+## Group-2 disposition and remaining obsolete candidates
 
-- tracked first-party backup snapshots (`*.before_*`, `*.pre_*`, `*.save`);
+- curated first-party historical snapshots under `docs/handoff_evidence/source_snapshots/group2-legacy-backups/`; exact duplicates were removed by Group 2 and remain recoverable from Git history;
 - archived/generated MuJoCo logs under `rnd/evidence/legacy/mujoco/` (retain as
   curated legacy evidence unless a later retention policy says otherwise);
-- `.marscode/deviceInfo.json`;
+- `.marscode/` local editor metadata is now ignored and untracked;
 - `fix_policy_path.py` after policy packaging is fixed;
 - unreferenced legacy ROS launch/config files after installed-host audit;
 - old root Xbox systemd/scripts after confirming no deployed machine uses the
@@ -330,14 +330,14 @@ currently deployed split workspaces.
    legacy C++ `types/` + generic Python `src/robot_interfaces` + ROS-native
    messages. They require adapters, not a wholesale merge.
 5. **Generated files:** build/install/log/cache trees are correctly untracked;
-   experiment artifacts, logs and manual backups are partly tracked and need a
-   policy.
+   experiment artifacts still need an evidence-lifecycle policy; legacy logs and
+   unique manual snapshots are now curated under explicit evidence paths.
 6. **Dangerous exact paths:** deployed ROS package/unit paths, laptop user units,
    legacy `/home/abx/Lite-robot` services, external codec root, and vendor ABI
    paths.
 7. **Absolute home paths:** catalogued above; replace gradually with environment,
    package-share lookup, systemd `EnvironmentFile`, and install-prefix discovery.
-8. **Obsolete candidates:** identified above; none were deleted.
+8. **Obsolete candidates:** Group 2 removed only verified local metadata and exact-content duplicates, while archiving unique snapshots; all uncertain candidates remain untouched.
 9. **ROS workspace:** keep it intact now. Split packages only after compatibility
    wrappers and installed-unit tests exist.
 10. **Clean separation feasibility:** yes. The runtime boundary is already

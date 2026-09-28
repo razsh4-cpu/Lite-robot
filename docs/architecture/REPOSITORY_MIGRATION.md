@@ -2,7 +2,7 @@
 
 This plan follows the Phase-A evidence in
 [REPOSITORY_AUDIT.md](REPOSITORY_AUDIT.md). Migration Group 1 is complete;
-Groups 2–13 remain unexecuted.
+Group 2 is complete; Groups 3–13 remain unexecuted.
 
 Rule for every group:
 
@@ -111,7 +111,7 @@ remain compatible.
   passed. No Mini-PC or physical robot was accessed, and runtime and safety
   behavior were unchanged.
 
-### Group 2 — host/editor and manual-backup hygiene
+### Group 2 — host/editor and manual-backup hygiene (completed)
 
 - **Source:** `.marscode/deviceInfo.json`, first-party `*.before_*`, `*.pre_*`
   and `*.save` snapshots (exclude legitimate third-party filenames such as
@@ -130,6 +130,11 @@ remain compatible.
 - **Risk:** **LOW/MEDIUM** because of the broad CMake glob.
 - **Rollback:** revert group commit.
 - **Prerequisites:** Group 1 recommended, not mandatory.
+- **Result:** unique historical snapshots were moved to
+  `docs/handoff_evidence/source_snapshots/group2-legacy-backups/`; exact
+  duplicates and `.marscode/deviceInfo.json` were removed; `.marscode/` is
+  narrowly ignored. Offline build passed, CTest passed `25/25`, the Python
+  regression suite passed `242`, and no runtime or safety source was changed.
 
 ### Group 3 — root MuJoCo experiment entry points
 
@@ -335,8 +340,7 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 2 — host/editor and manual-backup hygiene** is the recommended next
-group. Group 1 established the `rnd/evidence` boundary without changing
-runtime or safety behavior. Group 2 must still begin with an exact consumer
-audit because the broad CMake source glob can make backup-like C++ filenames
-more sensitive than ordinary documentation snapshots.
+**Group 3 — root MuJoCo experiment entry points** is the recommended next
+group. It must remain split into dependency-safe subgroups because
+`single_leg_sweep.py` derives the repository root from its current location,
+while the other experiment drivers contain hard-coded repository paths.
