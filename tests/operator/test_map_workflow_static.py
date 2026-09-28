@@ -2,7 +2,7 @@ from pathlib import Path
 import importlib.util
 import json
 
-ROOT = Path(__file__).parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 MANAGER = ROOT / "onboard_ros2_ws/src/sensor_visualization/scripts/lite3_map_manager.py"
 CLI = ROOT / "operator/lite3_map_cli.py"
 LAUNCH = ROOT / "onboard_ros2_ws/src/lite3_state_estimation/launch/day1_localization.launch.py"

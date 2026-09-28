@@ -3,7 +3,8 @@ from pathlib import Path
 import sys
 
 
-PATH = Path(__file__).with_name("lite3_command_registry.py")
+ROOT = Path(__file__).resolve().parents[2]
+PATH = ROOT / "operator" / "lite3_command_registry.py"
 SPEC = importlib.util.spec_from_file_location("lite3_command_registry", PATH)
 REGISTRY = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = REGISTRY

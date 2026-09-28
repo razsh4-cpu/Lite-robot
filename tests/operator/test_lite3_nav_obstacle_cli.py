@@ -5,11 +5,13 @@ import subprocess
 import sys
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+ROOT = HERE.parents[1]
+OPERATOR = ROOT / "operator"
+sys.path.insert(0, str(OPERATOR))
 
 
 def load(name):
-    spec = importlib.util.spec_from_file_location(name, HERE / f"{name}.py")
+    spec = importlib.util.spec_from_file_location(name, OPERATOR / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
     spec.loader.exec_module(module)
@@ -213,14 +215,14 @@ def test_existing_nav2_layer_starts_only_when_other_gates_pass(monkeypatch, tmp_
     assert starts == [True]
 
 def test_status_is_read_only_by_construction():
-    source = (HERE / "lite3_nav_cli.py").read_text()
+    source = (OPERATOR / "lite3_nav_cli.py").read_text()
     body = source.split("def status_command():", 1)[1].split("def cancel_command():", 1)[0]
     for forbidden in ("cleanup_autonomy", "systemctl", "NavigateToPose", "Popen"):
         assert forbidden not in body
 
 
 def test_executor_reuses_nav2_and_never_publishes_velocity():
-    source = (HERE / "lite3_nav_obstacle_execute.py").read_text()
+    source = (OPERATOR / "lite3_nav_obstacle_execute.py").read_text()
     assert "NavigateToPose" in source
     assert "create_subscription(Twist, \"/cmd_vel\"" in source
     assert "create_publisher(Twist" not in source
@@ -230,7 +232,7 @@ def test_executor_reuses_nav2_and_never_publishes_velocity():
 
 
 def test_planning_snapshot_is_inert_and_records_required_evidence():
-    source = (HERE / "lite3_chair_dryrun_snapshot.py").read_text()
+    source = (OPERATOR / "lite3_chair_dryrun_snapshot.py").read_text()
     assert "ComputePathToPose" in source
     assert "from nav2_msgs.action import NavigateToPose" not in source
     assert "cmd_vel_at_snapshot" in source
@@ -239,7 +241,7 @@ def test_planning_snapshot_is_inert_and_records_required_evidence():
 
 
 def test_status_never_starts_nav2_or_autonomy():
-    source = (HERE / "lite3_nav_cli.py").read_text()
+    source = (OPERATOR / "lite3_nav_cli.py").read_text()
     body = source.split("def status_command():", 1)[1].split(
         "def cancel_command():", 1)[0]
     assert "start_nav2_layer" not in body
@@ -247,7 +249,7 @@ def test_status_never_starts_nav2_or_autonomy():
 
 
 def test_nav2_start_helper_only_starts_existing_nav2_unit():
-    source = (HERE / "lite3_nav_cli.py").read_text()
+    source = (OPERATOR / "lite3_nav_cli.py").read_text()
     body = source.split("def start_nav2_layer():", 1)[1].split(
         "def snapshot_and_plan():", 1)[0]
     assert "NAV2_UNIT" in body
@@ -256,19 +258,19 @@ def test_nav2_start_helper_only_starts_existing_nav2_unit():
 
 
 def test_override_module_is_installed_as_executable_and_importable_python():
-    cmake = (HERE.parents[0] / "onboard_ros2_ws/src/sensor_visualization/CMakeLists.txt").read_text()
+    cmake = (ROOT / "onboard_ros2_ws/src/sensor_visualization/CMakeLists.txt").read_text()
     assert "RENAME lite3_nav_test_override" in cmake
     assert "install(FILES scripts/lite3_nav_test_override.py" in cmake
 
 
 def test_release_helper_always_removes_test_override():
-    helper = (HERE.parents[0] / "onboard_ros2_ws/src/sensor_visualization/scripts/lite3_release_autonomy.sh").read_text()
+    helper = (ROOT / "onboard_ros2_ws/src/sensor_visualization/scripts/lite3_release_autonomy.sh").read_text()
     assert "NAV_TEST_OVERRIDE.json" in helper
     assert 'rm -f -- "$test_override"' in helper
 
 
 def test_deploy_script_never_starts_navigation_or_motion():
-    deploy = (HERE / "deploy_nav_obstacle_test.sh").read_text()
+    deploy = (OPERATOR / "deploy_nav_obstacle_test.sh").read_text()
     assert "abx-fit-001" in deploy
     assert "COMMAND_SOURCE" in deploy and "NONE" in deploy
     assert "colcon build" in deploy

@@ -4,7 +4,8 @@ import sys
 from unittest.mock import Mock, patch
 
 
-PATH = Path(__file__).with_name("lite3_relocalize_cli.py")
+ROOT = Path(__file__).resolve().parents[2]
+PATH = ROOT / "operator" / "lite3_relocalize_cli.py"
 SPEC = importlib.util.spec_from_file_location("lite3_relocalize_cli", PATH)
 CLI = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = CLI

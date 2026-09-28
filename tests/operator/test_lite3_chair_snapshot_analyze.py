@@ -3,7 +3,17 @@
 
 import math
 
-from lite3_chair_snapshot_analyze import path_tangent_yaw
+import importlib.util
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+PATH = ROOT / "operator" / "lite3_chair_snapshot_analyze.py"
+SPEC = importlib.util.spec_from_file_location("lite3_chair_snapshot_analyze", PATH)
+MODULE = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = MODULE
+SPEC.loader.exec_module(MODULE)
+path_tangent_yaw = MODULE.path_tangent_yaw
 
 
 def test_path_tangent_overrides_zero_navfn_orientation():

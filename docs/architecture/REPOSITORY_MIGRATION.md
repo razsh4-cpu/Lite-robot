@@ -208,6 +208,11 @@ remain compatible.
 - **Rollback:** compatibility wrappers at previous paths for one release plus
   revertable install manifest.
 - **Prerequisites:** Group 4 package/import conventions.
+- **Group 5A result:** all five operator Python regression modules moved from
+  `operator/` to `tests/operator/`. Test fixtures now resolve the unchanged
+  operator sources explicitly from the repository root. No command source,
+  installed wrapper, executable, service, deployment file, or CLI behavior
+  changed.
 
 ### Group 6 — laptop C2 and visualization packaging
 
@@ -363,5 +368,6 @@ remain compatible.
 
 **Group 4 — pure generic Product contracts** is complete. Group 4A added
 in-place package metadata and Group 4B applied the approved Platform/Product
-ownership. **Group 5 — operator organization** is the recommended next group;
-begin with dependency analysis and split only behavior-neutral support files.
+ownership. **Group 5A — operator test separation** is complete. Continue Group 5 by
+classifying deployment, diagnostics, validation, and stable CLI consumers before
+moving any installed or motion-capable operator path.
