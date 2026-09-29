@@ -158,6 +158,8 @@ install(PROGRAMS scripts/lite3_nav2_preflight.py
 install(PROGRAMS scripts/lite3_nav_test_override.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_nav_test_override)
+install(FILES scripts/lite3_nav_test_override.py
+  DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/lite3_release_autonomy.sh
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_release_autonomy)

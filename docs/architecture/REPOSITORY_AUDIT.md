@@ -13,7 +13,7 @@ based on build files, package manifests, imports/includes, launch files,
 systemd units, tests, documentation, Git tracking state and hard-coded paths.
 The later Group 1 migration moved only the two audited legacy MuJoCo logs; it
 also used no Mini-PC or physical-robot access and changed no runtime or safety
-behavior. The maintained Python regression baseline is `242 passed`.
+behavior. The maintained Python regression baseline is `243 passed`.
 
 ## Executive findings
 

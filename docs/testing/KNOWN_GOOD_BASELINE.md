@@ -51,7 +51,7 @@ goal PASS. Attempt 2 above is the accepted baseline.
 - obstacle-test approval, status, cancel, override cleanup, packaging and
   diagnostic-snapshot behavior through mocks/static tests;
 - dormant Mission target/lifecycle contracts and unconfigured registry;
-- current focused offline regression: 223 tests passed on 2026-09-28.
+- current complete offline regression: 243 tests passed on 2026-09-29 (the increase from 242 adds the independent 180-second override-consumer assertion).
 
 These results prove deterministic software behavior only, not installation, DDS,
 physical clearance, sensor alignment or hardware response.
