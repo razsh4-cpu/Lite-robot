@@ -68,4 +68,4 @@ def test_override_ttl_is_bounded(tmp_path, monkeypatch):
     monkeypatch.setattr(MODULE.time, "sleep", lambda _seconds: None)
     value = MODULE.enable(tmp_path, "fixture", 9999.0)
     assert value["expires_unix"] - value["created_unix"] == MODULE.MAX_TTL_S
-    assert MODULE.MAX_TTL_S == 600.0
+    assert MODULE.MAX_TTL_S == 180.0

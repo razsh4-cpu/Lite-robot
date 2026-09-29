@@ -9,7 +9,7 @@ import time
 
 NORMAL_THRESHOLD = 0.80
 TEST_THRESHOLD = 0.70
-MAX_TTL_S = 600.0
+MAX_TTL_S = 180.0
 FILE_NAME = "NAV_TEST_OVERRIDE.json"
 
 
@@ -92,7 +92,7 @@ def main() -> int:
     parser.add_argument("command", choices=("enable", "status", "clear"))
     parser.add_argument("--state-dir", default="/run/lite3-control")
     parser.add_argument("--session")
-    parser.add_argument("--ttl", type=float, default=600.0)
+    parser.add_argument("--ttl", type=float, default=180.0)
     args = parser.parse_args()
     state_dir = Path(args.state_dir)
     try:

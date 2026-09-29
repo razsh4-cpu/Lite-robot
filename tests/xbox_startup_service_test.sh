@@ -56,9 +56,9 @@ grep -qx true "$temp/SYSTEM_READY"
 
 grep -qx "OnSuccess=lite3-local-xbox-control.service" "$root/systemd/lite3-xbox.service"
 ! grep -q "Restart=always" "$root/systemd/lite3-xbox.service"
-! grep -q "Wants=lite3-xbox.service" "$root/systemd/lite3-local-xbox-control.service"
-grep -qx "Environment=LITE3_POLICY_MODEL=/home/abx/Lite-robot/policy/ppo/policy.onnx" \
-    "$root/systemd/lite3-local-xbox-control.service"
+grep -qx "Wants=lite3-xbox.service" "$root/systemd/lite3-local-xbox-control.service"
+grep -qx "After=lite3-xbox.service" "$root/systemd/lite3-local-xbox-control.service"
+! grep -q "LITE3_POLICY_MODEL" "$root/systemd/lite3-local-xbox-control.service"
 grep -q "MANUAL_CONTROL_AVAILABLE" "$root/systemd/lite3-local-xbox-control.service"
 grep -q "lite3_command_source_none.sh" "$root/systemd/lite3-local-xbox-control.service"
 grep -q "lite3_xbox_device_valid.sh" "$root/systemd/lite3-local-xbox-control.service"

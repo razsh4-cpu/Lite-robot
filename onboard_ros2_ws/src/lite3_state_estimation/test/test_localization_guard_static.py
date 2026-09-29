@@ -43,3 +43,10 @@ def test_runtime_localization_never_overwrites_saved_pose():
     guard = (ROOT / "lite3_state_estimation/localization_guard.py").read_text(encoding="utf-8")
     assert "def _save_pose" not in guard
     assert "write_text(json.dumps" not in guard
+
+
+def test_test_override_is_limited_to_180_seconds():
+    guard = (ROOT / "lite3_state_estimation/localization_guard.py").read_text(
+        encoding="utf-8")
+    assert "0.0 < expires - created <= 180.0" in guard
+    assert "0.0 < expires - created <= 600.0" not in guard

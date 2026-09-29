@@ -152,7 +152,7 @@ class LocalizationGuard(Node):
                 and len(samples) >= 3
                 and all(0.70 <= item <= 1.0 for item in samples[-3:])
                 and created <= time.time() < expires
-                and 0.0 < expires - created <= 600.0)
+                and 0.0 < expires - created <= 180.0)
             if valid:
                 return 0.70, True
         except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
