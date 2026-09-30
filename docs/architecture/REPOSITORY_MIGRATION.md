@@ -1,8 +1,9 @@
 # Repository migration plan — Phase B
 
 This plan follows the Phase-A evidence in
-[REPOSITORY_AUDIT.md](REPOSITORY_AUDIT.md). Migration Group 1 is complete;
-Groups 2 and 3 are complete; Groups 4–13 remain unexecuted.
+[REPOSITORY_AUDIT.md](REPOSITORY_AUDIT.md). Groups 1, 2, 3A–3B, 4A–4B and
+5A–5C are complete. Group 11A is also complete as an independently proven,
+low-risk subgroup; the remainder of Group 11 is not started.
 
 Rule for every group:
 
@@ -12,7 +13,7 @@ audit exact files
 → move one small coherent group
 → update all code/build/unit/launch/test/docs references
 → build relevant targets
-→ run the maintained full regression suite (242 tests at this audit; never
+→ run the maintained full regression suite (243 tests at the current baseline; never
   fewer than the historical 223-test baseline)
 → run git diff --check
 → review diff and commit the group
@@ -327,6 +328,13 @@ remain compatible.
 - **Risk:** **HIGH** due model/deployment coupling.
 - **Rollback:** compatibility environment/path plus prior binary package.
 - **Prerequisites:** Group 10.
+- **Group 11A result:** the location-independent, uninstalled
+  `fix_policy_path.py` helper moved byte-for-byte from the repository root to
+  `rnd/policies/tools/fix_policy_path.py`. It has no Python, CMake, launch,
+  shell, systemd, test, install or runtime consumer; only documentation named
+  it. A temporary-directory smoke proved identical symlink behavior before and
+  after the move. This does not begin the remaining policy/model/runtime move,
+  whose Group-10 prerequisite and **HIGH** risk remain unchanged.
 
 ### Group 12 — models and third-party dependency normalization
 
@@ -367,7 +375,7 @@ remain compatible.
 4. Use `git mv`; do not copy-and-delete concurrent work.
 5. Build only offline/static targets unless a later task explicitly authorizes
    deployment or physical validation.
-6. Run focused tests, the maintained full suite (242 tests at this audit, and
+6. Run focused tests, the maintained full suite (243 tests at the current baseline, and
    never fewer than the historical 223-test baseline) and
    `git diff --check`.
 7. Confirm no generated/build/cache file was accidentally added.
@@ -375,8 +383,10 @@ remain compatible.
 
 ## Recommended next migration group
 
-**Group 4 — pure generic Product contracts** is complete. Group 4A added
-in-place package metadata and Group 4B applied the approved Platform/Product
-ownership. **Group 5A–5C** separated tests, uninstalled read-only diagnostics, and
-uninstalled planning-only validation tools. Remaining Group-5 files are stable
-CLIs, installed helpers, deployment sources, services, or motion-capable tools.
+**Groups 1–4 and Group 5A–5C** are complete. **Group 11A** isolated the
+uninstalled legacy policy-path helper without beginning the policy subsystem
+move. Remaining Group-5 files are stable CLIs, installed helpers, deployment
+sources, services, or motion-capable tools. The next candidate is the
+documentation-only relocation of root `PROGRESS.md`
+to a historical documentation location, after updating its three known
+documentation references; it has no build, launch, service or runtime consumer.

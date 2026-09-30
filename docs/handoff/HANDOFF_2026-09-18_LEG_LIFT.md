@@ -232,6 +232,7 @@ Avoid repeated full ctest runs unless structural changes were made.
 The historical `state_machine.hpp.save` snapshot is preserved at:
 - `docs/handoff_evidence/source_snapshots/group2-legacy-backups/state_machine/state_machine.hpp.save`
 
-Do not blindly commit `fix_policy_path.py`; review it before adding.
+The reviewed legacy helper is retained at
+`rnd/policies/tools/fix_policy_path.py`; do not run it during Product setup.
 
 Do not merge automatically.

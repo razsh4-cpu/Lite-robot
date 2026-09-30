@@ -106,7 +106,7 @@ behavior. The maintained Python regression baseline is `243 passed`.
 | `LICENSE` | Repository Apache-2.0 license text | Legal documentation; authoritative | **HIGH** legal significance; remain at root |
 | `PROGRESS.md` | Historical/current project progress with host paths | Documentation; supporting and partly historical | **LOW** to reorganize later; keep while links/handoff use it |
 | `README.md`, `README_EN.md` | Root low-level RL controller build/use documentation, not a complete description of the current patrol Product | Documentation; authoritative for legacy/R&D build, incomplete for platform | **MEDIUM**; retain and eventually label/move under R&D while adding a platform root README |
-| `fix_policy_path.py` | One-off symlink repair from repository model to parent `policy/`; referenced only by a handoff document | R&D deployment helper; legacy/obsolete candidate | **LOW**; archive after policy deployment is manifest-based; do not run during Product setup |
+| `rnd/policies/tools/fix_policy_path.py` | One-off symlink repair from repository model to parent `policy/`; referenced only by a handoff document | R&D deployment helper; isolated by Group 11A and retained for historical/manual compatibility | **LOW**; do not run during Product setup; remove only after policy deployment is manifest-based |
 | `main.cpp` | Root `rl_deploy` entry point; constructs C++ `StateMachine(RobotType::Lite3)` | R&D Low-Level runtime source | **HIGH**; remain with state machine and CMake |
 | `pytest.ini` | Limits default Python discovery to `test_*.py` | Test configuration; authoritative | **MEDIUM**; remain at root while tests span multiple trees |
 
@@ -314,7 +314,7 @@ currently deployed split workspaces.
 - archived/generated MuJoCo logs under `rnd/evidence/legacy/mujoco/` (retain as
   curated legacy evidence unless a later retention policy says otherwise);
 - `.marscode/` local editor metadata is now ignored and untracked;
-- `fix_policy_path.py` after policy packaging is fixed;
+- `rnd/policies/tools/fix_policy_path.py` after policy packaging is fixed;
 - unreferenced legacy ROS launch/config files after installed-host audit;
 - old root Xbox systemd/scripts after confirming no deployed machine uses the
   direct `lite3_xbox_control` service;
