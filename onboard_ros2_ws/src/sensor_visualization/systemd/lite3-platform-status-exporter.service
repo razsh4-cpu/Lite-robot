@@ -1,0 +1,19 @@
+[Unit]
+Description=Lite3 read-only vendor-neutral platform status exporter
+After=lite3-high-level-runtime.service lite3-lidar.service
+Wants=lite3-high-level-runtime.service lite3-lidar.service
+[Service]
+Type=simple
+User=abx
+Group=abx
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec /home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_platform_status_exporter --robot-id ${LITE3_ROBOT_ID:-robot_01}'
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=10
+[Install]
+WantedBy=multi-user.target

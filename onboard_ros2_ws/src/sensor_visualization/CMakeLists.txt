@@ -27,6 +27,8 @@ if(BUILD_TESTING)
     test/test_day3_mission_registry.py)
   ament_add_pytest_test(robot_posture_cli
     test/test_robot_posture_cli.py)
+  ament_add_pytest_test(platform_status_exporter
+    test/test_platform_status_exporter.py)
 endif()
 
 set(LITE3_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Lite3_MotionSDK" CACHE PATH
@@ -181,6 +183,9 @@ install(PROGRAMS scripts/lite3_high_level_ros_watchdog.py
 install(PROGRAMS scripts/lite3_mission_manager.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_mission_manager)
+install(PROGRAMS scripts/lite3_platform_status_exporter.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME lite3_platform_status_exporter)
 install(TARGETS lite3_telemetry_bridge DESTINATION lib/${PROJECT_NAME})
 install(FILES "${LITE3_SDK_LIB}" DESTINATION lib)
 
