@@ -6,6 +6,7 @@ Wants=lite3-high-level-runtime.service lite3-lidar.service
 Type=simple
 User=abx
 Group=abx
+EnvironmentFile=-/etc/lite3-control/platform-status-exporter.env
 Environment=ROS_DOMAIN_ID=0
 Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
 Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
