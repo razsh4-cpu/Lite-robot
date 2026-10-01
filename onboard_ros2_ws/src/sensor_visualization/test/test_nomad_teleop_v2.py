@@ -101,6 +101,64 @@ def test_enabled_conversion_uses_strict_limits_and_rb_button():
     assert shaped == (.10, -.05, .20)
 
 
+def test_enabled_stand_is_one_a_edge_and_waits_for_authoritative_standing():
+    clock = Clock()
+    machine = CORE.PhysicalTeleopMachine(
+        "robodog_01", clock=clock, physical_output_enabled=True)
+    machine.handle(intent(0), platform(posture="UNAVAILABLE"), authority())
+    stand = machine.handle(
+        intent(1, "STAND"), platform(posture="UNAVAILABLE"), authority())
+    assert stand.acquire is True
+    assert stand.joy.axes == [0.0] * 8
+    assert stand.joy.buttons[0] == 1
+    assert sum(stand.joy.buttons) == 1
+    assert stand.status["state"] == "WAITING_FOR_STANDING"
+    assert stand.status["reason"] == "STAND_REQUESTED"
+
+    waiting = machine.tick(platform(posture="UNAVAILABLE"), authority())
+    assert waiting.release is False
+    assert waiting.joy.buttons == [0] * 15
+    confirmed = machine.tick(platform(posture="STANDING"), authority())
+    assert confirmed.status["state"] == "WAITING_FOR_NEUTRAL"
+    assert confirmed.status["reason"] == "STANDING_CONFIRMED"
+    assert confirmed.release is False
+    assert machine.handle(
+        intent(2, "DRIVE"), platform(), authority()).status["reason"] == "NEUTRAL_REQUIRED"
+
+
+def test_stand_is_inert_while_physical_output_disabled_and_never_toggles_standing_robot():
+    disabled = CORE.PhysicalTeleopMachine(
+        "robodog_01", clock=Clock(), physical_output_enabled=False)
+    disabled.handle(intent(0), platform(posture="UNAVAILABLE"), authority())
+    blocked = disabled.handle(
+        intent(1, "STAND"), platform(posture="UNAVAILABLE"), authority())
+    assert blocked.acquire is False
+    assert blocked.joy.buttons == [0] * 15
+    assert blocked.status["reason"] == "PHYSICAL_OUTPUT_DISABLED"
+
+    enabled = CORE.PhysicalTeleopMachine(
+        "robodog_01", clock=Clock(), physical_output_enabled=True)
+    enabled.handle(intent(0), platform(), authority())
+    already = enabled.handle(intent(1, "STAND"), platform(), authority())
+    assert already.acquire is False
+    assert already.joy.buttons == [0] * 15
+    assert already.status["reason"] == "ALREADY_STANDING"
+
+
+def test_stand_timeout_releases_laptop_xbox_and_requires_new_neutral():
+    clock = Clock()
+    machine = CORE.PhysicalTeleopMachine(
+        "robodog_01", clock=clock, physical_output_enabled=True)
+    machine.handle(intent(0), platform(posture="UNAVAILABLE"), authority())
+    machine.handle(intent(1, "STAND"), platform(posture="UNAVAILABLE"), authority())
+    clock.value += machine.config.stand_timeout_s + 0.001
+    stopped = machine.tick(platform(clock.value, posture="UNAVAILABLE"),
+                           authority(clock.value))
+    assert stopped.release is True
+    assert stopped.status["state"] == "BLOCKED"
+    assert stopped.status["reason"] == "STAND_CONFIRMATION_TIMEOUT"
+
+
 def test_watchdog_zeroes_releases_and_requires_new_neutral():
     clock = Clock()
     machine = CORE.PhysicalTeleopMachine(
@@ -129,7 +187,7 @@ def test_identity_sequence_freshness_bounds_and_posture_fail_closed():
             request, platform(), authority())
         assert result.status["reason"] == reason
     bad_posture = CORE.PhysicalTeleopMachine("robodog_01", clock=Clock()).handle(
-        intent(0), platform(posture="SITTING"), authority())
+        intent(0, "DRIVE"), platform(posture="SITTING"), authority())
     assert bad_posture.status["reason"] == "POSTURE_NOT_STANDING"
 
 
@@ -164,8 +222,17 @@ def test_service_is_exclusive_and_output_disabled_by_default():
     unit = (ROOT / "systemd/lite3-nomad-teleop-adapter.service").read_text()
     assert "Conflicts=lite3-laptop-xbox-source.service" in unit
     assert "Conflicts=nomad-bipolix-teleop-validator.service" in unit
-    assert "physical-output-enabled false" in unit
+    assert 'physical-output-enabled "$${NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED:-false}"' in unit
     assert "require_deadman:=true" not in unit  # HIGH-LEVEL owns this parameter.
+
+
+def test_deployer_has_explicit_enable_and_fail_safe_disable_output_actions():
+    text = (ROOT.parents[2] / "operator/apply_nomad_teleop_phase3c.sh").read_text()
+    assert "--enable-output" in text
+    assert "--disable-output" in text
+    assert "NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED=false" in text
+    assert "assert_idle" in text
+    assert 'systemctl restart \"$unit\"' in text
 
 
 def test_adapter_has_no_vendor_udp_cmd_vel_nav2_or_posture_surface():

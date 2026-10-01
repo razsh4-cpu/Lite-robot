@@ -56,6 +56,33 @@ restore_if_needed() {
   [[ "$active" == yes ]] && systemctl start "$name" || true
 }
 
+set_output_gate() {
+  local enabled="$1" tmp
+  assert_idle
+  [[ -r /etc/nomad/bipolix-phase3c.env ]] || {
+    echo 'BLOCKED: Phase-3C profile is not installed' >&2
+    exit 1
+  }
+  tmp="$(mktemp)"
+  awk -v enabled="$enabled" '
+    BEGIN { found=0 }
+    /^NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED=/ {
+      print "NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED=" enabled; found=1; next
+    }
+    { print }
+    END { if (!found) print "NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED=" enabled }
+  ' /etc/nomad/bipolix-phase3c.env >"$tmp"
+  install -o root -g root -m 0644 "$tmp" /etc/nomad/bipolix-phase3c.env
+  rm -f "$tmp"
+  systemctl restart "$unit"
+  systemctl is-active --quiet "$unit" || {
+    echo 'BLOCKED: Phase-3C adapter failed to restart' >&2
+    exit 1
+  }
+  [[ "$enabled" == false ]] && assert_idle
+  echo "PHASE 3C PHYSICAL OUTPUT $([[ "$enabled" == true ]] && echo ENABLED || echo DISABLED)"
+}
+
 rollback_profile() {
   systemctl disable --now "$unit" 2>/dev/null || true
   sleep 1
@@ -70,6 +97,8 @@ rollback_profile() {
 
 case "$action" in
   --install) install_profile ;;
+  --enable-output) set_output_gate true ;;
+  --disable-output) set_output_gate false ;;
   --rollback) rollback_profile ;;
-  *) echo "usage: $0 --install|--rollback" >&2; exit 2 ;;
+  *) echo "usage: $0 --install|--enable-output|--disable-output|--rollback" >&2; exit 2 ;;
 esac

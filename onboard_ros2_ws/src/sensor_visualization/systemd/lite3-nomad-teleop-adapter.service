@@ -17,7 +17,7 @@ Environment=ROS_DOMAIN_ID=0
 Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
 Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
 ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
-ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_nomad_teleop_adapter --robot-id "$${NOMAD_BIPOLIX_ROBOT_ID:-robodog_01}" --host "$${NOMAD_BIPOLIX_MQTT_HOST:-127.0.0.1}" --port "$${NOMAD_BIPOLIX_MQTT_PORT:-1885}" --physical-output-enabled false'
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_nomad_teleop_adapter --robot-id "$${NOMAD_BIPOLIX_ROBOT_ID:-robodog_01}" --host "$${NOMAD_BIPOLIX_MQTT_HOST:-127.0.0.1}" --port "$${NOMAD_BIPOLIX_MQTT_PORT:-1885}" --physical-output-enabled "$${NOMAD_BIPOLIX_PHYSICAL_OUTPUT_ENABLED:-false}"'
 Restart=on-failure
 RestartSec=2
 KillSignal=SIGTERM

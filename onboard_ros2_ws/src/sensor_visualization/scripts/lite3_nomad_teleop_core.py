@@ -25,6 +25,7 @@ class TeleopConfig:
     max_wz: float = 0.20
     intent_ttl_s: float = 0.25
     watchdog_s: float = 0.30
+    stand_timeout_s: float = 20.0
     status_stale_s: float = 1.0
     minimum_battery_percent: float = 25.0
 
@@ -45,6 +46,12 @@ class Decision:
 
 def neutral_joy():
     return JoyFrame([0.0] * 8, [0] * 15)
+
+
+def stand_joy():
+    buttons = [0] * 15
+    buttons[0] = 1  # Existing Xbox bridge mapping: A -> SIT_STAND edge.
+    return JoyFrame([0.0] * 8, buttons)
 
 
 def _shape_axis(value, deadzone=0.05):
@@ -95,6 +102,7 @@ class PhysicalTeleopMachine:
         self.last_sequence = None
         self.last_intent_id = None
         self.last_accepted_at = None
+        self.stand_requested_at = None
         self.lease_requested = False
         self.velocity = (0.0, 0.0, 0.0)
 
@@ -154,7 +162,7 @@ class PhysicalTeleopMachine:
         for field in ("lease_generation", "control_epoch", "sequence"):
             if type(request.get(field)) is not int or request[field] < 0:
                 return "MALFORMED_REQUEST"
-        if request.get("action") not in {"DRIVE", "ZERO"}:
+        if request.get("action") not in {"DRIVE", "ZERO", "STAND"}:
             return "MALFORMED_REQUEST"
         if type(request.get("deadman_active")) is not bool:
             return "MALFORMED_REQUEST"
@@ -172,14 +180,14 @@ class PhysicalTeleopMachine:
                 or abs(float(request["vy"])) > self.config.max_vy
                 or abs(float(request["wz"])) > self.config.max_wz):
             return "VELOCITY_OUT_OF_RANGE"
-        if request["action"] == "ZERO":
+        if request["action"] in {"ZERO", "STAND"}:
             if request["deadman_active"] or any(float(request[key]) != 0.0 for key in ("vx", "vy", "wz")):
                 return "MALFORMED_REQUEST"
         elif not request["deadman_active"]:
             return "DEADMAN_REQUIRED"
         return None
 
-    def _context_failure(self, platform, authority):
+    def _context_failure(self, platform, authority, require_standing=True):
         now = float(self.clock())
         if not isinstance(platform, dict) or platform.get("schema") != "robot.platform_status":
             return "PLATFORM_STATUS_INVALID"
@@ -195,7 +203,7 @@ class PhysicalTeleopMachine:
             return "ROBOT_OFFLINE"
         if robot.get("high_level_health") != "READY":
             return "HIGH_LEVEL_UNHEALTHY"
-        if robot.get("posture") != "STANDING":
+        if require_standing and robot.get("posture") != "STANDING":
             return "POSTURE_NOT_STANDING"
         battery = robot.get("battery_percent")
         if not self._finite(battery) or float(battery) < self.config.minimum_battery_percent:
@@ -231,7 +239,9 @@ class PhysicalTeleopMachine:
         failure = self._request_failure(request)
         if failure:
             return self._stop("BLOCKED", failure)
-        failure = self._context_failure(platform, authority)
+        stand_action = request["action"] == "STAND"
+        failure = self._context_failure(
+            platform, authority, require_standing=request["action"] == "DRIVE")
         if failure:
             return self._stop("BLOCKED", failure)
         identity = self._request_identity(request)
@@ -248,7 +258,30 @@ class PhysicalTeleopMachine:
         self.last_sequence = request["sequence"]
         self.last_intent_id = request["intent_id"]
         self.last_accepted_at = float(self.clock())
+        if request["action"] == "STAND":
+            if (platform.get("robot_state") or {}).get("posture") == "STANDING":
+                self.stand_requested_at = None
+                self.velocity = (0.0, 0.0, 0.0)
+                self.state, self.result, self.reason = (
+                    "WAITING_FOR_NEUTRAL", "ZEROED", "ALREADY_STANDING")
+                return Decision(self._status(), neutral_joy())
+            if self.state not in {"ARMED", "OUTPUT_DISABLED"}:
+                return self._stop("WAITING_FOR_NEUTRAL", "NEUTRAL_REQUIRED")
+            if not self.physical_output_enabled:
+                self.velocity = (0.0, 0.0, 0.0)
+                self.state, self.result, self.reason = (
+                    "OUTPUT_DISABLED", "ZEROED", "PHYSICAL_OUTPUT_DISABLED")
+                return Decision(self._status(), neutral_joy())
+            self.lease_requested = True
+            self.stand_requested_at = float(self.clock())
+            self.velocity = (0.0, 0.0, 0.0)
+            self.state, self.result, self.reason = (
+                "WAITING_FOR_STANDING", "ACCEPTED", "STAND_REQUESTED")
+            return Decision(self._status(), stand_joy(), acquire=True)
         if request["action"] == "ZERO":
+            if self.state == "WAITING_FOR_STANDING":
+                self.reason = "STAND_IN_PROGRESS"
+                return Decision(self._status(), neutral_joy())
             release = self.lease_requested
             self.lease_requested = False
             self.velocity = (0.0, 0.0, 0.0)
@@ -267,9 +300,23 @@ class PhysicalTeleopMachine:
         return Decision(self._status(), velocity_to_joy(*self.velocity, True), acquire=True)
 
     def tick(self, platform, authority):
-        failure = self._context_failure(platform, authority)
+        waiting_for_stand = self.state == "WAITING_FOR_STANDING"
+        failure = self._context_failure(
+            platform, authority, require_standing=self.state == "ACTIVE")
         if failure:
             return self._stop("BLOCKED", failure)
+        if waiting_for_stand:
+            now = float(self.clock())
+            if (platform.get("robot_state") or {}).get("posture") == "STANDING":
+                self.stand_requested_at = None
+                self.state, self.result, self.reason = (
+                    "WAITING_FOR_NEUTRAL", "ZEROED", "STANDING_CONFIRMED")
+                return Decision(self._status(), neutral_joy())
+            if (self.stand_requested_at is None
+                    or now - self.stand_requested_at > self.config.stand_timeout_s):
+                self.stand_requested_at = None
+                return self._stop("BLOCKED", "STAND_CONFIRMATION_TIMEOUT")
+            return Decision(self._status(), neutral_joy())
         if self.identity is not None:
             authority_identity = {field: authority.get(field) for field in self.identity}
             if authority_identity != self.identity:
