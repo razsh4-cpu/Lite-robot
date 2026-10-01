@@ -143,6 +143,41 @@ def test_schema_rejects_nonfinite_and_bad_command_source(exporter):
     assert value["safety"]["safety_ready"] is False
 
 
+def test_timed_out_probe_kills_the_entire_subprocess_group(exporter, monkeypatch):
+    calls = {}
+
+    class Process:
+        pid = 4242
+        returncode = None
+
+        def communicate(self, timeout=None):
+            if timeout is not None:
+                raise exporter.subprocess.TimeoutExpired(["ros2"], timeout)
+            self.returncode = -9
+            return ("", "")
+
+    def popen(args, **kwargs):
+        calls["args"] = args
+        calls["kwargs"] = kwargs
+        return Process()
+
+    monkeypatch.setattr(exporter.subprocess, "Popen", popen)
+    monkeypatch.setattr(exporter.os, "killpg", lambda pid, sig: calls.update(killpg=(pid, sig)))
+    assert exporter.HostProbe(timeout=.01).run(["ros2", "topic", "echo"]) is None
+    assert calls["kwargs"]["start_new_session"] is True
+    assert calls["killpg"] == (4242, exporter.signal.SIGKILL)
+
+
+def test_ros_probes_do_not_wrap_ros2_with_leaky_timeout_process(exporter, monkeypatch):
+    seen = []
+    monkeypatch.setattr(exporter.HostProbe, "run", lambda self, args: seen.append(args) or None)
+    probe = exporter.HostProbe(timeout=.01)
+    probe.topic("/scan", "header.stamp")
+    probe.tf("map", "base_link")
+    assert all(args[0] == "ros2" for args in seen)
+    assert all("timeout" not in args for args in seen)
+
+
 def test_source_contains_no_motion_surface():
     text = SCRIPT.read_text(encoding="utf-8")
     forbidden = (

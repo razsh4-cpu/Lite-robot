@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only aggregation of authoritative Lite3 state."""
 from __future__ import annotations
-import argparse, json, math, os, re, subprocess, time
+import argparse, json, math, os, re, signal, subprocess, time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -86,16 +86,24 @@ class HostProbe:
   def __init__(self,robot_id="robot_01",state_dir="/run/lite3-control",timeout=2.0,clock=None): self.robot_id=robot_id; self.state_dir=Path(state_dir); self.timeout=timeout; self.clock=clock or time.time
   def run(self,args):
     try:
-      p=subprocess.run(args,text=True,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=self.timeout,check=False); return p.stdout.strip() if p.returncode==0 else None
-    except (OSError,subprocess.TimeoutExpired): return None
+      process=subprocess.Popen(args,text=True,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True)
+    except OSError: return None
+    try:
+      stdout,_=process.communicate(timeout=self.timeout)
+    except subprocess.TimeoutExpired:
+      try: os.killpg(process.pid,signal.SIGKILL)
+      except ProcessLookupError: pass
+      process.communicate()
+      return None
+    return stdout.strip() if process.returncode==0 else None
   def active(self,u): return self.run(["systemctl","is-active",u])=="active"
   def available(self,u): return self.run(["systemctl","show","-p","LoadState","--value",u]) not in (None,"not-found")
   def read(self,n):
     try:return (self.state_dir/n).read_text(encoding="utf-8").strip()
     except OSError:return None
-  def topic(self,t,field="data",reliability="best_effort"): return self.run(["timeout",str(self.timeout),"ros2","topic","echo",t,"--once","--field",field,"--qos-reliability",reliability,"--qos-durability","volatile"])
+  def topic(self,t,field="data",reliability="best_effort"): return self.run(["ros2","topic","echo",t,"--once","--field",field,"--qos-reliability",reliability,"--qos-durability","volatile"])
   def tf(self,a,b):
-    v=self.run(["timeout",str(self.timeout),"ros2","run","tf2_ros","tf2_echo",a,b]); return v is not None and "Translation:" in v
+    v=self.run(["ros2","run","tf2_ros","tf2_echo",a,b]); return v is not None and "Translation:" in v
   def posture(self,now):
     v=self.run(["journalctl","-u","lite3-high-level-runtime.service","-n","80","--no-pager","-o","json"])
     for line in reversed((v or "").splitlines()):
