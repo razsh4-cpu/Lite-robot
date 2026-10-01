@@ -124,7 +124,9 @@ def test_c2_and_relay_never_open_robot_udp_or_write_command_source_directly():
     assert "43897" not in c2_text + relay_text
     assert "sendto(" not in c2_text + relay_text
     assert "LAPTOP_XBOX\\n" not in c2_text
-    assert "LAPTOP_XBOX\\n" in relay_text
+    assert "from lite3_command_source_lease import LaptopXboxLease" in relay_text
+    lease_text = (ROOT / "scripts" / "lite3_command_source_lease.py").read_text()
+    assert "LAPTOP_XBOX\\n" in lease_text
 
 
 def test_robot_relay_service_starts_safe_waiting_path_at_boot():

@@ -1,0 +1,29 @@
+[Unit]
+Description=Lite3 NOMAD TeleopIntent v2 adapter (physical output disabled by default)
+After=network-online.target lite3-ros-network-ready.service lite3-high-level-runtime.service nomad-edge-mosquitto.service
+Wants=network-online.target nomad-edge-mosquitto.service
+Requires=lite3-ros-network-ready.service lite3-high-level-runtime.service
+Conflicts=lite3-laptop-xbox-source.service
+Conflicts=nomad-bipolix-teleop-validator.service
+Before=lite3-laptop-xbox-source.service nomad-bipolix-teleop-validator.service
+
+[Service]
+Type=simple
+User=abx
+Group=abx
+WorkingDirectory=/home/abx/ros2_ws
+EnvironmentFile=-/etc/nomad/bipolix-phase3c.env
+Environment=ROS_DOMAIN_ID=0
+Environment=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
+Environment=FASTDDS_BUILTIN_TRANSPORTS=UDPv4
+ExecStartPre=+/usr/bin/install -d -o abx -g abx -m 2775 /run/lite3-control
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/abx/ros2_ws/install/setup.bash && exec ros2 run sensor_visualization lite3_nomad_teleop_adapter --robot-id "$${NOMAD_BIPOLIX_ROBOT_ID:-robodog_01}" --host "$${NOMAD_BIPOLIX_MQTT_HOST:-127.0.0.1}" --port "$${NOMAD_BIPOLIX_MQTT_PORT:-1885}" --physical-output-enabled false'
+Restart=on-failure
+RestartSec=2
+KillSignal=SIGTERM
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

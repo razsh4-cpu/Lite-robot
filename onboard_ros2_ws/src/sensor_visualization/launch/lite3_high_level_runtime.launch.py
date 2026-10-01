@@ -21,7 +21,7 @@ def generate_launch_description():
             parameters=[{
                 "transmit": ParameterValue(transmit, value_type=bool),
                 "zero_only": ParameterValue(zero_only, value_type=bool),
-                "require_deadman": False,
+                "require_deadman": True,
                 "max_forward": 1.0,
                 "max_lateral": 1.0,
                 "max_yaw": 1.0,

@@ -29,6 +29,8 @@ if(BUILD_TESTING)
     test/test_robot_posture_cli.py)
   ament_add_pytest_test(platform_status_exporter
     test/test_platform_status_exporter.py)
+  ament_add_pytest_test(nomad_teleop_v2
+    test/test_nomad_teleop_v2.py)
 endif()
 
 set(LITE3_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Lite3_MotionSDK" CACHE PATH
@@ -124,6 +126,11 @@ install(PROGRAMS scripts/lite3_autonomy_command_source.py
 install(PROGRAMS scripts/lite3_laptop_xbox_source.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_laptop_xbox_source)
+install(PROGRAMS scripts/lite3_nomad_teleop_adapter.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME lite3_nomad_teleop_adapter)
+install(FILES scripts/lite3_nomad_teleop_core.py scripts/lite3_command_source_lease.py
+  DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/lite3_posture_guard.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME lite3_posture_guard)

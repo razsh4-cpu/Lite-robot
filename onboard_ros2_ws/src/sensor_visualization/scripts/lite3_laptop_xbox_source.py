@@ -3,10 +3,8 @@
 
 from __future__ import annotations
 
-import fcntl
 import json
 import os
-from pathlib import Path
 import time
 
 os.environ.setdefault("FASTDDS_BUILTIN_TRANSPORTS", "UDPv4")
@@ -14,73 +12,9 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Bool, String
+from lite3_command_source_lease import LaptopXboxLease
 
 
-class LaptopXboxLease:
-    def __init__(self, state_dir):
-        self.state_dir = Path(state_dir)
-        self.state_dir.mkdir(parents=True, exist_ok=True)
-        self.source_path = self.state_dir / "COMMAND_SOURCE"
-        self.lock_path = self.state_dir / "owner.lock"
-        self.lock = None
-
-    def acquire(self):
-        if self.lock is not None:
-            return True
-        lock = self.lock_path.open("a+")
-        try:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            lock.close()
-            return False
-        current = (self.source_path.read_text(encoding="utf-8").strip()
-                   if self.source_path.exists() else "NONE")
-        if current != "NONE":
-            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
-            lock.close()
-            return False
-        self.source_path.write_text("LAPTOP_XBOX\n", encoding="utf-8")
-        self.lock = lock
-        return True
-
-    def recover_stale_own_marker(self):
-        """Clear only an orphaned LAPTOP_XBOX marker.
-
-        The flock is the ownership authority.  A service crash/restart can
-        leave the human-readable marker behind after the kernel has released
-        the lock.  Never alter NONE or another source's marker.
-        """
-        if self.lock is not None:
-            return False
-        lock = self.lock_path.open("a+")
-        try:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            lock.close()
-            return False
-        try:
-            if self.owner() != "LAPTOP_XBOX":
-                return False
-            self.source_path.write_text("NONE\n", encoding="utf-8")
-            return True
-        finally:
-            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
-            lock.close()
-
-    def release(self):
-        if self.lock is None:
-            return
-        current = (self.source_path.read_text(encoding="utf-8").strip()
-                   if self.source_path.exists() else "NONE")
-        if current == "LAPTOP_XBOX":
-            self.source_path.write_text("NONE\n", encoding="utf-8")
-        fcntl.flock(self.lock.fileno(), fcntl.LOCK_UN)
-        self.lock.close()
-        self.lock = None
-
-    def owner(self):
-        return (self.source_path.read_text(encoding="utf-8").strip()
-                if self.source_path.exists() else "NONE")
 
 
 class LaptopXboxFreshness:
