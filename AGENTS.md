@@ -41,3 +41,20 @@ instructions but may never weaken these safety or Git requirements.
 - Preserve the dependency direction and the single-owner runtime boundaries
   documented there. Update the architecture record when an approved change
   alters those boundaries.
+
+## Engineering knowledge workflow
+
+- `docs/engineering/README.md` is the canonical knowledge entry point. Before
+  modifying or testing a subsystem, read its Capability Matrix row, relevant
+  Engineering Findings, and relevant prior Test Sessions.
+- Before a meaningful experiment, create a `bipolix.test_session/v1` record and
+  define objective, evidence, PASS/FAIL/ABORT, and safety boundaries. A record
+  never authorizes hardware action.
+- After meaningful testing or debugging, close the Test Session and create or
+  update a `bipolix.engineering_finding/v1` record when reusable knowledge was
+  learned. Preserve failures and partial results even after a later pass.
+- Never promote offline/mock work to physical proof or invent missing history;
+  use `UNKNOWN`, `HISTORICAL_CLAIM`, `INCONCLUSIVE`, or `EVIDENCE MISSING`.
+- Update the Capability Matrix only when evidence justifies the change, keep
+  primary artifacts in their authoritative location, and run
+  `python3 tools/engineering_knowledge.py validate` before handoff.
