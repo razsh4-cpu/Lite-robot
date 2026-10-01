@@ -125,6 +125,33 @@ def test_unknown_posture_or_required_navigation_sensor_blocks_safety(exporter):
     assert exporter.build_snapshot(source, now=100.0)["safety"]["safety_ready"] is False
 
 
+def test_fresh_vendor_telemetry_keeps_robot_online_when_odom_probe_times_out(
+        exporter, monkeypatch):
+    probe = exporter.HostProbe(robot_id="robodog_01", clock=lambda: 100.0)
+
+    monkeypatch.setattr(probe, "active", lambda unit: True)
+    monkeypatch.setattr(probe, "available", lambda unit: True)
+    monkeypatch.setattr(probe, "posture", lambda now: ("unknown_98", True))
+    monkeypatch.setattr(probe, "tf", lambda parent, child: False)
+    monkeypatch.setattr(
+        probe, "topic",
+        lambda topic, field="data", reliability="best_effort": None)
+    monkeypatch.setattr(probe, "read", lambda name: {
+        "COMMAND_SOURCE": "NONE",
+        "LOCALIZATION_STATE": "UNLOCALIZED",
+    }.get(name))
+
+    source = probe.collect()
+    value = exporter.build_snapshot(source, now=100.0)
+
+    assert source["telemetry_fresh"] is True
+    assert source["odometry_fresh"] is False
+    assert value["connectivity"]["online"] is True
+    assert value["robot_state"]["posture"] == "UNAVAILABLE"
+    assert value["sensors"]["odometry"]["ready"] is False
+    assert value["safety"]["safety_ready"] is False
+
+
 def test_recovery_is_deterministic_and_restart_sequence_is_safe(exporter):
     failed = exporter.build_snapshot({}, now=100.0, sequence=0)
     recovered = exporter.build_snapshot(complete(now=101.0), now=101.0, sequence=0)
