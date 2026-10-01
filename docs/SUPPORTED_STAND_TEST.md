@@ -5,7 +5,7 @@ test was performed during implementation. SDK ownership remains unconfirmed.
 Mechanical support must prevent collapse when SDK release removes stiffness.
 The operator must have the original emergency stop immediately available and
 review current battery/health and the limits below before authorizing the test.
-Undocumented state 98 is not reclassified by this code.
+Vendor basic-state 98 is a valid, expected non-fault state. It is not reclassified as STANDING and is not, by itself, proof of physical posture.
 
 ## Build and executable
 

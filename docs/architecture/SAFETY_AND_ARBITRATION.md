@@ -76,6 +76,15 @@ MISSION_ACTIVE → FAULT → STOPPING → SAFE
 motion-source lease is released. It does not require shutting down persistent
 heartbeat, telemetry, odometry or sensor services.
 
+## Lite3 vendor basic-state 98
+
+DeepRobotics robot_basic_state=98 is a valid, expected Lite3 vendor state. It
+must not be reported as an unknown-state fault, protection event, telemetry
+failure or hardware problem. It is intentionally not remapped to STANDING:
+state 98 alone does not prove the physical posture. Motion readiness therefore
+uses fresh explicit posture/telemetry evidence, while diagnostics treat state 98
+as non-fault information.
+
 ## Fault-response ownership
 
 | Fault | Detection owner | Required response owner | Current response |

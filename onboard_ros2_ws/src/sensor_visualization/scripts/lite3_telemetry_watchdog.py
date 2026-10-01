@@ -154,6 +154,9 @@ class WatchdogCore:
     LOW_BATTERY = 35.0
     CRITICAL_BATTERY = 25.0
     MOVEMENT_LOCK_BATTERY = 20.0
+    # DeepRobotics vendor basic-state 98 is observed during normal operation.
+    # It is valid/non-fault telemetry, but it is not positive proof of STANDING.
+    NONFAULT_VENDOR_STATES = {98}
 
     def __init__(self, codecs, raw_udp_timeout_s, robot_state_timeout_s):
         self.codecs = codecs
@@ -256,7 +259,8 @@ class WatchdogCore:
                 f'ROBOT STATE: {self.last_state}/{old_status} -> {basic_state}/{status}')
 
         known_basic_states = self.codecs.BASIC_STATE_NAMES
-        if state_changed and basic_state not in known_basic_states:
+        if (state_changed and basic_state not in known_basic_states
+                and basic_state not in self.NONFAULT_VENDOR_STATES):
             events.append(
                 f'⚠ UNKNOWN ROBOT STATE — {basic_state}/{status}; '
                 'no meaning is inferred for this vendor-undocumented value')
@@ -391,7 +395,7 @@ def run_offline_tests():
 
     state_change = core.observe(state(50.0, basic=98), 0.7)
     assert any('ROBOT STATE: 6/standing -> 98/unknown_98' == text for text in state_change)
-    assert any('UNKNOWN ROBOT STATE' in text for text in state_change)
+    assert not any('UNKNOWN ROBOT STATE' in text for text in state_change)
     assert not any('UNKNOWN ROBOT STATE' in text for text in core.observe(state(50.0, basic=98), 0.8))
 
     # B/G: non-RobotState packets keep raw UDP healthy but make the retained

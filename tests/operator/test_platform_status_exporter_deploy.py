@@ -22,3 +22,10 @@ def test_exporter_unit_has_no_motion_dependencies():
     assert "WantedBy=multi-user.target" in text
     for forbidden in ("AUTONOMY", "LAPTOP_XBOX", "/cmd_vel", "nav2.service"):
         assert forbidden not in text
+
+
+def test_deployer_persists_explicit_phase3c_capability_without_enabling_motion():
+    text = (ROOT / "operator/apply_platform_status_exporter.sh").read_text()
+    assert "LITE3_TELEOP_PHYSICAL_MANUAL" in text
+    assert "teleop_physical_manual" in text
+    assert "physical_output_enabled" not in text

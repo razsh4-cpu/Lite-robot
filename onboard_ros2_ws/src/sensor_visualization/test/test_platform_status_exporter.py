@@ -65,6 +65,24 @@ def test_complete_snapshot_is_contract_valid_and_read_only(exporter):
     assert value["localization"]["confidence"] == .91
     assert value["safety"]["command_source"] == "NONE"
     assert value["safety"]["motion_commands_supported"] is False
+    assert value["capabilities"]["teleop.physical_manual"] is False
+
+
+def test_phase3c_capability_is_explicit_without_enabling_motion(exporter):
+    source = complete()
+    source["teleop_physical_manual"] = True
+    value = exporter.build_snapshot(source, now=100.0, sequence=8)
+    assert value["capabilities"]["teleop.physical_manual"] is True
+    assert value["safety"]["motion_commands_supported"] is False
+    assert value["capabilities"]["teleop.physical_manual"] is False
+
+
+def test_phase3c_capability_is_explicit_without_enabling_motion(exporter):
+    source = complete()
+    source["teleop_physical_manual"] = True
+    value = exporter.build_snapshot(source, now=100.0, sequence=8)
+    assert value["capabilities"]["teleop.physical_manual"] is True
+    assert value["safety"]["motion_commands_supported"] is False
 
 
 def test_missing_and_partial_sources_never_default_healthy(exporter):
