@@ -1,0 +1,410 @@
+{
+  "scope": "Read-only metadata catalog; no bag replay or command publication; source facts from prior approved read-only capture",
+  "bags": [
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/icp_live_recovery_20260915_2025/metadata.yaml",
+      "duration_ns": 40877066501,
+      "message_count": 7042,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "icp_live_recovery_20260915_2025_0.mcap",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/odom_info",
+          "type": "rtabmap_msgs/msg/OdomInfo",
+          "message_count": 396
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 408
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 2448
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 419
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 396
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 423
+        },
+        {
+          "name": "/map",
+          "type": "nav_msgs/msg/OccupancyGrid",
+          "message_count": 21
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 419
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/battery_percent",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 419
+        }
+      ],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "EVIDENCE_INCOMPLETE",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/lite3_20260915-191547/metadata.yaml",
+      "duration_ns": 626717138180,
+      "message_count": 93751,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "lite3_20260915-191547_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/lite3/cmd_vel_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 139
+        },
+        {
+          "name": "/cmd_vel",
+          "type": "geometry_msgs/msg/Twist",
+          "message_count": 139
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10204
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10210
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 2769
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10204
+        },
+        {
+          "name": "/lite3/battery_percent",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10210
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 6273
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10204
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 2769
+        }
+      ],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "EVIDENCE_INCOMPLETE",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/day1_1m_odom_20260924_232254/metadata.yaml",
+      "duration_ns": 150149026684,
+      "message_count": 64017,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "day1_1m_odom_20260924_232254_0.mcap",
+          "exists": true,
+          "size": 67192670
+        }
+      ],
+      "topics": [
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 1503
+        },
+        {
+          "name": "/joy",
+          "type": "sensor_msgs/msg/Joy",
+          "message_count": 2449
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 30030
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 30034
+        }
+      ],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "PAYLOAD_PRESENT_NOT_INSPECTED",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/day1_amcl_20260924_233701/metadata.yaml",
+      "duration_ns": 89300702296,
+      "message_count": 38808,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "day1_amcl_20260924_233701_0.mcap",
+          "exists": true,
+          "size": 40863198
+        }
+      ],
+      "topics": [
+        {
+          "name": "/joy",
+          "type": "sensor_msgs/msg/Joy",
+          "message_count": 1413
+        },
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/particle_cloud",
+          "type": "nav2_msgs/msg/ParticleCloud",
+          "message_count": 28
+        },
+        {
+          "name": "/map",
+          "type": "nav_msgs/msg/OccupancyGrid",
+          "message_count": 1
+        },
+        {
+          "name": "/amcl_pose",
+          "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+          "message_count": 29
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 889
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 18629
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 17818
+        }
+      ],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "PAYLOAD_PRESENT_NOT_INSPECTED",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/offline_smoke_20260915-180016/metadata.yaml",
+      "duration_ns": 0,
+      "message_count": 0,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "offline_smoke_20260915-180016_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "EVIDENCE_INCOMPLETE",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/offline_smoke_20260915-180210/metadata.yaml",
+      "duration_ns": 0,
+      "message_count": 0,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "offline_smoke_20260915-180210_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "EVIDENCE_INCOMPLETE",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/tf_forward_validation_20260915_2002/metadata.yaml",
+      "duration_ns": 46114561267,
+      "message_count": 7887,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "tf_forward_validation_20260915_2002_0.mcap",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/cmd_vel",
+          "type": "geometry_msgs/msg/Twist",
+          "message_count": 19
+        },
+        {
+          "name": "/lite3/cmd_vel_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 27
+        },
+        {
+          "name": "/odom_info",
+          "type": "rtabmap_msgs/msg/OdomInfo",
+          "message_count": 461
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 461
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 923
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 923
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 462
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 923
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 922
+        }
+      ],
+      "capture_classification": "LIVE_STATIC_PROVEN metadata only",
+      "evidence_status": "EVIDENCE_INCOMPLETE",
+      "historical_association": "Filename/topic lead only; exact executed experiment and result UNKNOWN",
+      "run_date_basis": "Filename indicates date; exact run identity not independently established"
+    }
+  ]
+}

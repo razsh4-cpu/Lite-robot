@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-02",
+  "scope": "Offline source closure only",
+  "counts": {
+    "tests": 87,
+    "findings": 54,
+    "historical_independent_scopes": 92,
+    "aliases": 2,
+    "incomplete_primary_evidence_scopes": 48,
+    "additional_planned_stages": 5
+  },
+  "physical_tests": false,
+  "robot_commands": false,
+  "mini_pc_modified": false,
+  "verification": {
+    "mocked_backend": "240 passed, escalation allowed local TestClient sockets; sandbox run stalled and was interrupted",
+    "inert_ros": "307 passed, 4 skipped; corrected package names/PYTHONPATH and selected unused isolated test domain100 after domain97 lock",
+    "knowledge_project": "108 passed; canonical validator PASS",
+    "operator_and_branding": "40 passed",
+    "frontend_focused": "50 passed",
+    "frontend_full": "1072 passed, 1 AssetsPage elapsed-time failure (30s expected31s); isolated8 passed; final focused regression50 passed",
+    "frontend_typecheck": "PASS",
+    "frontend_lint": "PASS",
+    "frontend_build": "PASS,274 modules",
+    "isolated_colcon": "3 packages built in /tmp; no launch/deployment",
+    "ruff": "PASS; unused test import removed",
+    "diff_check": "PASS",
+    "not_executed": [
+      "live ROS nodes/graph",
+      "vendor UDP fake or physical integration",
+      "physical matrix",
+      "Mini-PC deployment"
+    ]
+  },
+  "file_hashes": {
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/teleopEvidence.spec.ts": "2897acccb87a60535bdf7ffa153d6e23183ef4bd46824767689d0f10fbe57c2b",
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/teleopEvidence.ts": "afd27bd629273d705130e23ce6f860c1684cc5c80b1880c196176ece477a856b",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_lite3_bridge/test/test_idle_odometry.py": "9bbcad1caad1719ed6a0ee03dc5fb84b13d0025f8702c3ce3d30748b4031eb98",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_lite3_bridge/test/test_scaling_diagnostics.py": "7dc76c0b778ef9e98c3eeec298d44238b7d78504cbe1550546206bbd56673f55",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_navigation/test/test_nav_controller.py": "e919b9d5167ea810488fdb5eadf55c5e5fe4fb9ef96072eda3c34f928cca7178",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_patrol/test/test_diag_trace.py": "ba6d45ddc2121cfbf4f2c275b538d0b4c03a759eb668045ec540e6d7589ddb1a",
+    "/home/raz/Documents/NOMAD/scripts/lite3_validation.py": "b6a5a52e824c1f9c6dcde11fc088495cbac1817c10a08909a5c8ac010f6a9752",
+    "/home/raz/Documents/NOMAD/tests/test_lite3_validation.py": "a54b3fee38e7cbb336af690ae4e86885aea4621cc2a511be9e75b6dea0f71c11",
+    "/home/raz/Documents/NOMAD/frontend/web/src/components/console/DriveTab.spec.ts": "58d57610ce34f3c55ddf04e237b83250e0e251fd879fc3786d7da6526a28fa59",
+    "/home/raz/Documents/NOMAD/frontend/web/src/components/console/DriveTab.vue": "ab797292f4a9618b7bc249d8b7af68128874e6f5c944ccbc39f89b1e31afec2c",
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/laptopXbox.spec.ts": "f6b17bfae2abfa2dbc489d15c76febe5cce67786b9c40164a77874d86b56a059",
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/laptopXbox.ts": "274982ec1757b69789f46deacd41d3e4dd4921afa0e20e8587f216883b6ef272",
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/useLaptopXbox.spec.ts": "1a3795714b056d8fa6ab1d1a2aa3f0701c1dbb5b19e9a679432c96f917232afe",
+    "/home/raz/Documents/NOMAD/frontend/web/src/composables/useLaptopXbox.ts": "31408968d07cfa5ec536395f727bb52b81f78366482eccebf20d5d78b3c1460a",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_lite3_bridge/config/lite3.yaml": "9748277c22f31b8f40bf024ce1a5aef54129129745ec41d2b083557eb14737bf",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_lite3_bridge/sable_lite3_bridge/lite3_bridge_node.py": "11b8aa0a601890caa13ff94dc56645e2d32063507df1895e182555b797502a1e",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_lite3_bridge/test/test_lite3_bridge.py": "d3679380910a461bdb61e1ce1bfa096214a45825aa0b7fbfd5d8b491af3830c5",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_navigation/package.xml": "8ad397ac564941b941b044321b4f5ff52cfb5fadd3a707ef0368985836d42aa1",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_navigation/sable_navigation/stack.py": "9cf250df3cc1e170cb9e459d577b1a6649fa85572c9d76d98a15ca275b5dd4f6",
+    "/home/raz/Documents/NOMAD/ros2_ws/src/sable_patrol/sable_patrol/robot_telemetry_node.py": "4e848a0b7f209aafa65f0855ddb192805de92f1021241c186c86a15385f31595",
+    "/home/raz/ros-robot-cc/Lite-robot/tests/engineering/test_engineering_knowledge.py": "f97bf532a70c6b0113fe50a6e5bdc4134e6384f2bc67926bc5f8cce166d5f9ca",
+    "/home/raz/ros-robot-cc/Lite-robot/tools/engineering_knowledge.py": "1336a425c0f24b8b5e00d3793e97f669c44c710bee0624511c85bf79b84df789"
+  },
+  "sable_commits": [
+    "2b268cc Document historical reconciliation and require evidence-based knowledge capture",
+    "9063369 Prepare laptop teleoperation evidence and supervised Lite3 validation",
+    "d3a023f Reconcile Lite3 idle odometry and expose guarded command conversion evidence",
+    "82ef525 Support CPU-compatible navigation controller selection with bounded limits"
+  ]
+}

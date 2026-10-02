@@ -23,3 +23,8 @@ could leave the UI `DISCONNECTED` despite the device existing.
   finding does not itself promote the upcoming physical test.
 - DO NOT REPEAT: equate `/dev/input/js0` with Gamepad API readiness or bypass
   neutral/fresh-RB gates to compensate for browser activation behavior.
+
+## Retrospective session links
+
+[TEST-20261002-031](../tests/TEST-20261002-031-firefox-gamepad-visibility-failure-and-reported-ui-recovery.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.

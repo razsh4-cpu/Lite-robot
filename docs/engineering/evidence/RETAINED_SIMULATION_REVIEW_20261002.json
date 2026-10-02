@@ -1,0 +1,138 @@
+{
+  "capture_date": "2026-10-02",
+  "sources": [
+    {
+      "source": "artifacts/joint_leg_lift_sweep/results.csv",
+      "sha256": "f0a279ef342408acf704beb27c0e378fc104760e7a84c4a1e33f69e22a99f6d9",
+      "rows": 72,
+      "columns": [
+        "shift_scale",
+        "lift_scale",
+        "completed",
+        "abort_reason",
+        "actual_lift_mm",
+        "fr_unloaded",
+        "support_margin_mm",
+        "stance_loaded",
+        "roll_deg",
+        "pitch_deg",
+        "tracking_error_rad",
+        "max_joint_rate_rad_s",
+        "peak_torque_nm"
+      ],
+      "outcomes": {
+        "completed": {
+          "False": 72
+        },
+        "abort_reason": {
+          "FR did not remain unloaded during the hold": 72
+        }
+      },
+      "evidence": "retained OFFLINE simulation outputs; run timestamps and exact version UNKNOWN; no physical evidence"
+    },
+    {
+      "source": "artifacts/joint_angle_sweep/results.csv",
+      "sha256": "a9c2ec9ae92eb397cc107d7757b9e71f837761db4b01b27921fc36313a6d205a",
+      "rows": 180,
+      "columns": [
+        "thigh_deg",
+        "knee_deg",
+        "curl_scale",
+        "completed",
+        "actual_lift_mm",
+        "fr_unloaded",
+        "support_margin_mm",
+        "stance_loaded",
+        "roll_deg",
+        "pitch_deg",
+        "tracking_error_rad",
+        "max_joint_rate_rad_s",
+        "peak_torque_nm",
+        "abort_reason"
+      ],
+      "outcomes": {
+        "completed": {
+          "False": 180
+        },
+        "abort_reason": {
+          "FR did not remain unloaded during the hold": 162,
+          "body roll/pitch exceeded 12 degrees": 18
+        }
+      },
+      "evidence": "retained OFFLINE simulation outputs; run timestamps and exact version UNKNOWN; no physical evidence"
+    },
+    {
+      "source": "artifacts/leg_lift_sweep/results.csv",
+      "sha256": "221c72a717b91cffd2e62878d035317c567f986b11376027788c94f44373442a",
+      "rows": 79,
+      "columns": [
+        "shift_x_mm",
+        "shift_y_mm",
+        "lift_mm",
+        "completed",
+        "abort_reason",
+        "actual_lift_mm",
+        "fr_unloaded",
+        "stance_loaded",
+        "support_margin_mm",
+        "roll_deg",
+        "pitch_deg",
+        "tracking_error_rad",
+        "max_joint_rate_rad_s",
+        "peak_torque_nm"
+      ],
+      "outcomes": {
+        "completed": {
+          "False": 79
+        },
+        "abort_reason": {
+          "measured FR clearance did not reach 5 mm": 74,
+          "all four contacts were not restored after lowering": 1,
+          "body roll/pitch exceeded 12 degrees": 4
+        }
+      },
+      "evidence": "retained OFFLINE simulation outputs; run timestamps and exact version UNKNOWN; no physical evidence"
+    },
+    {
+      "source": "artifacts/grid_162/results.csv",
+      "sha256": "b0ee6b0550672c81878a9d77699d8f3940a81d38f98d7e9bf0203fe39174b20d",
+      "rows": 162,
+      "columns": [
+        "run",
+        "shift_mm",
+        "lift_mm",
+        "kp",
+        "kd",
+        "timing_scale",
+        "friction_scale",
+        "returncode",
+        "pass",
+        "reason",
+        "clearance_mm",
+        "support_margin_mm",
+        "roll_deg",
+        "pitch_deg",
+        "peak_torque_nm",
+        "tracking_error_rad",
+        "joint_rate_rad_s",
+        "touchdown_velocity_m_s",
+        "final_joint_error_rad"
+      ],
+      "outcomes": {
+        "returncode": {
+          "2": 15,
+          "0": 147
+        },
+        "pass": {
+          "False": 15,
+          "True": 147
+        },
+        "reason": {
+          "measured FR clearance did not reach 5 mm|clearance": 15,
+          "": 147
+        }
+      },
+      "evidence": "retained OFFLINE simulation outputs; run timestamps and exact version UNKNOWN; no physical evidence"
+    }
+  ]
+}

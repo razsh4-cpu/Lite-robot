@@ -1,0 +1,1316 @@
+{
+  "audit_date": "2026-10-02",
+  "host": "abx@192.168.2.32",
+  "scope": "Read-only allowlisted facts; no ROS graph commands, robot module imports, bag replay, or physical commands",
+  "records": [
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "environment-allowlist",
+      "path": "/etc/sable/ros.env",
+      "values": {
+        "ROS_DOMAIN_ID": "23",
+        "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
+        "SABLE_ROS_SETUP": "/opt/ros/jazzy/setup.bash",
+        "SABLE_PATROL_PARAMS": "/etc/sable/patrol.yaml",
+        "SABLE_ROS_LAUNCH": "sable_bringup robot.launch.py",
+        "SABLE_ROS_LAUNCH_ARGS": "robot:=lite3 lidar:=rplidar camera:=realsense bringup_params:=/etc/sable/robot.yaml lidar_model:=s2 navigation:=slam viz_bridge:=true"
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "environment-allowlist",
+      "path": "/etc/lite3-control/platform-status-exporter.env",
+      "values": {
+        "LITE3_ROBOT_ID": "robodog_01"
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "config-facts",
+      "path": "/etc/sable/patrol.yaml",
+      "values": {
+        "patrol_sequencer": {
+          "ros__parameters": {
+            "map_frame": "map",
+            "base_frame": "base_link",
+            "link_topic": "/sable/link_up"
+          }
+        },
+        "sable_mqtt_bridge": {
+          "ros__parameters": {
+            "mqtt_host": "127.0.0.1",
+            "command_ttl_sec": 15.0,
+            "mqtt_port": 1885,
+            "cmd_topic": "robot/cmd",
+            "state_topic": "device/robot_state",
+            "link_topic": "/sable/link_up",
+            "teleop_topic": "teleop_vel",
+            "teleop_hz": 20.0,
+            "teleop_max_vx": 2.0,
+            "teleop_max_vy": 1.5,
+            "teleop_max_wz": 2.0,
+            "teleop_deadman_sec": 0.5,
+            "estop_topic": "/sable/e_stop",
+            "robot_actions": "stand:/lite3_bridge/stand,sit:/lite3_bridge/sit,auto_mode:/lite3_bridge/auto_mode,manual_mode:/lite3_bridge/manual_mode"
+          }
+        },
+        "robot_telemetry": {
+          "ros__parameters": {
+            "mqtt_host": "127.0.0.1",
+            "mqtt_port": 1885
+          }
+        },
+        "sim_nav": {
+          "ros__parameters": {
+            "map_frame": "map",
+            "base_frame": "base_link",
+            "estop_topic": "/sable/e_stop"
+          }
+        },
+        "initial_pose": {
+          "ros__parameters": {
+            "base_frame": "base_link"
+          }
+        },
+        "scene": {
+          "ros__parameters": {
+            "mqtt_host": "127.0.0.1",
+            "mqtt_port": 1885
+          }
+        }
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "config-facts",
+      "path": "/etc/sable/robot.yaml",
+      "values": {
+        "sable_bringup": {
+          "ros__parameters": {
+            "base_frame": "base_link"
+          }
+        },
+        "lite3_bridge": {
+          "ros__parameters": {
+            "robot_ip": "192.168.1.120",
+            "max_vx": 2.0,
+            "max_vy": 1.5,
+            "max_wz": 2.0,
+            "drive_codes": "axis",
+            "odom_sign": [
+              1,
+              1,
+              1
+            ],
+            "cmd_timeout_sec": 0.4
+          }
+        },
+        "camera_stream": {
+          "ros__parameters": {}
+        },
+        "rplidar_node": {
+          "ros__parameters": {
+            "angle_compensate": true
+          }
+        }
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "config-facts",
+      "path": "/home/abx/NOMAD/ros2_ws/src/sable_lite3_bridge/config/lite3.yaml",
+      "values": {
+        "lite3_bridge": {
+          "ros__parameters": {
+            "robot_ip": "192.168.1.120",
+            "max_vx": 0.5,
+            "max_vy": 0.3,
+            "max_wz": 0.6,
+            "cmd_timeout_sec": 0.4,
+            "zero_hold_sec": 1.0,
+            "estop_topic": "/sable/e_stop",
+            "drive_codes": "nav",
+            "heartbeat_hz": 4.0,
+            "state_max_age_sec": 0.5,
+            "poll_hz": 50.0,
+            "odom_sign": [
+              -1,
+              1,
+              1
+            ],
+            "odom_frame": "odom",
+            "base_frame": "base_link"
+          }
+        }
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "config-facts",
+      "path": "/home/abx/NOMAD/ros2_ws/src/sable_bringup/config/twist_mux.yaml",
+      "values": {
+        "twist_mux": {
+          "ros__parameters": {
+            "topics": {
+              "teleop": {},
+              "joystick": {},
+              "navigation": {}
+            },
+            "locks": {
+              "e_stop": {}
+            }
+          }
+        }
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/icp_live_recovery_20260915_2025/metadata.yaml",
+      "duration_ns": 40877066501,
+      "message_count": 7042,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "icp_live_recovery_20260915_2025_0.mcap",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/odom_info",
+          "type": "rtabmap_msgs/msg/OdomInfo",
+          "message_count": 396
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 408
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 2448
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 419
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 396
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 423
+        },
+        {
+          "name": "/map",
+          "type": "nav_msgs/msg/OccupancyGrid",
+          "message_count": 21
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 419
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/battery_percent",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 423
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 419
+        }
+      ]
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/lite3_20260915-191547/metadata.yaml",
+      "duration_ns": 626717138180,
+      "message_count": 93751,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "lite3_20260915-191547_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/lite3/cmd_vel_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 139
+        },
+        {
+          "name": "/cmd_vel",
+          "type": "geometry_msgs/msg/Twist",
+          "message_count": 139
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10204
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 10210
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10210
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 2769
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 10204
+        },
+        {
+          "name": "/lite3/battery_percent",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10210
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 6273
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 10204
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 2769
+        }
+      ]
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/day1_1m_odom_20260924_232254/metadata.yaml",
+      "duration_ns": 150149026684,
+      "message_count": 64017,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "day1_1m_odom_20260924_232254_0.mcap",
+          "exists": true,
+          "size": 67192670
+        }
+      ],
+      "topics": [
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 1503
+        },
+        {
+          "name": "/joy",
+          "type": "sensor_msgs/msg/Joy",
+          "message_count": 2449
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 30030
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 30034
+        }
+      ]
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/day1_amcl_20260924_233701/metadata.yaml",
+      "duration_ns": 89300702296,
+      "message_count": 38808,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "day1_amcl_20260924_233701_0.mcap",
+          "exists": true,
+          "size": 40863198
+        }
+      ],
+      "topics": [
+        {
+          "name": "/joy",
+          "type": "sensor_msgs/msg/Joy",
+          "message_count": 1413
+        },
+        {
+          "name": "/tf_static",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 1
+        },
+        {
+          "name": "/particle_cloud",
+          "type": "nav2_msgs/msg/ParticleCloud",
+          "message_count": 28
+        },
+        {
+          "name": "/map",
+          "type": "nav_msgs/msg/OccupancyGrid",
+          "message_count": 1
+        },
+        {
+          "name": "/amcl_pose",
+          "type": "geometry_msgs/msg/PoseWithCovarianceStamped",
+          "message_count": 29
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 889
+        },
+        {
+          "name": "/tf",
+          "type": "tf2_msgs/msg/TFMessage",
+          "message_count": 18629
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 17818
+        }
+      ]
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/offline_smoke_20260915-180016/metadata.yaml",
+      "duration_ns": 0,
+      "message_count": 0,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "offline_smoke_20260915-180016_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": []
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/offline_smoke_20260915-180210/metadata.yaml",
+      "duration_ns": 0,
+      "message_count": 0,
+      "storage": "sqlite3",
+      "files": [
+        {
+          "name": "offline_smoke_20260915-180210_0.db3",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": []
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "bag-metadata",
+      "path": "/home/abx/ros2_ws/bags/tf_forward_validation_20260915_2002/metadata.yaml",
+      "duration_ns": 46114561267,
+      "message_count": 7887,
+      "storage": "mcap",
+      "files": [
+        {
+          "name": "tf_forward_validation_20260915_2002_0.mcap",
+          "exists": false,
+          "size": null
+        }
+      ],
+      "topics": [
+        {
+          "name": "/cmd_vel",
+          "type": "geometry_msgs/msg/Twist",
+          "message_count": 19
+        },
+        {
+          "name": "/lite3/cmd_vel_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 27
+        },
+        {
+          "name": "/odom_info",
+          "type": "rtabmap_msgs/msg/OdomInfo",
+          "message_count": 461
+        },
+        {
+          "name": "/odom",
+          "type": "nav_msgs/msg/Odometry",
+          "message_count": 461
+        },
+        {
+          "name": "/lite3/manual_yaw_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 923
+        },
+        {
+          "name": "/lite3/manual_forward_normalized",
+          "type": "std_msgs/msg/Float32",
+          "message_count": 923
+        },
+        {
+          "name": "/scan",
+          "type": "sensor_msgs/msg/LaserScan",
+          "message_count": 462
+        },
+        {
+          "name": "/lite3/manual_axis_deadman",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 923
+        },
+        {
+          "name": "/lite3/robot_state_fresh",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/control_reason",
+          "type": "std_msgs/msg/String",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/control_enabled",
+          "type": "std_msgs/msg/Bool",
+          "message_count": 922
+        },
+        {
+          "name": "/lite3/robot_basic_state",
+          "type": "std_msgs/msg/Int32",
+          "message_count": 922
+        }
+      ]
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/ros2_ws/maps/room_map.yaml",
+      "values": {
+        "image": "room_map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -6.441,
+          -4.098,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/ros2_ws/maps/site_full_20260925/map.yaml",
+      "values": {
+        "image": "map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -4.155,
+          -3.19,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/ros2_ws/maps/Home_Map/map.yaml",
+      "values": {
+        "image": "map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -4.155,
+          -3.19,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/Desktop/robotdog_ws/src/maps/room_map.yaml",
+      "values": {
+        "image": "room_map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -6.441,
+          -4.098,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/Desktop/robotdog_ws/src/maps/site_full_20260925/map.yaml",
+      "values": {
+        "image": "map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -4.155,
+          -3.19,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "map-metadata",
+      "path": "/home/abx/Desktop/robotdog_ws/src/maps/Home_Map/map.yaml",
+      "values": {
+        "image": "map.pgm",
+        "resolution": 0.05,
+        "origin": [
+          -4.155,
+          -3.19,
+          0
+        ],
+        "occupied_thresh": 0.65,
+        "free_thresh": 0.196,
+        "negate": 0
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "sable-driver-source",
+      "path": "/home/abx/NOMAD/ros2_ws/src/sable_lite3_bridge/sable_lite3_bridge/lite3_bridge_node.py",
+      "exists": true,
+      "size": 53774,
+      "sha256": "aa6a61afc5838ef6846da14338bfdc36427172e05184bf570ef0978dfe8e5aad",
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_lite3_bridge/sable_lite3_bridge/lite3_bridge_node.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": true,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": false,
+        "killpg": false,
+        "DEPLOYED_ROOT": false,
+        "linear.y": true,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "sable-driver-install",
+      "path": "/home/abx/NOMAD/ros2_ws/install/sable_lite3_bridge/lib/python3.12/site-packages/sable_lite3_bridge/lite3_bridge_node.py",
+      "exists": false
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "sable-mqtt-source",
+      "path": "/home/abx/NOMAD/ros2_ws/src/sable_patrol/sable_patrol/mqtt_bridge_node.py",
+      "exists": true,
+      "size": 41191,
+      "sha256": "0e1af467010ebdc2ea51193434c2340eb5032ccd31766f896f4e724ead04b34b",
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_patrol/sable_patrol/mqtt_bridge_node.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": false,
+        "killpg": false,
+        "DEPLOYED_ROOT": false,
+        "linear.y": true,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "sable-nav-source",
+      "path": "/home/abx/NOMAD/ros2_ws/src/sable_navigation/sable_navigation/stack.py",
+      "exists": true,
+      "size": 31060,
+      "sha256": "7433add9c096182bacbcf02c5120a89917bbf94e74b88a950ea495b932669218",
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_navigation/sable_navigation/stack.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": true,
+        "SABLE_NAV_CONTROLLER": true,
+        "start_new_session=True": false,
+        "killpg": false,
+        "DEPLOYED_ROOT": false,
+        "linear.y": false,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "legacy-exporter-source",
+      "path": "/home/abx/ros2_ws/src/sensor_visualization/scripts/lite3_platform_status_exporter.py",
+      "exists": true,
+      "size": 11934,
+      "sha256": "2b82ace58ef66aa7e7bc14ed304e4557ec477861c2a782199c486745694c6aeb",
+      "resolved": "/home/abx/Desktop/robotdog_ws/src/src/sensor_visualization/scripts/lite3_platform_status_exporter.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": true,
+        "killpg": true,
+        "DEPLOYED_ROOT": false,
+        "linear.y": false,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "legacy-exporter-install",
+      "path": "/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_platform_status_exporter",
+      "exists": true,
+      "size": 11934,
+      "sha256": "2b82ace58ef66aa7e7bc14ed304e4557ec477861c2a782199c486745694c6aeb",
+      "resolved": "/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_platform_status_exporter",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": true,
+        "killpg": true,
+        "DEPLOYED_ROOT": false,
+        "linear.y": false,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "legacy-override-installed",
+      "path": "/home/abx/ros2_ws/install/sensor_visualization/lib/sensor_visualization/lite3_nav_test_override.py",
+      "exists": true,
+      "size": 3979,
+      "sha256": "93ea01b695aa55b7a34e0e71aa357595861640df8d85cce5f31c3250ce2e6067",
+      "resolved": "/home/abx/Desktop/robotdog_ws/src/src/sensor_visualization/scripts/lite3_nav_test_override.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": false,
+        "killpg": false,
+        "DEPLOYED_ROOT": false,
+        "linear.y": false,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": false
+      }
+    },
+    {
+      "capture": "minipc-facts.jsonl",
+      "kind": "code-facts",
+      "label": "legacy-axis-source",
+      "path": "/home/abx/ros2_ws/src/sensor_visualization/scripts/lite3_manual_axis_control.py",
+      "exists": true,
+      "size": 20131,
+      "sha256": "6ffc2f2b18e08bed1c3291d980e01ebab1979b2770fc5425ffe6e455cbb104f4",
+      "resolved": "/home/abx/Desktop/robotdog_ws/src/src/sensor_visualization/scripts/lite3_manual_axis_control.py",
+      "markers": {
+        "ControlAuthority": false,
+        "manual_control_start_locked": false,
+        "min_drive_battery_pct": false,
+        "odom_still_after_sec": false,
+        "controller_choice": false,
+        "SABLE_NAV_CONTROLLER": false,
+        "start_new_session=True": false,
+        "killpg": false,
+        "DEPLOYED_ROOT": false,
+        "linear.y": false,
+        "linear_y": false,
+        "0x0131": false,
+        "0x21010131": true
+      }
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "permission-gap",
+      "path": "/etc/sable/edge-mosquitto.conf"
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "mqtt-nonsecret-facts",
+      "path": "/etc/mosquitto/mosquitto.conf",
+      "directives": [],
+      "secret_configuration_exists": false
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "marker",
+      "path": "/run/lite3-control/COMMAND_SOURCE",
+      "exists": false
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "marker",
+      "path": "/run/lite3-control/MANUAL_CONTROL_AVAILABLE",
+      "exists": true,
+      "value": "false"
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "cpu-capability",
+      "model": "Intel(R) Celeron(R) J6413 @ 1.80GHz",
+      "avx": false,
+      "avx2": false
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "archive-member-metadata",
+      "path": "/home/abx/lite3-services-backup-2026-10-01.tgz",
+      "service_members": [
+        "etc/systemd/system/lite3-nomad-teleop-adapter.service",
+        "etc/systemd/system/lite3-xbox.service",
+        "etc/systemd/system/lite3-high-level-xbox.service",
+        "etc/systemd/system/lite3-local-xbox-control.service",
+        "etc/systemd/system/lite3-laptop-xbox-source.service",
+        "etc/systemd/system/lite3-autonomy-command-source.service",
+        "etc/systemd/system/lite3-relocalization-motion.service",
+        "etc/systemd/system/lite3-nav2.service",
+        "etc/systemd/system/lite3-nav2-safety-monitor.service",
+        "etc/systemd/system/lite3-mapping.service",
+        "etc/systemd/system/lite3-localization.service",
+        "etc/systemd/system/lite3-realsense.service"
+      ]
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "vendor-port-binding-counts",
+      "counts": {
+        "43893": 0,
+        "43897": 1
+      }
+    },
+    {
+      "capture": "minipc-facts-remaining.jsonl",
+      "kind": "platform-status-allowlist",
+      "path": "/run/lite3-control/platform_status.json",
+      "values": {
+        "capabilities.localization": true,
+        "capabilities.motion.backward": true,
+        "capabilities.motion.forward": true,
+        "capabilities.motion.lateral": true,
+        "capabilities.motion.yaw": true,
+        "capabilities.navigation": true,
+        "capabilities.odometry": true,
+        "capabilities.posture.control": true,
+        "capabilities.sensor.d455": true,
+        "capabilities.sensor.rplidar": true,
+        "capabilities.teleop.physical_manual": true,
+        "connectivity.online": false,
+        "localization.active_map": null,
+        "localization.confidence": null,
+        "localization.observed_at": 1790930137.54537,
+        "localization.ready": false,
+        "localization.state": "UNAVAILABLE",
+        "navigation.available": false,
+        "navigation.observed_at": 1790930137.54537,
+        "navigation.ready": false,
+        "navigation.state": "UNAVAILABLE",
+        "observed_at": 1790930137.54537,
+        "published_at": 1790930137.5453658,
+        "robot_id": "robodog_01",
+        "robot_state.battery_percent": null,
+        "robot_state.posture": "OFFLINE",
+        "safety.command_source": "UNKNOWN",
+        "safety.motion_commands_supported": false,
+        "safety.robot_side_owner": null,
+        "safety.safety_ready": false,
+        "schema_version": 1,
+        "sensors.d455.available": false,
+        "sensors.d455.observed_at": 1790930137.54537,
+        "sensors.d455.ready": false,
+        "sensors.odometry.available": false,
+        "sensors.odometry.observed_at": 1790930137.54537,
+        "sensors.odometry.ready": false,
+        "sensors.rplidar.available": false,
+        "sensors.rplidar.observed_at": 1790930137.54537,
+        "sensors.rplidar.ready": false,
+        "sensors.tf.available": true,
+        "sensors.tf.observed_at": 1790930137.54537,
+        "sensors.tf.ready": false,
+        "sequence": 1785251089056
+      }
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "package": "sable_lite3_bridge",
+      "egg_link": "/home/abx/NOMAD/ros2_ws/install/sable_lite3_bridge/lib/python3.12/site-packages/sable-lite3-bridge.egg-link",
+      "build_path": "/home/abx/NOMAD/ros2_ws/build/sable_lite3_bridge",
+      "module_path": "/home/abx/NOMAD/ros2_ws/build/sable_lite3_bridge/sable_lite3_bridge/lite3_bridge_node.py",
+      "module_exists": true,
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_lite3_bridge/sable_lite3_bridge/lite3_bridge_node.py",
+      "sha256": "aa6a61afc5838ef6846da14338bfdc36427172e05184bf570ef0978dfe8e5aad"
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "package": "sable_patrol",
+      "egg_link": "/home/abx/NOMAD/ros2_ws/install/sable_patrol/lib/python3.12/site-packages/sable-patrol.egg-link",
+      "build_path": "/home/abx/NOMAD/ros2_ws/build/sable_patrol",
+      "module_path": "/home/abx/NOMAD/ros2_ws/build/sable_patrol/sable_patrol/mqtt_bridge_node.py",
+      "module_exists": true,
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_patrol/sable_patrol/mqtt_bridge_node.py",
+      "sha256": "0e1af467010ebdc2ea51193434c2340eb5032ccd31766f896f4e724ead04b34b"
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "package": "sable_navigation",
+      "egg_link": "/home/abx/NOMAD/ros2_ws/install/sable_navigation/lib/python3.12/site-packages/sable-navigation.egg-link",
+      "build_path": "/home/abx/NOMAD/ros2_ws/build/sable_navigation",
+      "module_path": "/home/abx/NOMAD/ros2_ws/build/sable_navigation/sable_navigation/stack.py",
+      "module_exists": true,
+      "resolved": "/home/abx/NOMAD/ros2_ws/src/sable_navigation/sable_navigation/stack.py",
+      "sha256": "7433add9c096182bacbcf02c5120a89917bbf94e74b88a950ea495b932669218"
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "marker": ".sable_built_tree",
+      "hash": "865c671af4a035029cd7e7075d5188ec40f66a6d"
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "marker": ".sable_running_tree",
+      "hash": "865c671af4a035029cd7e7075d5188ec40f66a6d"
+    },
+    {
+      "capture": "minipc-installed-resolution.jsonl",
+      "marker": ".sable_build_key",
+      "hash": "0ba245cc842f1bbf5e595de1ee5d1f734455ef6c"
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-high-level-runtime.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-lidar.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-localization.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-localization-supervisor.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-local-xbox-control.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-laptop-xbox-source.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-xbox.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-autonomy-control.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-nav2.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-high-level-ros-watchdog.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "not-found",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "",
+        "DropInPaths": "",
+        "UnitFileState": ""
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-system-health.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "FragmentPath": "/etc/systemd/system/lite3-system-health.service",
+        "DropInPaths": "",
+        "UnitFileState": "disabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-platform-status-exporter.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "752",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:47 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/etc/systemd/system/lite3-platform-status-exporter.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "lite3-ros-network-ready.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "0",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:58 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "exited",
+        "FragmentPath": "/etc/systemd/system/lite3-ros-network-ready.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "sable-edge.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "1434",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:58 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/etc/systemd/system/sable-edge.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "sable-ros.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "1439",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:58 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/etc/systemd/system/sable-ros.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "sable-edge-mosquitto.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "1432",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:58 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/etc/systemd/system/sable-edge-mosquitto.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "capture": "minipc-safe-state.jsonl",
+      "kind": "service",
+      "unit": "mosquitto.service",
+      "rc": 0,
+      "values": {
+        "MainPID": "1080",
+        "NRestarts": "0",
+        "ExecMainStartTimestamp": "Tue 2026-07-28 18:04:49 IDT",
+        "ExecMainStatus": "0",
+        "LoadState": "loaded",
+        "ActiveState": "active",
+        "SubState": "running",
+        "FragmentPath": "/usr/lib/systemd/system/mosquitto.service",
+        "DropInPaths": "",
+        "UnitFileState": "enabled"
+      }
+    },
+    {
+      "kind": "git-provenance",
+      "path": "/home/abx/Lite-robot",
+      "capture": "minipc-inventory.jsonl",
+      "untracked_files_assessed": false,
+      "sha": "25b98652cad56a3d1d69cebcde0b153075cda434",
+      "branch": "handoff/low-level-leg-control-2026-09-17",
+      "tracked_dirty": true
+    },
+    {
+      "kind": "git-provenance",
+      "path": "/home/abx/NOMAD",
+      "capture": "minipc-inventory.jsonl",
+      "untracked_files_assessed": false,
+      "sha": "b4f6a48a56e96c524515d811abc92608ef1e1f3f",
+      "branch": "main",
+      "tracked_dirty": false
+    },
+    {
+      "kind": "git-provenance",
+      "path": "/home/abx/ros2_ws",
+      "capture": "minipc-inventory.jsonl",
+      "untracked_files_assessed": false,
+      "sha": "1f3331d0897647cca61d99c135bc23424c5b1bcc",
+      "branch": "main",
+      "tracked_dirty": true
+    }
+  ]
+}

@@ -58,3 +58,18 @@ instructions but may never weaken these safety or Git requirements.
 - Update the Capability Matrix only when evidence justifies the change, keep
   primary artifacts in their authoritative location, and run
   `python3 tools/engineering_knowledge.py validate` before handoff.
+
+## Proportionate capture and review
+
+- Read relevant Known Good, Known Bad and Lessons as well as the capability row
+  and applicable prior sessions/findings before a meaningful decision. Check
+  configuration, control-path applicability and supersession.
+- Use collection → agent classification/draft → validation/review → canonical
+  knowledge. Drafts are evidence candidates, never permission or automatic
+  physical proof. Review scope/result/provenance and secret exposure first.
+- Preserve incident failure → investigation → cause or UNKNOWN → fix → actual
+  retest. Use a Test Session and/or Finding proportional to engineering significance;
+  trivial edits and routine commands need no additional records.
+- Follow `docs/engineering/KNOWLEDGE_CAPTURE_WORKFLOW.md`. Synthetic dry-run records
+  remain outside this checkout and never enter canonical registries. Fleet
+  applicability is reviewed knowledge, not automatic behavior propagation.

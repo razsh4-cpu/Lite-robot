@@ -70,3 +70,24 @@ Taxonomy: `ROBOT_CONTROL`, `SAFETY`, `ROS2`, `TF`, `ODOMETRY`,
 `LOCALIZATION`, `NAVIGATION`, `SENSORS`, `XBOX`, `NOMAD`, `MQTT`,
 `NETWORKING`, `MINI_PC`, `DEPLOYMENT`, `RELIABILITY`, `PERFORMANCE`,
 `HARDWARE`, `R_AND_D`.
+
+## Historical closure and deployed-state evidence
+
+- [Historical master inventory](HISTORICAL_MASTER_INVENTORY.md) maps retained
+  experiments, failures, fixes, retests, and remaining gaps to canonical IDs.
+- [Mini-PC deployed-state audit](MINIPC_DEPLOYED_STATE_AUDIT.md) separates
+  inspected source/configuration/services from historical motion acceptance.
+
+The 2026-10-02 retrospective records use their capture date in frontmatter and
+state the actual experiment date separately, including `UNKNOWN`. Restored
+records retain original IDs and an explicit recovery note. Written physical
+reports, source tests, live-static captures, and raw artifacts remain distinct.
+The historical chair PASS does not establish independent body-frame strafe,
+and older normalized ROS caps do not calibrate current SI-scaled NOMAD control.
+
+- [Final knowledge-gap audit](FINAL_KNOWLEDGE_GAP_AUDIT.md) summarizes closure
+  and exact remaining evidence/retest requirements.
+
+## Subsequent safe source closure — 2026-10-02
+
+The read-only deployed snapshot remains unchanged. CPU-compatible controller selection and dispatch-bound idle odometry have subsequently been reconciled through existing SABLE owners, with offline tests only (TEST-20261002-106 / FINDING-20261002-095). Driver scaling diagnostics, bounded forwarding, UI evidence and passive validation preparation add observability without calibration changes. These are not deployed or physically proven. Direct strafe remains UNVALIDATED. See SAFE_AUTONOMOUS_CLOSURE.md for current counts, checks and blockers. Five additional supervised records TEST-20261002-107..111 are PLANNED ONLY, no new historical experiments; each physical matrix item is evaluated individually.

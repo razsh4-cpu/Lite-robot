@@ -28,7 +28,7 @@ explicit 70% test override. The operator must approve the override before it is
 created and must separately approve physical motion after seeing the path.
 
 The override is a validated JSON token in `/run/lite3-control`, applies only to
-the obstacle test, expires after at most ten minutes, and is removed on PASS,
+the obstacle test, expires after at most 180 seconds, and is removed on PASS,
 FAIL, cancel, exception, AUTONOMY stop, or reboot. A missing, stale, malformed,
 or modified token restores the normal 80% gate. Falling below 70% during the
 test aborts the mission.

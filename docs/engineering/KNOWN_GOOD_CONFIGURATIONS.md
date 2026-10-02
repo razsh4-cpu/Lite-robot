@@ -12,3 +12,24 @@ authoritative.
 | Phase-3C adapter | [Phase-3C design](../../../NOMAD/docs/superpowers/specs/2026-10-01-bipolix-phase3c-physical-teleop-design.md) | v2 physical-manual contract; default output disabled; neutral/new-RB/continuous-deadman/watchdog |
 | Mini-PC workload | [performance baseline](../operations/PERFORMANCE_BASELINE.md) | headless; RViz laptop-side; D455 on demand when unused by Day-2 Nav2 |
 | Source deployment | [reconciliation record](../architecture/SOURCE_OF_TRUTH_RECONCILIATION_2026-09-29.md) | compare content/consumers; exclude build/install/log/runtime state |
+
+## Scope and current-deployment limits
+
+Historical configuration references above are known-good for their recorded
+path and evidence scope, not a declaration that the current Mini-PC matches.
+Consult the [deployed-state audit](MINIPC_DEPLOYED_STATE_AUDIT.md) before any
+reconciliation. Preserve CPU-compatible controller selection and idle-odom
+fixes while reviewing missing newer guards and site configuration differences.
+
+- The obstacle override is explicit, session-scoped, 70% ×3 and at most
+  **180 seconds** in both producer and independent consumer; normal navigation
+  remains 80% ×3. This does not authorize a test or bypass map verification.
+- Historical ROS normalized x/yaw caps and asymmetric raw conversion are
+  evidence-bounded by [FINDING-20261002-015](findings/FINDING-20261002-015-historical-normalized-vendor-axes-are-not-si-calibration.md); they do not calibrate
+  current SI-scaled NOMAD motion.
+- Production LiDAR z=0.08/yaw=π is retained configuration provenance;
+  [FINDING-20261002-013](findings/FINDING-20261002-013-configured-lidar-extrinsics-are-not-complete-calibration-metrology.md) identifies incomplete metrology and frame limits.
+
+## Subsequent safe source closure — 2026-10-02
+
+The read-only deployed snapshot remains unchanged. CPU-compatible controller selection and dispatch-bound idle odometry have subsequently been reconciled through existing SABLE owners, with offline tests only (TEST-20261002-106 / FINDING-20261002-095). Driver scaling diagnostics, bounded forwarding, UI evidence and passive validation preparation add observability without calibration changes. These are not deployed or physically proven. Direct strafe remains UNVALIDATED. See SAFE_AUTONOMOUS_CLOSURE.md for current counts, checks and blockers. Five additional supervised records TEST-20261002-107..111 are PLANNED ONLY, no new historical experiments; each physical matrix item is evaluated individually.

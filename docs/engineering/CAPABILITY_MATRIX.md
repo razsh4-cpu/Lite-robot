@@ -5,13 +5,13 @@
 | HIGH-LEVEL runtime | Persistent sole vendor UDP/odom owner | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` baseline | repeated-boot soak useful | [closeout](../HIGH_LEVEL_NAV2_CLOSEOUT_2026-09-27.md) |
 | Local Xbox | Existing lease-gated source | HISTORICAL_CLAIM | 2026-09 | UNKNOWN | UNKNOWN | exact session evidence incomplete | [test catalog](../testing/TEST_CATALOG.md) |
 | Laptop Xbox/C2 | Exclusive `LAPTOP_XBOX` path | PHYSICALLY_PROVEN | 2026-09-27 | robot_01 | `abf9900` baseline | not proof of NOMAD browser adapter | [TEST-20260927-004](tests/TEST-20260927-004-laptop-xbox-manual.md) |
-| NOMAD remote Xbox | Protected Phase-3C adapter/UI prepared | OFFLINE_PROVEN | 2026-10-01 | robodog_01 | Lite `35c8173`; NOMAD `76928a7` | physical test pending | [planned test](tests/TEST-20261001-002-phase3c-xbox-physical.md) |
+| NOMAD remote Xbox | Protected Phase-3C adapter/UI and Stand workflow committed | OFFLINE_PROVEN | 2026-10-01 source | robodog_01 | Lite through `cc9cd69`; NOMAD through `53d0692` | exact deployment and physical acceptance pending | [planned test](tests/TEST-20261001-002-phase3c-xbox-physical.md) |
 | Command arbiter | NONE/LOCAL_XBOX/LAPTOP_XBOX/AUTONOMY exclusive | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | ghost-marker parity remains regression target | [finding](findings/FINDING-20260930-001-command-authority.md) |
 | Safety watchdog | 300 ms guarded source freshness | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | Phase-3C physical release pending | [baseline](../testing/KNOWN_GOOD_BASELINE.md) |
-| Mapping/SLAM | Operator workflow and saved maps | PHYSICALLY_PROVEN | 2026-09-27 | robot_01 | `abf9900` | map identity must be explicit | [test catalog](../testing/TEST_CATALOG.md) |
+| Mapping/SLAM | Historical operator workflow and saved maps | HISTORICAL_CLAIM | 2026-09-27 | robot_01 | `abf9900` | map identity explicit; map-save hashes/session missing | [test catalog](../testing/TEST_CATALOG.md) |
 | Localization/AMCL | saved hypothesis + global fallback; 80% ×3 gate | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | physical ambiguity can require short manual motion | [TEST-20260927-003](tests/TEST-20260927-003-home-map-localization.md) |
 | Product odometry | HIGH-LEVEL telemetry `/odom`, bounded rate | PHYSICALLY_PROVEN | 2026-09-27 | robot_01 | `abf9900` | ICP R&D is not product authority | [baseline](../testing/KNOWN_GOOD_BASELINE.md) |
-| TF | map→odom→base_link→lidar_link single ownership | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | D455 extrinsic remains separate | [configuration](../architecture/CONFIGURATION_CALIBRATION_DATA.md) |
+| TF | map→odom→base_link→lidar_link single ownership | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | LiDAR metrology incomplete; D455 extrinsic separate | [configuration](../architecture/CONFIGURATION_CALIBRATION_DATA.md) |
 | Nav2 single goal | planner/controller via AUTONOMY | PHYSICALLY_PROVEN | 2026-09-27 | robot_01 | `abf9900` | preserve limits/gates | [chair PASS](tests/TEST-20260927-002-chair-avoidance-pass.md) |
 | Obstacle avoidance | LiDAR→costmaps→Nav2, right-side chair | PHYSICALLY_PROVEN | 2026-09-27 | robot_01 | `abf9900` | snapshot required for clearance claims | [chair PASS](tests/TEST-20260927-002-chair-avoidance-pass.md) |
 | RPLIDAR | `/scan`, mapping/localization/2D obstacles | LIVE_STATIC_PROVEN | 2026-09-27 | robot_01 | `abf9900` | single driver required | [test catalog T008](../testing/TEST_CATALOG.md) |
@@ -21,3 +21,28 @@
 | Mission / Patrol | motion-blocked mock/preview only | OFFLINE_PROVEN | 2026-10-01 | robodog_01 | NOMAD `c3c3e96` | physical execution pending | [NOMAD non-motion MVP](../../../NOMAD/docs/integrations/BIPOLIX_NON_MOTION_MVP.md) |
 | Multi-robot isolation | status/lease/reservation/mock isolation | OFFLINE_PROVEN | 2026-09-30 | fixture fleet | NOMAD `4561e74` | live fleet not proven | [Phase-3A record](tests/TEST-20260930-003-nomad-phase3a-mock.md) |
 | Mini-PC reliability | headless/on-demand workload; exporter leak fixed | PARTIAL | 2026-10-01 | robot_01 | `e396f55` | rtl8851bu soak open | [exporter finding](findings/FINDING-20261001-001-exporter-process-leak.md) |
+
+## Additional evidence scopes and current deployment
+
+| Capability / question | Evidence scope | Limitation | Canonical evidence |
+|---|---|---|---|
+| HIGH-LEVEL `robot stand` | PHYSICALLY_PROVEN in historical closeout | separate from low-level Stand and current browser Stand | [TEST-20261002-004](tests/TEST-20261002-004-high-level-robot-stand-temporary-lease-acceptance.md) |
+| ROS backward / yaw / curve / neutral | HISTORICAL_CLAIM from retained physical reports | raw per-run data missing; normalized values not SI calibration; curve y=0 | [TEST-20261002-021](tests/TEST-20261002-021-historical-ros-vendor-backward-motion.md), [TEST-20261002-022](tests/TEST-20261002-022-historical-ros-vendor-yaw-in-both-directions.md), [TEST-20261002-023](tests/TEST-20261002-023-historical-ros-forward-and-yaw-curved-motion.md), [TEST-20261002-024](tests/TEST-20261002-024-historical-ros-deadman-release-neutral-and-shutdown.md) |
+| Independent direct body-frame strafe | UNVALIDATED; reported direct NOMAD attempt FAIL | cause and command/yaw/displacement capture UNKNOWN | [TEST-20261002-013](tests/TEST-20261002-013-owner-reported-direct-nomad-strafe-failure.md), [FINDING-20261002-005](findings/FINDING-20261002-005-independent-body-frame-strafe-physical-proof-remains-incomplete.md) |
+| Obstacle wrapper packaging / snapshots | OFFLINE_PROVEN software repair | installed live import and complete artifact acceptance pending | [TEST-20261002-006](tests/TEST-20261002-006-importable-obstacle-helper-packaging-repair.md), [TEST-20261002-018](tests/TEST-20261002-018-reconstructable-obstacle-snapshot-software-repair.md) |
+| Mini-PC source/config/service state | LIVE_STATIC_PROVEN / PARTIAL read-only evidence | differing deployed/integration fixes, guards, caps, signs, domain, and clocks; no physical readiness proof | [TEST-20261002-080](tests/TEST-20261002-080-minipc-read-only-evidence-audit.md) |
+
+The historical Nav2 chair PASS remains a recorded goal, stop, and release
+result; world lateral displacement alone does not establish direct body-frame
+`linear.y` acceptance. Capability constants, active services, and code presence
+are not current physical readiness.
+
+The original Product odometry row retains the closeout's broad physical-use
+classification: it participated in recorded product motion. Independent
+metric displacement/tolerance and SI motion calibration evidence are incomplete
+in [TEST-20261002-016](tests/TEST-20261002-016-historical-product-odometry-displacement-claim.md). This row must not be interpreted as
+a separately measured odometry calibration or proof of each body-frame axis.
+
+## Subsequent safe source closure — 2026-10-02
+
+The read-only deployed snapshot remains unchanged. CPU-compatible controller selection and dispatch-bound idle odometry have subsequently been reconciled through existing SABLE owners, with offline tests only (TEST-20261002-106 / FINDING-20261002-095). Driver scaling diagnostics, bounded forwarding, UI evidence and passive validation preparation add observability without calibration changes. These are not deployed or physically proven. Direct strafe remains UNVALIDATED. See SAFE_AUTONOMOUS_CLOSURE.md for current counts, checks and blockers. Five additional supervised records TEST-20261002-107..111 are PLANNED ONLY, no new historical experiments; each physical matrix item is evaluated individually.

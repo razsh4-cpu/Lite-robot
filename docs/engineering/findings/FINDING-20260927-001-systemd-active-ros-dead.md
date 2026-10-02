@@ -20,3 +20,8 @@ process-state-only readiness.
   AMCL active → TF → confidence evaluation.
 - DO NOT REPEAT: accept `systemctl is-active` as proof that ROS is usable.
 - Remaining validation: repeated-boot/long-duration soak is still useful.
+
+## Retrospective session links
+
+[TEST-20261002-001](../tests/TEST-20261002-001-dds-recovery-with-incomplete-persistent-deployment.md), [TEST-20261002-002](../tests/TEST-20261002-002-high-level-ros-readiness-failure-and-software-recovery.md), [TEST-20261002-026](../tests/TEST-20261002-026-map-server-and-amcl-ordered-lifecycle-recovery.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.

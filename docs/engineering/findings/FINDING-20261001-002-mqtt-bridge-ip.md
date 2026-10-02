@@ -20,3 +20,8 @@ Updating the bridge destination restored topic arrival/FleetRegistry visibility.
   publish → bridge destination → central broker → registry ingestion.
 - Deployment lesson: broker host is configuration, never a stale copied
   development-host constant.
+
+## Retrospective session links
+
+[TEST-20261002-032](../tests/TEST-20261002-032-stale-central-mqtt-bridge-destination-incident.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.

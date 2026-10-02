@@ -20,3 +20,8 @@ future analysis.
   [obstacle runbook](../../operations/OBSTACLE_TEST.md).
 - DO NOT REPEAT: present a precise clearance as durable evidence without the
   source snapshot needed to reproduce it.
+
+## Retrospective session links
+
+[TEST-20261002-005](../tests/TEST-20261002-005-earlier-chair-planning-safe-refusal.md), [TEST-20261002-018](../tests/TEST-20261002-018-reconstructable-obstacle-snapshot-software-repair.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.

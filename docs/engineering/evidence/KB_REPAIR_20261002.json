@@ -1,0 +1,245 @@
+{
+  "restored": [
+    "docs/engineering/findings/FINDING-20260913-001-motion-sdk-ownership-unconfirmed.md",
+    "docs/engineering/findings/FINDING-20260913-002-posture-dependent-joint-readings.md",
+    "docs/engineering/findings/FINDING-20260914-001-vendor-manual-axis-protocol.md",
+    "docs/engineering/findings/FINDING-20260914-002-direct-onnx-not-pilot.md",
+    "docs/engineering/findings/FINDING-20260917-001-atomic-stand-authorization.md",
+    "docs/engineering/findings/FINDING-20260917-002-absolute-stand-hold-deadline.md",
+    "docs/engineering/findings/FINDING-20260918-001-low-level-foot-force-unavailable.md",
+    "docs/engineering/findings/FINDING-20260918-002-long-action-permit-lifecycle.md",
+    "docs/engineering/findings/FINDING-20260921-001-simulation-contact-model-ambiguity.md",
+    "docs/engineering/findings/FINDING-20260927-004-odom-publication-rate.md",
+    "docs/engineering/tests/TEST-20260913-001-long-supported-stand-release.md",
+    "docs/engineering/tests/TEST-20260913-002-rl-zero-bounded-release.md",
+    "docs/engineering/tests/TEST-20260913-003-first-supervised-stand-failure.md",
+    "docs/engineering/tests/TEST-20260914-001-vendor-manual-axis-forward.md",
+    "docs/engineering/tests/TEST-20260915-001-icp-baseline-null-guess.md",
+    "docs/engineering/tests/TEST-20260915-002-icp-threshold-candidates.md",
+    "docs/engineering/tests/TEST-20260917-002-stand-authorization-expiry.md",
+    "docs/engineering/tests/TEST-20260917-003-stand-automatic-release.md",
+    "docs/engineering/tests/TEST-20260918-001-body-shift-progression.md",
+    "docs/engineering/tests/TEST-20260918-002-fr-leg-lift-attempts.md",
+    "docs/engineering/tests/TEST-20260918-003-body-shift-guard-abort.md",
+    "docs/engineering/tests/TEST-20260921-001-fr-robust-unload-campaign.md"
+  ],
+  "new_tests": [
+    "docs/engineering/tests/TEST-20261002-001-dds-recovery-with-incomplete-persistent-deployment.md",
+    "docs/engineering/tests/TEST-20261002-002-high-level-ros-readiness-failure-and-software-recovery.md",
+    "docs/engineering/tests/TEST-20261002-003-autonomy-qos-stall-and-compatible-velocity-input.md",
+    "docs/engineering/tests/TEST-20261002-004-high-level-robot-stand-temporary-lease-acceptance.md",
+    "docs/engineering/tests/TEST-20261002-005-earlier-chair-planning-safe-refusal.md",
+    "docs/engineering/tests/TEST-20261002-006-importable-obstacle-helper-packaging-repair.md",
+    "docs/engineering/tests/TEST-20261002-007-headless-mini-pc-and-on-demand-workload-snapshots.md",
+    "docs/engineering/tests/TEST-20261002-008-exporter-timeout-process-group-cleanup.md",
+    "docs/engineering/tests/TEST-20261002-009-network-loss-diagnosis-and-prepared-rtl8851bu-mitigation.md",
+    "docs/engineering/tests/TEST-20261002-010-wrong-map-localization-and-active-map-preflight-repair.md",
+    "docs/engineering/tests/TEST-20261002-011-ghost-command-source-marker-safe-recovery.md",
+    "docs/engineering/tests/TEST-20261002-012-navfn-path-tangent-clearance-correction.md",
+    "docs/engineering/tests/TEST-20261002-013-owner-reported-direct-nomad-strafe-failure.md",
+    "docs/engineering/tests/TEST-20261002-014-committed-phase-3c-stand-and-connectivity-software.md",
+    "docs/engineering/tests/TEST-20261002-015-battery-connection-spark-and-suspected-dc-dc-damage.md",
+    "docs/engineering/tests/TEST-20261002-016-historical-product-odometry-displacement-claim.md",
+    "docs/engineering/tests/TEST-20261002-017-home-map-mapping-and-save-load-historical-operation.md",
+    "docs/engineering/tests/TEST-20261002-018-reconstructable-obstacle-snapshot-software-repair.md",
+    "docs/engineering/tests/TEST-20261002-019-motion-blocked-nomad-mission-and-patrol-software.md",
+    "docs/engineering/tests/TEST-20261002-020-lithium-battery-charging-fire-and-reported-shell-damage.md",
+    "docs/engineering/tests/TEST-20261002-021-historical-ros-vendor-backward-motion.md",
+    "docs/engineering/tests/TEST-20261002-022-historical-ros-vendor-yaw-in-both-directions.md",
+    "docs/engineering/tests/TEST-20261002-023-historical-ros-forward-and-yaw-curved-motion.md",
+    "docs/engineering/tests/TEST-20261002-024-historical-ros-deadman-release-neutral-and-shutdown.md",
+    "docs/engineering/tests/TEST-20261002-025-persistent-runtime-survives-optional-xbox-source-loss.md",
+    "docs/engineering/tests/TEST-20261002-026-map-server-and-amcl-ordered-lifecycle-recovery.md",
+    "docs/engineering/tests/TEST-20261002-027-bounded-product-odometry-publication-repair.md",
+    "docs/engineering/tests/TEST-20261002-028-amcl-global-localization-service-hung-with-fresh-sensors.md",
+    "docs/engineering/tests/TEST-20261002-029-stationary-saved-pose-hypothesis-exhausted-at-55-1-percent.md",
+    "docs/engineering/tests/TEST-20261002-030-obstacle-preflight-separated-localization-from-inactive-nav2.md",
+    "docs/engineering/tests/TEST-20261002-031-firefox-gamepad-visibility-failure-and-reported-ui-recovery.md",
+    "docs/engineering/tests/TEST-20261002-032-stale-central-mqtt-bridge-destination-incident.md"
+  ],
+  "new_findings": [
+    "docs/engineering/findings/FINDING-20261002-001-autonomy-velocity-qos-compatibility-preserves-independent-watchdog.md",
+    "docs/engineering/findings/FINDING-20261002-002-command-source-markers-do-not-establish-real-ownership.md",
+    "docs/engineering/findings/FINDING-20261002-003-installed-executable-helpers-also-need-an-importable-module.md",
+    "docs/engineering/findings/FINDING-20261002-004-localization-confidence-is-a-custom-scan-to-map-match-score.md",
+    "docs/engineering/findings/FINDING-20261002-005-independent-body-frame-strafe-physical-proof-remains-incomplete.md",
+    "docs/engineering/findings/FINDING-20261002-006-zero-yaw-navfn-poses-need-path-tangent-footprint-diagnostics.md",
+    "docs/engineering/findings/FINDING-20261002-007-on-demand-unused-perception-reduced-recorded-mini-pc-load.md",
+    "docs/engineering/findings/FINDING-20261002-008-temporary-high-level-posture-leases-need-neutral-continuity.md",
+    "docs/engineering/findings/FINDING-20261002-009-relocalization-requires-explicit-approval-before-ownership-or-motion.md",
+    "docs/engineering/findings/FINDING-20261002-010-battery-connection-spark-and-suspected-dc-dc-damage-need-separate-closure.md",
+    "docs/engineering/findings/FINDING-20261002-011-updated-gateway-source-must-become-the-running-deployed-process.md",
+    "docs/engineering/findings/FINDING-20261002-012-mqtt-edge-namespace-translation-is-part-of-the-transport-contract.md",
+    "docs/engineering/findings/FINDING-20261002-013-configured-lidar-extrinsics-are-not-complete-calibration-metrology.md",
+    "docs/engineering/findings/FINDING-20261002-014-reported-lithium-charging-fire-has-no-recorded-safety-closure.md",
+    "docs/engineering/findings/FINDING-20261002-015-historical-normalized-vendor-axes-are-not-si-calibration.md",
+    "docs/engineering/findings/FINDING-20261002-016-fresh-scan-and-odometry-do-not-prove-responsive-amcl.md",
+    "docs/engineering/findings/FINDING-20261002-017-active-localization-does-not-mean-nav2-servers-are-available.md"
+  ],
+  "event_to_tests": {
+    "dds-udp-recovery": [
+      "TEST-20261002-001"
+    ],
+    "runtime-ros-dead": [
+      "TEST-20261002-002"
+    ],
+    "autonomy-qos": [
+      "TEST-20261002-003"
+    ],
+    "product-stand": [
+      "TEST-20261002-004"
+    ],
+    "chair-safe-refusal": [
+      "TEST-20261002-005"
+    ],
+    "obstacle-import-packaging": [
+      "TEST-20261002-006"
+    ],
+    "headless-resources": [
+      "TEST-20261002-007"
+    ],
+    "exporter-leak": [
+      "TEST-20261002-008"
+    ],
+    "network-rtl": [
+      "TEST-20261002-009"
+    ],
+    "wrong-map": [
+      "TEST-20261002-010"
+    ],
+    "ghost-source": [
+      "TEST-20261002-011"
+    ],
+    "navfn-yaw": [
+      "TEST-20261002-012"
+    ],
+    "direct-strafe-gap": [
+      "TEST-20261002-013"
+    ],
+    "phase3c-software": [
+      "TEST-20261002-014"
+    ],
+    "hardware-charging": [
+      "TEST-20261002-015",
+      "TEST-20261002-020"
+    ],
+    "product-odom-motion": [
+      "TEST-20261002-016"
+    ],
+    "slam-home-map": [
+      "TEST-20261002-017"
+    ],
+    "clearance8mm": [
+      "TEST-20261002-018"
+    ],
+    "mission-patrol-mock": [
+      "TEST-20261002-019"
+    ],
+    "historical-ros-backward": [
+      "TEST-20261002-021"
+    ],
+    "historical-ros-yaw": [
+      "TEST-20261002-022"
+    ],
+    "historical-ros-curve": [
+      "TEST-20261002-023"
+    ],
+    "historical-ros-neutral-shutdown": [
+      "TEST-20261002-024"
+    ],
+    "runtime-independent": [
+      "TEST-20261002-025"
+    ],
+    "amcl-lifecycle": [
+      "TEST-20261002-026"
+    ],
+    "odom-flood": [
+      "TEST-20261002-027"
+    ],
+    "amcl-service-hang": [
+      "TEST-20261002-028"
+    ],
+    "global-localization-low": [
+      "TEST-20261002-029"
+    ],
+    "obstacle-nav2-off": [
+      "TEST-20261002-030"
+    ],
+    "gamepad-browser": [
+      "TEST-20261002-031"
+    ],
+    "mqtt-stale-ip": [
+      "TEST-20261002-032"
+    ],
+    "hardware-spark": [
+      "TEST-20261002-015"
+    ],
+    "hardware-fire": [
+      "TEST-20261002-020"
+    ]
+  },
+  "event_to_findings": {
+    "autonomy-qos": [
+      "FINDING-20261002-001"
+    ],
+    "ghost-source": [
+      "FINDING-20261002-002"
+    ],
+    "obstacle-import-packaging": [
+      "FINDING-20261002-003"
+    ],
+    "score-not-probability": [
+      "FINDING-20261002-004"
+    ],
+    "direct-strafe-gap": [
+      "FINDING-20261002-005"
+    ],
+    "navfn-yaw": [
+      "FINDING-20261002-006"
+    ],
+    "headless-resources": [
+      "FINDING-20261002-007"
+    ],
+    "product-stand": [
+      "FINDING-20261002-008"
+    ],
+    "relocalize-unsafe-start": [
+      "FINDING-20261002-009"
+    ],
+    "hardware-charging": [
+      "FINDING-20261002-010",
+      "FINDING-20261002-014"
+    ],
+    "gateway-stale-restart": [
+      "FINDING-20261002-011"
+    ],
+    "mqtt-edge-topics": [
+      "FINDING-20261002-012"
+    ],
+    "lidar-tf-extrinsic": [
+      "FINDING-20261002-013"
+    ],
+    "historical-normalized-units": [
+      "FINDING-20261002-015"
+    ],
+    "amcl-service-hang": [
+      "FINDING-20261002-016"
+    ],
+    "obstacle-nav2-off": [
+      "FINDING-20261002-017"
+    ],
+    "hardware-spark": [
+      "FINDING-20261002-010"
+    ],
+    "hardware-fire": [
+      "FINDING-20261002-014"
+    ]
+  },
+  "counts": {
+    "restored_paths": 22,
+    "new_tests": 32,
+    "new_findings": 17,
+    "canonical_tests": 56,
+    "canonical_findings": 43
+  }
+}

@@ -18,3 +18,8 @@ Status/preflight now records and displays the active map YAML.
   [failure record](../../FAILURES_AND_FIXES.md).
 - DO NOT REPEAT: tune AMCL, extrinsics, origin, or use a threshold override
   before confirming the selected map is the intended site.
+
+## Retrospective session links
+
+[TEST-20261002-010](../tests/TEST-20261002-010-wrong-map-localization-and-active-map-preflight-repair.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.

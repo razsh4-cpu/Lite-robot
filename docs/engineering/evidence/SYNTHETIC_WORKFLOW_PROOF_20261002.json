@@ -1,0 +1,443 @@
+{
+  "synthetic": true,
+  "source_root": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering",
+  "sandbox": "/tmp/lite3-knowledge-workflow-proof-final-20261002",
+  "subsystem": "SAFETY",
+  "read_before_decision": [
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/README.md",
+      "sha256": "1ecf58f80dfb4a4d79dd022cfca1b9f8a441c9c8f205aa0498b1b3894a95b68c",
+      "id": "SUMMARY"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/CAPABILITY_MATRIX.md",
+      "sha256": "21b5b61ea9bff735cbe0a40831dbdd92a6aabdde200afca73b0da1062ab7882a",
+      "id": "SUMMARY"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/KNOWN_GOOD_CONFIGURATIONS.md",
+      "sha256": "637fafb41f5ff75e6b456b3544802736cd139dad65d578a2899b9dd0d955c405",
+      "id": "SUMMARY"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/KNOWN_BAD.md",
+      "sha256": "63c5dddd9d3cf3a1aee4ba331867e63a5cb3afbe84429a63581c824032f88cfd",
+      "id": "SUMMARY"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/LESSONS_LEARNED.md",
+      "sha256": "f87b2f98cd65333b6ef86d87313b96a0992be959de310626695f5c9204b69d08",
+      "id": "SUMMARY"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260913-001-long-supported-stand-release.md",
+      "sha256": "25792091cef51afe83c0b28a0133781c094f1a50867bca195e49cab9c6e8cccd",
+      "id": "TEST-20260913-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260913-002-rl-zero-bounded-release.md",
+      "sha256": "b5c6b89342318944278b8c3eacccb59f59e354d43d79e7bb429b56820b737b21",
+      "id": "TEST-20260913-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260913-003-first-supervised-stand-failure.md",
+      "sha256": "bf1f29a56233e804440da7e87ad58e798808d3b1c5bfc5363467f62c217357ec",
+      "id": "TEST-20260913-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260914-001-vendor-manual-axis-forward.md",
+      "sha256": "4be71a59533e630dcfc7f951b42adf0f36b2884a6a25b34fb17f702cad2b8959",
+      "id": "TEST-20260914-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260917-001-supported-stand.md",
+      "sha256": "7bfd1eb082c673b66ef2e1e3b1a3ebb2bf8d892ac56cfc2ffe44673b7141a3a9",
+      "id": "TEST-20260917-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260917-002-stand-authorization-expiry.md",
+      "sha256": "3f01758f894e4e58d66d7bb45c5b023bd1a24713079ddf1b710e8c5eea6b6709",
+      "id": "TEST-20260917-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260917-003-stand-automatic-release.md",
+      "sha256": "f68edf1c2b8d37438138188ef2664e0e70a3819c816059487ffc4e6c253d2068",
+      "id": "TEST-20260917-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260918-001-body-shift-progression.md",
+      "sha256": "931cc25f3d4a1f3c9ce024327c0a62e48bad0d766c6ad3fb8c5bc654fee0698b",
+      "id": "TEST-20260918-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260918-002-fr-leg-lift-attempts.md",
+      "sha256": "bc85e8ed47ab0fe74b4d2a9a39b116bd90b66a16c2f0241ba80304b388f4172a",
+      "id": "TEST-20260918-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260918-003-body-shift-guard-abort.md",
+      "sha256": "654cfff1da95ddb078b24923cf1418272c53ecb08953f0bb72c0ad1f4559273f",
+      "id": "TEST-20260918-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260921-001-fr-robust-unload-campaign.md",
+      "sha256": "71d6b4276b98a756a82a2ec4d2281d9378cff2f4cbdff5dcd53178f72da33251",
+      "id": "TEST-20260921-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260927-001-chair-avoidance-interrupted.md",
+      "sha256": "cc61b6c2b4d7cb6bdad653544685434fb68aaa60d7b9e68c77fe2dd254c776fd",
+      "id": "TEST-20260927-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260927-002-chair-avoidance-pass.md",
+      "sha256": "4b33cd082b2cf1a8da513b062d9341d670fafd1221ffaa701e5b8f60982979d4",
+      "id": "TEST-20260927-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260927-004-laptop-xbox-manual.md",
+      "sha256": "942502ae64b483508d82f99c43eea52ff715ca11f2aa8ba8e89d2acbdc346ab5",
+      "id": "TEST-20260927-004"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260929-001-relocalize-approval.md",
+      "sha256": "3ed907ea1b23769b6369abf8c4c14b6dd715d33fd8ef6517ce079d901d8342ef",
+      "id": "TEST-20260929-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260930-001-nomad-phase1-status.md",
+      "sha256": "3000643454e64d168258968f1639e0c72126027fae147da5d37b2d2fc83c6eb9",
+      "id": "TEST-20260930-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260930-002-nomad-phase2-authority.md",
+      "sha256": "499c19a4ea981bd01ecf24a5734ca7054562bee6be22c5a7e4b5901bf98d0626",
+      "id": "TEST-20260930-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20260930-003-nomad-phase3a-mock.md",
+      "sha256": "862c863f37ccd3b761eeeb420ce9199a085453a36bda6efdbeb4e5e2cde3deea",
+      "id": "TEST-20260930-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261001-001-nomad-phase3b-live-static.md",
+      "sha256": "2dea0196234c76a1041047e94c9ee09225f475f84ccdbc54bb7bd827da3cf4f2",
+      "id": "TEST-20261001-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261001-002-phase3c-xbox-physical.md",
+      "sha256": "2f3b2104bd01aad1dec5d722e2e218a716bd887374bb7dae228edeacb9572a1b",
+      "id": "TEST-20261001-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-003-autonomy-qos-stall-and-compatible-velocity-input.md",
+      "sha256": "80b87212f599b2a246bd20616150f9bc34284442ae5ad54299621e83b9b8a667",
+      "id": "TEST-20261002-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-004-high-level-robot-stand-temporary-lease-acceptance.md",
+      "sha256": "f3735298a867115e4538d0c6ebf8052aa4713a0fb88e30d4a63b8bdd6b65acff",
+      "id": "TEST-20261002-004"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-005-earlier-chair-planning-safe-refusal.md",
+      "sha256": "80bd788efdd23765e23d304158cbc0f6f7add6f1f35aa737ae0e048d0e59c4db",
+      "id": "TEST-20261002-005"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-011-ghost-command-source-marker-safe-recovery.md",
+      "sha256": "64fb25dab82833ddcc704fc1dcb24bf969d91c7c2ef11a8e495245056b375d90",
+      "id": "TEST-20261002-011"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-012-navfn-path-tangent-clearance-correction.md",
+      "sha256": "ee7b388d1f278d0a51c8d811a1f0221efa20cd64b1376deba1256733660a1a7c",
+      "id": "TEST-20261002-012"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-014-committed-phase-3c-stand-and-connectivity-software.md",
+      "sha256": "5c0a310b2d85912906d9f214b2ab3496d99b0e7a2dcf02fbdbf557d78daad59c",
+      "id": "TEST-20261002-014"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-015-battery-connection-spark-and-suspected-dc-dc-damage.md",
+      "sha256": "302f8c9d5ecf1ad12a1f7bec3acbd312b0b4c9315d185d7b7cabcbb60a43a1c9",
+      "id": "TEST-20261002-015"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-018-reconstructable-obstacle-snapshot-software-repair.md",
+      "sha256": "589f054ac9a69cc40599caf172b2f0ecc84ac428a550d94c3063a7da52dea14d",
+      "id": "TEST-20261002-018"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-020-lithium-battery-charging-fire-and-reported-shell-damage.md",
+      "sha256": "bb64a7702f0adee115f979f916db93293a36832688cdcfdca208c6f2f9d3054b",
+      "id": "TEST-20261002-020"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-021-historical-ros-vendor-backward-motion.md",
+      "sha256": "74794de4438f0f176e336b70a69af50992d4f781415f81c8c9848c2df585c500",
+      "id": "TEST-20261002-021"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-022-historical-ros-vendor-yaw-in-both-directions.md",
+      "sha256": "e229848ffe8a7e3a30f4882e1ed63a68f4bac89e4913db09ea6a75eed65b2bb1",
+      "id": "TEST-20261002-022"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-023-historical-ros-forward-and-yaw-curved-motion.md",
+      "sha256": "002e681df9e7fe3d2d67f564360dc9f150f2223e29a401dc19d03de45ec1b4b9",
+      "id": "TEST-20261002-023"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-024-historical-ros-deadman-release-neutral-and-shutdown.md",
+      "sha256": "bd0593c691480a5bf8bcd07e4915e05a42089c3fc0be824c9f05434b647f5094",
+      "id": "TEST-20261002-024"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-025-persistent-runtime-survives-optional-xbox-source-loss.md",
+      "sha256": "a116784fd60427d2f05946fed282b46878709725de52a85e764fe9151974d7e0",
+      "id": "TEST-20261002-025"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-029-stationary-saved-pose-hypothesis-exhausted-at-55-1-percent.md",
+      "sha256": "84b6782884aa616b5bc9eecc12a611293006b201d5316dc6a6238af655a961b5",
+      "id": "TEST-20261002-029"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-030-obstacle-preflight-separated-localization-from-inactive-nav2.md",
+      "sha256": "8a0f3fbf8e0602115b422000004900a60dffae907059096325ee3295e40dc3bb",
+      "id": "TEST-20261002-030"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-031-firefox-gamepad-visibility-failure-and-reported-ui-recovery.md",
+      "sha256": "ee25430a74e69d42d5faa46a8e4c5e0235f16e5b0a867d24fbd8d22e2835c4c8",
+      "id": "TEST-20261002-031"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/tests/TEST-20261002-080-minipc-read-only-evidence-audit.md",
+      "sha256": "76d71e0477ccd8f43213db6fbf4e595c2c1e7463df90a72830dfba07aab15f0e",
+      "id": "TEST-20261002-080"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260913-001-motion-sdk-ownership-unconfirmed.md",
+      "sha256": "954768cb960e221bceb96aacb3abf1648da87aa6e9da7c6a5fdcd546cd0bd85d",
+      "id": "FINDING-20260913-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260914-001-vendor-manual-axis-protocol.md",
+      "sha256": "cf7623e72e1e7447b378d0f6d6296327cd1c32421bcf645ee6a9ae338ef53af7",
+      "id": "FINDING-20260914-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260914-002-direct-onnx-not-pilot.md",
+      "sha256": "e3e4bb7e6840a323616fa4c3dde24c93527e976ab281737dd0855cfe2fbcb6d1",
+      "id": "FINDING-20260914-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260917-001-atomic-stand-authorization.md",
+      "sha256": "906e79eaeae4c4670b754c28d52c381c50a974570d435d5fd3aa4d0f69fa08e1",
+      "id": "FINDING-20260917-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260917-002-absolute-stand-hold-deadline.md",
+      "sha256": "1cd52770dec6ff1a22b27fdd36470ad52fbfb2c714aa4a767da5d757461ba6c0",
+      "id": "FINDING-20260917-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260918-002-long-action-permit-lifecycle.md",
+      "sha256": "23dca7dae15f9cc0d37f31a582c9d2104023e1150e5ec5581ee4a8f4df07d94c",
+      "id": "FINDING-20260918-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260921-001-simulation-contact-model-ambiguity.md",
+      "sha256": "924f8552da985886079adc9dfec7b625001241d39abaf86220931b277dff2a72",
+      "id": "FINDING-20260921-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260927-003-obstacle-snapshot.md",
+      "sha256": "5d1b7752fa9fd2874a16ca2ddcbd342505585bc3ae510130cd2a92227c91468e",
+      "id": "FINDING-20260927-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260929-001-source-of-truth.md",
+      "sha256": "a0e20cbaa919fe2f93dec6568e9a5e35492d44291ae549b12165c9d3cdb55f90",
+      "id": "FINDING-20260929-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20260930-001-command-authority.md",
+      "sha256": "58a2cf8ad5033f78144e8108e7a9b4d0cb8538ed206aee1525a69e7d6a294759",
+      "id": "FINDING-20260930-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261001-003-firefox-gamepad.md",
+      "sha256": "7500e44a2e29e0e6a57a6163269401d8106abb5656f182657d8631599f10d2e6",
+      "id": "FINDING-20261001-003"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261001-004-vendor-state-98.md",
+      "sha256": "52759c013b40264a3ffd439a1c5f9978f17ad057da4194713f66021b968e5991",
+      "id": "FINDING-20261001-004"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-001-autonomy-velocity-qos-compatibility-preserves-independent-watchdog.md",
+      "sha256": "ef1886c7fb9625a0cb69e03033f5e89601fcd25f78972c32fe09b892b6c379cf",
+      "id": "FINDING-20261002-001"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-002-command-source-markers-do-not-establish-real-ownership.md",
+      "sha256": "7491412e81f67e1dc1590410ca2a453fbd06102035fa009466f0b8e69c8df509",
+      "id": "FINDING-20261002-002"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-006-zero-yaw-navfn-poses-need-path-tangent-footprint-diagnostics.md",
+      "sha256": "8898495c1b41ff68b40002e75e5b41ee6ec0afbe567a05c1eecf3a204f23e917",
+      "id": "FINDING-20261002-006"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-008-temporary-high-level-posture-leases-need-neutral-continuity.md",
+      "sha256": "7854db28afa945440d8062347bd987cc069af55f9e07d29d45e8f0195851b7a1",
+      "id": "FINDING-20261002-008"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-009-relocalization-requires-explicit-approval-before-ownership-or-motion.md",
+      "sha256": "58223a13e8ddff92f10df904871455fcefb9cc8314f184cbd47176e8d44c8590",
+      "id": "FINDING-20261002-009"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-010-battery-connection-spark-and-suspected-dc-dc-damage-need-separate-closure.md",
+      "sha256": "fc86e3f8101708db5507cf9732de9a25644e764119835160307e80af1ab3a15b",
+      "id": "FINDING-20261002-010"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-014-reported-lithium-charging-fire-has-no-recorded-safety-closure.md",
+      "sha256": "3b2dd0491b30189463c7e117f1cdfde8b254a48ffb09717b49235e7fe09143ab",
+      "id": "FINDING-20261002-014"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-015-historical-normalized-vendor-axes-are-not-si-calibration.md",
+      "sha256": "d4c04833d9567847a0df0816b6476ca4af05ff942ab243e1ec8b8d9e1eacf9b4",
+      "id": "FINDING-20261002-015"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-017-active-localization-does-not-mean-nav2-servers-are-available.md",
+      "sha256": "bee652163b2d4579346a4e120c5475a667430e6598bbbcc7df92564cea006194",
+      "id": "FINDING-20261002-017"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-080-nav2-cpu-compatibility-fix-exists-deployed-but-not-on-integratio.md",
+      "sha256": "3a80a715f7b70291821c3a4882cef1355aab9b6ed626f9cc9e5cbb2c39a2b4d7",
+      "id": "FINDING-20261002-080"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-081-idle-odometry-fix-exists-deployed-but-not-on-integration-branch.md",
+      "sha256": "1310d2d682f92dbdcd68dc7b7b7f3d56d0173995fc9e47364be9fafc7de60719",
+      "id": "FINDING-20261002-081"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-082-deployed-control-guards-and-site-configuration-differ-from-integ.md",
+      "sha256": "a1f200f7e1ac36c1f0c7be0b6b6720bc6980c63eb91bf14b4b3b90ded0e56b41",
+      "id": "FINDING-20261002-082"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-083-legacy-status-domain-and-advertised-capabilities-are-not-product.md",
+      "sha256": "bfcbf184b697c66ea5d749a15172b00fd64c6de2e16d1f69aeb42fc5261e02e5",
+      "id": "FINDING-20261002-083"
+    },
+    {
+      "path": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/findings/FINDING-20261002-084-retained-bags-and-clock-metadata-impose-evidence-limits.md",
+      "sha256": "284b5056533f6976fb7c0b0314c0216132d305b7353f0cda49283246a7823166",
+      "id": "FINDING-20261002-084"
+    }
+  ],
+  "decision": {
+    "based_on_ids": [
+      "TEST-20260913-001",
+      "TEST-20260913-002",
+      "TEST-20260913-003",
+      "TEST-20260914-001",
+      "TEST-20260917-001",
+      "TEST-20260917-002",
+      "TEST-20260917-003",
+      "TEST-20260918-001",
+      "TEST-20260918-002",
+      "TEST-20260918-003",
+      "TEST-20260921-001",
+      "TEST-20260927-001",
+      "TEST-20260927-002",
+      "TEST-20260927-004",
+      "TEST-20260929-001",
+      "TEST-20260930-001",
+      "TEST-20260930-002",
+      "TEST-20260930-003",
+      "TEST-20261001-001",
+      "TEST-20261001-002",
+      "TEST-20261002-003",
+      "TEST-20261002-004",
+      "TEST-20261002-005",
+      "TEST-20261002-011",
+      "TEST-20261002-012",
+      "TEST-20261002-014",
+      "TEST-20261002-015",
+      "TEST-20261002-018",
+      "TEST-20261002-020",
+      "TEST-20261002-021",
+      "TEST-20261002-022",
+      "TEST-20261002-023",
+      "TEST-20261002-024",
+      "TEST-20261002-025",
+      "TEST-20261002-029",
+      "TEST-20261002-030",
+      "TEST-20261002-031",
+      "TEST-20261002-080",
+      "FINDING-20260913-001",
+      "FINDING-20260914-001",
+      "FINDING-20260914-002",
+      "FINDING-20260917-001",
+      "FINDING-20260917-002",
+      "FINDING-20260918-002",
+      "FINDING-20260921-001",
+      "FINDING-20260927-003",
+      "FINDING-20260929-001",
+      "FINDING-20260930-001",
+      "FINDING-20261001-003",
+      "FINDING-20261001-004",
+      "FINDING-20261002-001",
+      "FINDING-20261002-002",
+      "FINDING-20261002-006",
+      "FINDING-20261002-008",
+      "FINDING-20261002-009",
+      "FINDING-20261002-010",
+      "FINDING-20261002-014",
+      "FINDING-20261002-015",
+      "FINDING-20261002-017",
+      "FINDING-20261002-080",
+      "FINDING-20261002-081",
+      "FINDING-20261002-082",
+      "FINDING-20261002-083",
+      "FINDING-20261002-084"
+    ],
+    "physical_proof": false,
+    "action": "INERT_ANALYSIS_ONLY",
+    "reason": "This demonstration has no physical observation",
+    "source_rule": "Unit/mock results never become physical proof.",
+    "source_rule_document": "/home/raz/ros-robot-cc/Lite-robot/docs/engineering/README.md"
+  },
+  "inert_analysis": {
+    "physical_observation": false,
+    "classification": "OFFLINE_PROVEN",
+    "result": "PASS",
+    "scope": "SYNTHETIC evidence-class separation only"
+  },
+  "hardware_commands_sent": 0,
+  "stages": [
+    "discover",
+    "read",
+    "decide",
+    "inert_analysis",
+    "draft",
+    "index",
+    "validate"
+  ],
+  "validation_errors": []
+}

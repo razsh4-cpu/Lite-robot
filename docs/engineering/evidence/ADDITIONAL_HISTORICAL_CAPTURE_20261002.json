@@ -1,0 +1,216 @@
+{
+  "capture_date": "2026-10-02",
+  "scope": "Missing appropriate retrospective record types; no new physical experiment or proof promotion",
+  "records": [
+    {
+      "event": "HIST-024",
+      "id": "FINDING-20261002-085",
+      "path": "docs/engineering/findings/FINDING-20261002-085-wi-fi-name-configuration-baseline.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-026",
+      "id": "TEST-20261002-081",
+      "path": "docs/engineering/tests/TEST-20261002-081-inert-first-stand-failure-recovery.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-026",
+      "id": "FINDING-20261002-086",
+      "path": "docs/engineering/findings/FINDING-20261002-086-inert-first-stand-failure-recovery.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-028",
+      "id": "TEST-20261002-082",
+      "path": "docs/engineering/tests/TEST-20261002-082-convergence-and-supported-stand-entry.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-029",
+      "id": "TEST-20261002-083",
+      "path": "docs/engineering/tests/TEST-20261002-083-policy-contract-comparison-and-restoration.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-030",
+      "id": "TEST-20261002-084",
+      "path": "docs/engineering/tests/TEST-20261002-084-direct-onnx-forward-trials.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-032",
+      "id": "TEST-20261002-085",
+      "path": "docs/engineering/tests/TEST-20261002-085-original-vendor-controller-transport-investigation.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-032",
+      "id": "FINDING-20261002-087",
+      "path": "docs/engineering/findings/FINDING-20261002-087-original-vendor-controller-transport-investigation.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-033",
+      "id": "TEST-20261002-086",
+      "path": "docs/engineering/tests/TEST-20261002-086-repeat-bounded-manual-axis-forward.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-035",
+      "id": "TEST-20261002-087",
+      "path": "docs/engineering/tests/TEST-20261002-087-one-leg-kinematics-and-deterministic-simulation.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-036",
+      "id": "TEST-20261002-088",
+      "path": "docs/engineering/tests/TEST-20261002-088-supported-fr-path-offline-construction.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-037",
+      "id": "TEST-20261002-089",
+      "path": "docs/engineering/tests/TEST-20261002-089-real-body-shift-measured-speed-guard-abort.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-037",
+      "id": "FINDING-20261002-088",
+      "path": "docs/engineering/findings/FINDING-20261002-088-real-body-shift-measured-speed-guard-abort.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-038",
+      "id": "TEST-20261002-090",
+      "path": "docs/engineering/tests/TEST-20261002-090-passive-vendor-gait-and-foot-force-contrast.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-039",
+      "id": "TEST-20261002-091",
+      "path": "docs/engineering/tests/TEST-20261002-091-retained-72-jointscale-sweep.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-040",
+      "id": "TEST-20261002-092",
+      "path": "docs/engineering/tests/TEST-20261002-092-retained-180-thigh-knee-angle-sweep.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-041",
+      "id": "TEST-20261002-093",
+      "path": "docs/engineering/tests/TEST-20261002-093-retained-79-cartesian-lift-sweep.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-042",
+      "id": "TEST-20261002-094",
+      "path": "docs/engineering/tests/TEST-20261002-094-retained-grid162-and-sensitivity.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-043",
+      "id": "TEST-20261002-095",
+      "path": "docs/engineering/tests/TEST-20261002-095-retained-newplan-fr-failure.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-044",
+      "id": "FINDING-20261002-089",
+      "path": "docs/engineering/findings/FINDING-20261002-089-body-only-30-60-90-percent-safe-scale-calibration-plan.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-047",
+      "id": "TEST-20261002-096",
+      "path": "docs/engineering/tests/TEST-20261002-096-battery-exhausted-shutdown.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-048",
+      "id": "TEST-20261002-097",
+      "path": "docs/engineering/tests/TEST-20261002-097-nav2-package-dns-install-failure.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-048",
+      "id": "FINDING-20261002-090",
+      "path": "docs/engineering/findings/FINDING-20261002-090-nav2-package-dns-install-failure.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-060",
+      "id": "TEST-20261002-098",
+      "path": "docs/engineering/tests/TEST-20261002-098-current-existing-path-lite3-integration.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-066",
+      "id": "TEST-20261002-099",
+      "path": "docs/engineering/tests/TEST-20261002-099-supported-stand-rms-only-velocity-loss-persistence-correct.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-066",
+      "id": "FINDING-20261002-091",
+      "path": "docs/engineering/findings/FINDING-20261002-091-supported-stand-rms-only-velocity-loss-persistence-correct.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-067",
+      "id": "TEST-20261002-100",
+      "path": "docs/engineering/tests/TEST-20261002-100-early-normalized-ros-manual-axis-fail-closed-sitting-test.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-070",
+      "id": "TEST-20261002-101",
+      "path": "docs/engineering/tests/TEST-20261002-101-earlier-lidar-orientation-clustering-and-mapping-work.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-071",
+      "id": "TEST-20261002-102",
+      "path": "docs/engineering/tests/TEST-20261002-102-earlier-d455-rgb-depth-and-center-depth-range-checks.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-072",
+      "id": "TEST-20261002-103",
+      "path": "docs/engineering/tests/TEST-20261002-103-calibration-logger-and-monitor-preparation.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-076",
+      "id": "TEST-20261002-104",
+      "path": "docs/engineering/tests/TEST-20261002-104-relocalize-started-before-explicit-approval.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-083",
+      "id": "TEST-20261002-105",
+      "path": "docs/engineering/tests/TEST-20261002-105-duplicate-rviz-config-launcher-disagreement.md",
+      "kind": "tests"
+    },
+    {
+      "event": "HIST-083",
+      "id": "FINDING-20261002-092",
+      "path": "docs/engineering/findings/FINDING-20261002-092-duplicate-rviz-config-launcher-disagreement.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-084",
+      "id": "FINDING-20261002-093",
+      "path": "docs/engineering/findings/FINDING-20261002-093-distro-paho-compatibility-defect-shim.md",
+      "kind": "findings"
+    },
+    {
+      "event": "HIST-089",
+      "id": "FINDING-20261002-094",
+      "path": "docs/engineering/findings/FINDING-20261002-094-operator-python-helper-lacked-sourced-ros-environment.md",
+      "kind": "findings"
+    }
+  ]
+}

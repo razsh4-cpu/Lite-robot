@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
+import json
 import os
 import re
 import socket
@@ -303,6 +305,139 @@ def validate_tree(root: Path) -> list[str]:
     return errors
 
 
+
+def dry_run_workflow(*, root: Path, sandbox: Path, subsystem: str) -> dict:
+    """Read existing knowledge, then prove capture in an isolated synthetic tree.
+
+    Only explicit knowledge documents are read. No Git subprocess, socket,
+    ROS import, evidence ingestion, canonical write, or promotion is used.
+    """
+    root = root.resolve()
+    sandbox = sandbox.resolve()
+    repo = root.parents[1]
+    if sandbox.is_relative_to(repo) or root.is_relative_to(sandbox):
+        raise ValueError("sandbox must be outside the source repository and canonical tree")
+    if sandbox.exists():
+        raise ValueError("sandbox must be a new path; existing artifacts are never overwritten")
+    if not re.fullmatch(r"[A-Z][A-Z0-9_]*", subsystem):
+        raise ValueError("subsystem must be one uppercase taxonomy token")
+
+    reads = []
+    based_on_ids = []
+
+    def read_document(path: Path, *, record: bool = False) -> str:
+        if not path.resolve().is_relative_to(root):
+            raise ValueError("knowledge source symlink escapes the explicit root")
+        content = path.read_text(encoding="utf-8")
+        data = _frontmatter(path) if record else {}
+        reads.append({"path": str(path), "sha256": hashlib.sha256(content.encode()).hexdigest(),
+                      "id": data.get("id", "SUMMARY")})
+        return content
+
+    policy_text = ""
+    for name in ("README.md", "CAPABILITY_MATRIX.md", "KNOWN_GOOD_CONFIGURATIONS.md",
+                 "KNOWN_BAD.md", "LESSONS_LEARNED.md"):
+        content = read_document(root / name)
+        if name == "README.md":
+            policy_text = re.sub(r"\s+", " ", content)
+    policy_rules = [sentence for sentence in re.split(r"(?<=[.!?])\s+", policy_text)
+                    if "physical" in sentence.lower() and
+                    any(word in sentence.lower() for word in ("never", "separate")) and
+                    any(word in sentence.lower() for word in ("offline", "mock"))]
+    if not policy_rules:
+        raise ValueError("README lacks an explicit offline/mock versus physical evidence rule")
+    for directory in (root / "tests", root / "findings"):
+        for path in sorted(directory.glob("*.md")):
+            if not path.resolve().is_relative_to(root):
+                raise ValueError("knowledge source symlink escapes the explicit root")
+            data = _frontmatter(path)
+            categories = {x.strip() for x in data.get("categories", "").split(",")}
+            if subsystem in categories:
+                read_document(path, record=True)
+                based_on_ids.append(data["id"])
+    if not based_on_ids:
+        raise ValueError("no relevant records; choose a documented subsystem before deciding")
+
+    # The decision follows successful reads. Existing historical evidence cannot
+    # turn this mock analysis into physical acceptance or an authorized command.
+    decision = {"based_on_ids": based_on_ids, "physical_proof": False,
+                "action": "INERT_ANALYSIS_ONLY", "reason": "This demonstration has no physical observation",
+                "source_rule": policy_rules[0], "source_rule_document": str(root / "README.md")}
+    analysis = {"physical_observation": False, "classification": "OFFLINE_PROVEN",
+                "result": "PASS", "scope": "SYNTHETIC evidence-class separation only"}
+    now = dt.datetime.now().astimezone().isoformat(timespec="seconds")
+    day = now.split("T", 1)[0].replace("-", "")
+    sandbox.mkdir(parents=True, exist_ok=False)
+    for folder in ("tests", "findings"):
+        (sandbox / folder).mkdir()
+    test_id, finding_id = f"TEST-{day}-001", f"FINDING-{day}-001"
+    test_path = sandbox / "tests" / f"{test_id}-synthetic-workflow.md"
+    finding_path = sandbox / "findings" / f"{finding_id}-synthetic-evidence-boundary.md"
+    test_path.write_text(f"""---
+schema: bipolix.test_session/v1
+id: {test_id}
+title: SYNTHETIC offline knowledge workflow demonstration
+date: {now.split('T', 1)[0]}
+classification: OFFLINE_PROVEN
+result: PASS
+categories: {subsystem}
+robot_id: SYNTHETIC_NO_ROBOT
+git_sha: UNKNOWN
+evidence: ../evidence.json
+synthetic: true
+review_status: SYNTHETIC_DRAFT
+applicability: NONE
+---
+
+# SYNTHETIC — workflow proof, no physical acceptance
+
+Objective: read relevant existing knowledge before an inert evidence-class decision.
+Acceptance: no physical observation stays offline; source IDs were read first;
+only this external sandbox changes; records and indexes validate.
+FAIL: physical proof inferred, canonical content changed, or consistency invalid.
+ABORT: any hardware, network, ROS, or secret-bearing evidence operation requested.
+Actual: inert classification PASS, physical proof false; no robot commands sent.
+This PASS covers the synthetic workflow only. Human review is required before
+any real draft enters canonical knowledge. Related [finding](../findings/{finding_path.name}).
+""", encoding="utf-8")
+    finding_path.write_text(f"""---
+schema: bipolix.engineering_finding/v1
+id: {finding_id}
+title: SYNTHETIC offline evidence does not establish physical acceptance
+date: {now.split('T', 1)[0]}
+status: HISTORICAL
+categories: {subsystem}
+evidence: ../evidence.json
+synthetic: true
+review_status: SYNTHETIC_DRAFT
+applicability: NONE
+---
+
+# SYNTHETIC — demonstration only, not canonical engineering knowledge
+
+Observation: relevant existing records were read before the mock decision.
+Root cause/fix/retest: no real incident occurred; NOT APPLICABLE.
+Lesson demonstrated: a mock result never creates physical proof or hardware permission.
+Validation: [synthetic session](../tests/{test_path.name}); sandbox validator.
+No robot/model/firmware/site applicability and no cross-robot propagation.
+""", encoding="utf-8")
+    (sandbox / "TEST_REGISTRY.md").write_text(
+        f"# SYNTHETIC sandbox tests\n\n[{test_id}](tests/{test_path.name})\n", encoding="utf-8")
+    (sandbox / "FINDING_REGISTRY.md").write_text(
+        f"# SYNTHETIC sandbox findings\n\n[{finding_id}](findings/{finding_path.name})\n", encoding="utf-8")
+    (sandbox / "README.md").write_text(
+        "# SYNTHETIC offline workflow sandbox\n\nNever promote these demonstration records to canonical history.\n",
+        encoding="utf-8")
+    report = {"synthetic": True, "source_root": str(root), "sandbox": str(sandbox),
+              "subsystem": subsystem, "read_before_decision": reads, "decision": decision,
+              "inert_analysis": analysis, "hardware_commands_sent": 0,
+              "stages": ["discover", "read", "decide", "inert_analysis", "draft", "index", "validate"]}
+    (sandbox / "evidence.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    report["validation_errors"] = validate_tree(sandbox)
+    (sandbox / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return report
+
+
 def _default_root() -> Path:
     return Path(__file__).resolve().parents[1] / "docs" / "engineering"
 
@@ -319,7 +454,18 @@ def main(argv: list[str] | None = None) -> int:
         child.add_argument("--repo", type=Path, default=Path.cwd())
     validate = subparsers.add_parser("validate")
     validate.add_argument("--root", type=Path, default=_default_root())
+    dry_run = subparsers.add_parser("dry-run", help="SYNTHETIC workflow proof outside canonical knowledge")
+    dry_run.add_argument("--root", type=Path, default=_default_root())
+    dry_run.add_argument("--sandbox", type=Path, required=True)
+    dry_run.add_argument("--subsystem", required=True)
     args = parser.parse_args(argv)
+    if args.command == "dry-run":
+        try:
+            report = dry_run_workflow(root=args.root, sandbox=args.sandbox, subsystem=args.subsystem)
+        except (ValueError, OSError) as error:
+            parser.error(str(error))
+        print(json.dumps(report, indent=2))
+        return 1 if report["validation_errors"] else 0
     if args.command == "validate":
         errors = validate_tree(args.root)
         if errors:

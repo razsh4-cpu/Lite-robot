@@ -149,3 +149,72 @@ def test_initializer_writes_only_below_requested_root(tmp_path: Path, kind: str)
     assert path.is_relative_to(tmp_path / "engineering")
     assert path.exists()
     assert not list(tmp_path.glob("owner.lock"))
+
+
+def demo_source(tmp_path: Path) -> Path:
+    source = tmp_path / "repo" / "docs" / "engineering"
+    for name in ["README.md", "CAPABILITY_MATRIX.md", "KNOWN_GOOD_CONFIGURATIONS.md", "KNOWN_BAD.md", "LESSONS_LEARNED.md"]:
+        write(source / name, f"# {name}\nKeep offline evidence separate from physical acceptance.\n")
+    write(source / "findings" / "FINDING-20261001-001-source.md", """---
+schema: bipolix.engineering_finding/v1
+id: FINDING-20261001-001
+title: Source evidence boundary
+date: 2026-10-01
+status: CURRENT
+categories: SAFETY
+evidence: EVIDENCE MISSING
+---
+Offline evidence cannot authorize hardware.
+""")
+    return source
+
+
+def test_dry_run_reads_before_decision_and_validates_synthetic_sandbox(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = demo_source(tmp_path)
+    before = {p.relative_to(source): p.read_bytes() for p in source.rglob("*") if p.is_file()}
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("dry-run must not use sockets or subprocesses")
+
+    monkeypatch.setattr(knowledge.socket, "socket", forbidden)
+    monkeypatch.setattr(knowledge.subprocess, "run", forbidden)
+    sandbox = tmp_path / "sandbox"
+    report = knowledge.dry_run_workflow(root=source, sandbox=sandbox, subsystem="SAFETY")
+
+    assert report["stages"] == ["discover", "read", "decide", "inert_analysis", "draft", "index", "validate"]
+    assert report["decision"]["physical_proof"] is False
+    assert "offline evidence" in report["decision"]["source_rule"].lower()
+    assert report["decision"]["source_rule_document"] == str(source / "README.md")
+    assert report["decision"]["based_on_ids"] == ["FINDING-20261001-001"]
+    assert report["validation_errors"] == []
+    assert report["synthetic"] is True
+    assert report["hardware_commands_sent"] == 0
+    assert knowledge.validate_tree(sandbox) == []
+    assert before == {p.relative_to(source): p.read_bytes() for p in source.rglob("*") if p.is_file()}
+    for path in list((sandbox / "tests").glob("*.md")) + list((sandbox / "findings").glob("*.md")):
+        assert "SYNTHETIC" in path.read_text()
+        assert "PHYSICALLY_PROVEN" not in path.read_text()
+    assert list((sandbox / "tests").glob("*.md"))
+    assert list((sandbox / "findings").glob("*.md"))
+
+
+@pytest.mark.parametrize("destination", ["canonical", "under_repo", "nonempty"])
+def test_dry_run_refuses_canonical_or_existing_destinations(tmp_path: Path, destination: str) -> None:
+    source = demo_source(tmp_path)
+    sandbox = source if destination == "canonical" else source.parents[1] / "scratch" if destination == "under_repo" else tmp_path / "nonempty"
+    if destination == "nonempty":
+        write(sandbox / "existing.txt", "keep")
+    with pytest.raises(ValueError):
+        knowledge.dry_run_workflow(root=source, sandbox=sandbox, subsystem="SAFETY")
+    if destination == "nonempty":
+        assert (sandbox / "existing.txt").read_text() == "keep"
+
+
+def test_dry_run_missing_knowledge_fails_without_creating_records(tmp_path: Path) -> None:
+    source = demo_source(tmp_path)
+    sandbox = tmp_path / "sandbox"
+    with pytest.raises(ValueError, match="relevant"):
+        knowledge.dry_run_workflow(root=source, sandbox=sandbox, subsystem="DOES_NOT_EXIST")
+    assert not sandbox.exists()

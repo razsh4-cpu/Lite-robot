@@ -25,3 +25,8 @@ and reaping their process groups, causing child/task/memory growth. Commit
   not retained as a standalone committed raw dataset (`EVIDENCE MISSING`).
 - DO NOT REPEAT: launch periodic ROS CLI subprocesses without killing and
   reaping the complete process group on timeout.
+
+## Retrospective session links
+
+[TEST-20261002-008](../tests/TEST-20261002-008-exporter-timeout-process-group-cleanup.md). These preserve scoped history and
+remaining evidence limits; linking them does not constitute a new retest.
