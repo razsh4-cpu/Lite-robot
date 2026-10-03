@@ -5,7 +5,7 @@ title: Independent autonomy no-motion staging against existing INERT runtime
 date: 2026-10-03
 classification: PARTIAL
 result: PARTIAL
-actual_behavior: Navigation active onboard; laptop DDS blocked by both UFW firewalls
+actual_behavior: Navigation active; laptop DDS recovered; localization below gate and RViz acceptance pending
 categories: NAVIGATION, LOCALIZATION, DEPLOYMENT, SAFETY
 robot_id: robot_01
 git_sha: 534ab2df1c2566190dd47a9ae914988ff0d570ae
@@ -84,6 +84,18 @@ planning are therefore **NOT YET VALIDATED**.
 Remaining: scoped DDS firewall allowance, actual laptop data arrival, correct
 site-map/alignment review, normal localization gate and planning-only preview.
 Missing standing/hardware readiness/localization remain blocked, not fabricated.
+
+### DDS recovery — 2026-10-03
+
+Operator added peer-only Wi-Fi UDP7400:7650 inbound UFW rules on both machines.
+The subsequent laptop read-only probe received 36 scans and 192 odometry samples
+in 6 seconds, plus the 150-cell-wide map; last scan age 0.166s, odom 0.062s,
+odom->base_link 0.067s and AMCL map->odom future offset 0.334s. This resolves the
+previous transport failure, not localization or physical acceptance.
+Localization remains approximately 68%, UNLOCALIZED, with stationary global
+search exhausted. One laptop RViz session was reopened; its map-shader error
+remains under investigation. No pose guess/calibration/map edit was performed.
+No AUTONOMY, Stand/Sit or physical velocity output was requested.
 
 Rollback stops only `lite3-autonomy-validation.service` and
 `lite3-nav2-safety-monitor.service`. Existing independent runtime remains running;
