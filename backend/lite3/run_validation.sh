@@ -6,6 +6,9 @@ source /opt/ros/jazzy/setup.bash
 source /home/abx/ros2_ws/install/setup.bash
 source /home/abx/Desktop/robotdog_ws/install/setup.bash
 source "$root/ros_ws/install/setup.bash"
+# This existing ament_python package installs a resource marker but no AMENT
+# prefix hook; preserve the established localization wrapper's explicit prefix.
+export AMENT_PREFIX_PATH="$root/ros_ws/install/lite3_state_estimation:${AMENT_PREFIX_PATH:-}"
 export ROS_DOMAIN_ID=0 ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET FASTDDS_BUILTIN_TRANSPORTS=UDPv4
 cd "$root"
 source "$root/site.env"

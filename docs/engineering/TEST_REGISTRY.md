@@ -93,3 +93,5 @@
 | [TEST-20261002-109](tests/TEST-20261002-109-planned-manual-directions.md) | 2026-10-02 | PLANNED | PLANNED | Individual forward backward yaw curve and direct strafe |
 | [TEST-20261002-110](tests/TEST-20261002-110-planned-safety.md) | 2026-10-02 | PLANNED | PLANNED | ZERO RB timeout disconnect reconnect ownership and takeover |
 | [TEST-20261002-111](tests/TEST-20261002-111-planned-autonomy.md) | 2026-10-02 | PLANNED | PLANNED | Separately approved Nav2 Mission Patrol pause cancel completion |
+
+- [TEST-20261003-001](tests/TEST-20261003-001-independent-autonomy-no-motion-staging.md) — isolated INERT runtime integration staging; privileged activation/live localization still pending.
