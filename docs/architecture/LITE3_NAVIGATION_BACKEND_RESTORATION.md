@@ -193,3 +193,29 @@ No SSH inspection completed, no deployment, no goals, no velocity, no ownership
 and no robot motion. Concrete live NavigationPort binding and supervised runtime
 validation remain required; historical physical success is not proof of this
 new mission orchestration.
+
+## Superseding live-binding checkpoint — 2026-10-03
+
+The concrete independent NavigationPort, ROS observation and bounded onboard
+launcher are now implemented (not deployed). See `backend/lite3/README.md` and
+`LIVE_BINDING_PLAN.md`. No SABLE/NOMAD runtime is required. Site/map identity is
+external; missing Home_Map is not a backend blocker. Earlier missing-binding
+statements above describe historical checkpoints only.
+
+Focused validation: **126 passed, 3 deselected**. The deselected tests concern
+manual/takeover behavior outside this continuation. Coverage includes partial
+activation cleanup, delayed authoritative zero, action rejection/cancellation,
+measurement-time freshness, actually loaded map/grid matching, wrong-map goals,
+patrol sequencing and alert interruption. Static-only existing Nav2 checks also
+passed 20 tests; 8 ROS-dependent tests were excluded because local `rclpy` is
+unavailable. These are software results, not physical/runtime validation.
+
+The reviewed binding stops the existing AUTONOMY adapter before waiting for
+Nav2 cancellation and retains an orchestration mutex until terminal cancellation,
+fresh post-stop zero and COMMAND_SOURCE=NONE are proven. No new velocity writer,
+physical arbiter or UDP receiver was added. Existing watchdog/safety stay intact.
+
+Remaining: real Jazzy/DDS/action transport, deployed service paths/permissions,
+sensor/TF/localization/RViz alignment and separately approved bounded physical
+goals/obstacle/patrol/alert validation. No Mini-PC connection completed, no
+deployment or physical command occurred. Xbox branch remains untouched.

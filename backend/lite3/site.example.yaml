@@ -1,0 +1,7 @@
+# Inert template. Supply a measured site registry and existing map assets.
+map_yaml: null
+saved_goals: null
+patrols:
+  supervised_validation: [measured_start, measured_observation]
+alerts:
+  observation_alert: measured_observation
