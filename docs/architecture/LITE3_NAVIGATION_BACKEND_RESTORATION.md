@@ -165,3 +165,31 @@ The focused navigation/localization/map workflow suite passed 73 tests from
 the isolated worktree. This proves source/static behavior only. It does not
 prove the map artifact, installed ROS plugins, DDS graph, calibration, physical
 clearance, or current robot readiness.
+
+# Current preparation checkpoint — 2026-10-03
+
+The independent offline backend is prepared in `backend/lite3/`; its README
+defines the external site/map identity, saved goals, patrol/alert lifecycle and
+manual-takeover contracts. Historical Home_Map recovery is optional, not a
+backend prerequisite. No concrete live navigation transport is activated.
+
+Localization scripts accept `LITE3_WORKSPACE`; RViz launch/session/watcher use
+sibling paths and optional `LITE3_RVIZ_CONFIG`. Legacy workspace defaults and
+localization threshold remain unchanged. No deployment units were modified.
+
+Focused validation: 78 tests passed (new orchestration, external-site binding,
+relocated environment, mission registry/contracts, localization supervisor/guard,
+obstacle CLI and map workflow). The larger targeted collection yielded 97 passes
+and 7 import failures, all missing `rclpy`; the separate existing AUTONOMY test
+also cannot collect without `rclpy`. These are NOT reported as tested safety
+runtime behavior. Shell syntax and `git diff --check` passed.
+An additional static-only Nav2 run passed 20 tests with 8 ROS-dependent tests
+explicitly deselected; these exclusions are not runtime safety validation.
+Engineering knowledge validation in this isolated worktree encounters existing
+external/sibling evidence links that do not resolve under `.worktrees`; no
+historical evidence or link ownership was changed.
+
+No SSH inspection completed, no deployment, no goals, no velocity, no ownership
+and no robot motion. Concrete live NavigationPort binding and supervised runtime
+validation remain required; historical physical success is not proof of this
+new mission orchestration.

@@ -2,7 +2,9 @@
 
 Status: **IMPLEMENTED BUT NOT PHYSICALLY VALIDATED / EXECUTION DISABLED**.
 
-This phase provides only pure contracts and the existing named-location registry.
+This phase provides pure contracts, the existing named-location registry and
+offline orchestration in `backend/lite3/autonomy.py` (see its README).
+The concrete live NavigationPort is not implemented or activated.
 It installs no service, starts no node, sends no Nav2 goal and acquires no lease.
 
 ## Boundary
