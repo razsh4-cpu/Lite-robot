@@ -5,7 +5,7 @@ title: Independent autonomy no-motion staging against existing INERT runtime
 date: 2026-10-03
 classification: PARTIAL
 result: PARTIAL
-actual_behavior: Staged localization build passed; privileged activation pending
+actual_behavior: Navigation active onboard; laptop DDS blocked by both UFW firewalls
 categories: NAVIGATION, LOCALIZATION, DEPLOYMENT, SAFETY
 robot_id: robot_01
 git_sha: 534ab2df1c2566190dd47a9ae914988ff0d570ae
@@ -54,9 +54,36 @@ duplicate runtime/sensor owner, or any physical motion intent.
 
 ## Remaining validation / rollback
 
-Operator sudo activation, then actual graph/lifecycle/freshness/AMCL score,
-costmaps, obstacle returns and RViz/private path preview. Missing standing,
-hardware readiness or localization must remain blocked, not fabricated.
+### Post-activation live-static observations
+
+Operator ran the staged installer on 2026-10-03. SABLE edge/ROS and physical
+AUTONOMY are inactive; existing HIGH-LEVEL is still INERT and SOURCE=NONE.
+Map Server, AMCL, controller/planner/BT lifecycle responses are active. Loaded
+grid matches the selected map assets. Local/global costmap publishers each have
+one owner, as do scan/odom/map. No publisher exists on physical `/cmd_vel` or
+`/lite3/autonomy/cmd_vel`.
+
+The read-only raw onboard probe received 59 scans and 289 odometry samples in
+6 seconds: last scan age 0.118s, odom 0.017s; dynamic map->odom was future-dated
+0.414s (within configured AMCL tolerance), odom->base_link age 0.018s. Slower
+subprocess-based observation produced stale/TF warnings despite these raw
+measurements; do not weaken gates or declare the full runtime ready from this.
+Initial action-status snapshot was unavailable and remains fail-closed.
+
+Normal localization remains UNLOCALIZED at roughly 67–68%, not 80% x3.
+Posture `unknown_98` is not a vendor fault and not standing proof. No Stand,
+Sit, initial-pose correction or robot movement was performed.
+
+Exactly one RViz plus the existing body-marker process runs on the laptop.
+Laptop raw probe received no robot samples. Both kernel journals show UFW
+blocking traffic between 192.168.2.177 and 192.168.2.32 at DDS ports 7420,
+7440/7442/7446/7448. Sudo is required to correct the narrowly scoped peer rules;
+no firewall rules were changed during this inspection. RViz alignment and dry
+planning are therefore **NOT YET VALIDATED**.
+
+Remaining: scoped DDS firewall allowance, actual laptop data arrival, correct
+site-map/alignment review, normal localization gate and planning-only preview.
+Missing standing/hardware readiness/localization remain blocked, not fabricated.
 
 Rollback stops only `lite3-autonomy-validation.service` and
 `lite3-nav2-safety-monitor.service`. Existing independent runtime remains running;
