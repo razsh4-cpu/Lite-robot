@@ -3,15 +3,17 @@
 set -eo pipefail
 
 readonly state_dir="${LITE3_STATE_DIR:-/run/lite3-control}"
-readonly input_gate="${LITE3_INPUT_GATE:-/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_ros_inputs_ready}"
-readonly launch_stack="${LITE3_LOCALIZATION_LAUNCH:-/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_localization_start}"
-readonly lifecycle_gate="${LITE3_LIFECYCLE_GATE:-/home/abx/Desktop/robotdog_ws/install/sensor_visualization/lib/sensor_visualization/lite3_localization_lifecycle_ready}"
+readonly workspace="${LITE3_WORKSPACE:-/home/abx/Desktop/robotdog_ws}"
+readonly executables="$workspace/install/sensor_visualization/lib/sensor_visualization"
+readonly input_gate="${LITE3_INPUT_GATE:-$executables/lite3_ros_inputs_ready}"
+readonly launch_stack="${LITE3_LOCALIZATION_LAUNCH:-$executables/lite3_localization_start}"
+readonly lifecycle_gate="${LITE3_LIFECYCLE_GATE:-$executables/lite3_localization_lifecycle_ready}"
 readonly attempts="${LITE3_LOCALIZATION_ATTEMPTS:-3}"
 readonly dds_cleanup_seconds="${LITE3_DDS_CLEANUP_SECONDS:-10}"
 
 if [[ "${LITE3_SKIP_ROS_ENV:-false}" != true ]]; then
-    source /opt/ros/jazzy/setup.bash
-    source /home/abx/Desktop/robotdog_ws/install/setup.bash
+    source "${LITE3_ROS_SETUP:-/opt/ros/jazzy/setup.bash}"
+    source "$workspace/install/setup.bash"
     export ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
     export ROS_AUTOMATIC_DISCOVERY_RANGE="${ROS_AUTOMATIC_DISCOVERY_RANGE:-SUBNET}"
     export FASTDDS_BUILTIN_TRANSPORTS="${FASTDDS_BUILTIN_TRANSPORTS:-UDPv4}"

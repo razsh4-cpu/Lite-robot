@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-readonly config="/home/raz/ros-robot-cc/laptop_visualization/lite3_remote_lidar.rviz"
-source /opt/ros/jazzy/setup.bash
+readonly root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+readonly config="${LITE3_RVIZ_CONFIG:-$root/lite3_remote_lidar.rviz}"
+source "${LITE3_ROS_SETUP:-/opt/ros/jazzy/setup.bash}"
 set -u
 export ROS_DOMAIN_ID=0
 export ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET
@@ -24,4 +25,6 @@ systemctl --user reset-failed lite3-rviz-session.service >/dev/null 2>&1 || true
 exec systemd-run --user --unit=lite3-rviz-session --collect \
   --setenv=ROS_DOMAIN_ID=0 --setenv=ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET \
   --setenv=FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
-  /home/raz/ros-robot-cc/laptop_visualization/lite3_nav2_rviz_session.sh
+  --setenv=LITE3_RVIZ_CONFIG="$config" \
+  --setenv=LITE3_ROS_SETUP="${LITE3_ROS_SETUP:-/opt/ros/jazzy/setup.bash}" \
+  "$root/lite3_nav2_rviz_session.sh"

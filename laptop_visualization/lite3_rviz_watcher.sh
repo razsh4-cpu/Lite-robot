@@ -2,8 +2,10 @@
 set -eo pipefail
 
 readonly ros_setup="${LITE3_ROS_SETUP:-/opt/ros/jazzy/setup.bash}"
-readonly config="${LITE3_RVIZ_CONFIG:-/home/raz/ros-robot-cc/laptop_visualization/lite3_remote_lidar.rviz}"
-readonly session="/home/raz/ros-robot-cc/laptop_visualization/lite3_nav2_rviz_session.sh"
+readonly root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+export LITE3_RVIZ_CONFIG="${LITE3_RVIZ_CONFIG:-$root/lite3_remote_lidar.rviz}"
+readonly config="$LITE3_RVIZ_CONFIG"
+readonly session="$root/lite3_nav2_rviz_session.sh"
 readonly retry_seconds="${LITE3_RVIZ_RETRY_SECONDS:-10}"
 # Remote DDS discovery can take several seconds immediately after either host
 # boots. Give one scan enough time to arrive so a healthy robot is not
