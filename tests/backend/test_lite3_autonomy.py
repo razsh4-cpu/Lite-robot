@@ -163,11 +163,21 @@ def test_stale_readiness_aborts_current_navigation(tmp_path):
 
 def test_backend_has_no_direct_velocity_vendor_or_frontend_path():
     root = Path(__file__).parents[2] / "backend/lite3"
-    for path in root.glob("*.py"):
+    for path in (root / "autonomy.py",):
         source = path.read_text()
         for forbidden in ("create_publisher", "ActionClient", "socket.socket",
                           "owner.lock", "SIT_STAND", "import rclpy"):
             assert forbidden not in source
+
+
+def test_live_binding_does_not_add_velocity_vendor_or_frontend_writers():
+    root = Path(__file__).parents[2] / "backend/lite3"
+    for path in root.glob("*.py"):
+        source = path.read_text()
+        for forbidden in ("create_publisher", "socket.socket", "SIT_STAND",
+                          "geometry_msgs.msg import Twist", "import paho",
+                          "import sable", "import nomad"):
+            assert forbidden not in source, (path, forbidden)
 
 
 def test_external_site_changes_invalidate_saved_goals(tmp_path):

@@ -1,7 +1,7 @@
 """Offline-prepared mission orchestration over the existing navigation boundary.
 
-No concrete physical transport is provided here. A future navigation port must
-use the existing Nav2/AUTONOMY path and confirm cancellation, zero and release.
+The separate live_navigation binding uses the existing Nav2/AUTONOMY path and
+confirms cancellation, zero and release. This orchestration imports no ROS.
 """
 from __future__ import annotations
 
@@ -254,6 +254,9 @@ class AutonomyBackend:
         return self.cancel_patrol()
 
     def handle_alert(self, alert, ready):
+        provider = ready if callable(ready) else None
+        if provider:
+            ready = provider()
         if alert not in self.alert_routes:
             raise ValueError("unmapped alert")
         goal = self.goals.resolve(self.alert_routes[alert], ready.map_identity)
@@ -265,7 +268,7 @@ class AutonomyBackend:
                 raise ValueError("patrol stop unconfirmed")
         self._idle()
         from dataclasses import replace
-        dispatch_ready = replace(ready, command_source=self.command_source) if self.mode == "PATROL" else ready
+        dispatch_ready = provider() if provider else (replace(ready, command_source=self.command_source) if self.mode == "PATROL" else ready)
         self._dispatch(goal, dispatch_ready, "ALERT")
         self.alert_state = "NAVIGATING"
 
@@ -287,7 +290,10 @@ class AutonomyBackend:
                 self.patrol_state = "COMPLETED"
             else:
                 self.waypoint += 1
+                self.patrol_state = "RUNNING"
                 try:
+                    if callable(ready):
+                        ready = ready()
                     self._dispatch(self.goals.resolve(self.route[self.waypoint], ready.map_identity), ready, "PATROL")
                 except Exception:
                     self.patrol_state = "FAILED"
